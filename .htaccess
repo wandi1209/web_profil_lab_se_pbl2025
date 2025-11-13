@@ -1,0 +1,19 @@
+Options -Indexes
+RewriteEngine On
+
+# -------------------------------------------------
+# ATURAN KEAMANAN (Blokir file sensitif)
+# -------------------------------------------------
+RewriteRule ^(\.env|\.git|composer\.json|composer\.lock)$ - [F,L]
+RewriteRule ^(app/|vendor/) - [F,L]
+
+
+# -------------------------------------------------
+# ATURAN ROUTING MVC (Alihkan ke index.php)
+# -------------------------------------------------
+# Abaikan file/folder yang benar-benar ada (css, js, img)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Alihkan semua request lain ke index.php
+RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]

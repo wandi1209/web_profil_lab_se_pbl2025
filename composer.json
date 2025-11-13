@@ -1,0 +1,11 @@
+{
+    "name": "polinema/web_profil_lab_se",
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Polinema\\WebProfilLabSe\\": "app/"
+        }
+    }
+}
