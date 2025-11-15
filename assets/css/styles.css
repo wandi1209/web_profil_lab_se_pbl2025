@@ -1,0 +1,62 @@
+/* CSS untuk menyesuaikan tampilan visual */
+body {
+    /* Terapkan Font Poppins di sini */
+    font-family: 'Poppins', sans-serif;
+    /* Background */
+    background-color: #f0f4f8;
+    background-image: radial-gradient(#d8e0e8 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.text-primary {
+    color: #0B4E82 !important; 
+}
+
+.login-card {
+    border-radius: 1rem;
+    border: 1px solid #8290A3;
+    background-color: white;
+    max-width: 400px; 
+}
+
+.input-group{
+    border: 1px solid #8290A3; 
+    border-radius: 20px;
+    padding: 0.5rem 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.input-group-text {
+    background-color: white;
+    border: none;
+    color: #555;
+    padding-right: 0.5rem;
+}
+
+.form-control {
+    border: none;
+    box-shadow: none !important; 
+}
+
+.custom-input-container input {
+    padding: 0;
+}
+
+.custom-input-container i {
+    color: #4a90e2; 
+    margin-right: 0.5rem;
+}
+
+/* Tombol utama */
+.btn-primary {
+    background-color: #0B4E82; 
+    border-color: #0B4E82;
+    transition: background-color 0.2s;
+    border-radius: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+    border-color: #1565c0;
+}
