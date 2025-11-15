@@ -9,25 +9,21 @@ class Controller {
      * @param string $view Path ke file view (mis: 'pages/home')
      * @param array $data Data yang akan diekstrak untuk view
      */
-    public function view($view, $data = []) {
-        // Ekstrak $data menjadi variabel (mis: $data['title'] -> $title)
+    public function view($view, $data = [], $useLayout = false) {
         extract($data);
 
-        // Path ke file view
         $viewPath = __DIR__ . '/../views/' . $view . '.php';
 
-        if (file_exists($viewPath)) {
-            // Muat header
+        if (!file_exists($viewPath)) {
+            die("View tidak ditemukan: " . $viewPath);
+        }
+
+        if ($useLayout) {
             require_once __DIR__ . '/../views/layouts/header.php';
-            
-            // Muat konten view
             require_once $viewPath;
-            
-            // Muat footer
             require_once __DIR__ . '/../views/layouts/footer.php';
         } else {
-            // Jika file view tidak ada
-            die("View tidak ditemukan: " . $viewPath);
+            require_once $viewPath;
         }
     }
 
