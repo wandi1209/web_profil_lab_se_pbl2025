@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/styles.css">
     <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/sidebar.css">
+    
+    
 </head>
 
 <body class="d-flex flex-column min-vh-100">

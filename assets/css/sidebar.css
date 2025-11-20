@@ -1,6 +1,6 @@
 #sidebar {
-    width: 250px !important;
-    height: 100vh !important;
+    width: flex !important;
+    height: flex !important;
     background-color: #343A40 !important;
 }
 
