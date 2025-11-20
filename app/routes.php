@@ -12,6 +12,7 @@ $app->get('/', [ExampleController::class, 'index']);
 $app->get('/about', [ExampleController::class, 'about']);
 
 $app->get('/login', [AuthController::class, 'login']);
+$app->post('/login-proses', [AuthController::class, 'processLogin']);
 
 // admin routes
 $app->get('/admin', [AdminController::class, 'index']);

@@ -52,8 +52,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <!-- pesan login -->
             <?= $message ?>
 
-            <form action="" method="POST">
-
+            <form action="<?= $_ENV['APP_URL'] ?>/login-proses" method="POST">
+                <?php 
+                if(isset($_SESSION['error'])) {
+                    echo "<div class='alert alert-danger'>" . $_SESSION['error'] . "</div>";
+                    unset($_SESSION['error']); 
+                }
+                ?>
                 <!-- Username -->
                 <div class="mb-3">
                     <div class="input-group">
