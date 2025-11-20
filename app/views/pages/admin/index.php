@@ -1,8 +1,6 @@
-<main class="flex-1 flex items-center justify-center text-center bg-gray-100">
-    <div>
-        <h1 class="text-2xl font-bold">Selamat Datang di Dashboard CMS</h1>
-        <p class="mt-2 text-gray-600">
-            Laboratorium Software Engineering POLINEMA
-        </p>
-    </div>
-</main>
+<div class="d-flex">
+    <main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center min-vh-100">
+        <h1 class="fw-bold">Selamat Datang di Dashboard CMS</h1>
+        <p>Laboratorium Software Engineering POLINEMA</p>
+    </main>
+</div>

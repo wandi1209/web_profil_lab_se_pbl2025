@@ -1,4 +1,11 @@
 /* CSS untuk menyesuaikan tampilan visual */
+main {
+    min-height: calc(100vh - 60px); /* biar tinggi pas layar dan footer tidak jauh */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 body {
     /* Terapkan Font Poppins di sini */
     font-family: 'Poppins', sans-serif;
@@ -60,4 +67,3 @@ body {
     background-color: #1565c0;
     border-color: #1565c0;
 }
-
