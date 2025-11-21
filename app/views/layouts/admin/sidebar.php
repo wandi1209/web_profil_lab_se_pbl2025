@@ -13,26 +13,26 @@
         <!-- PROFILE -->
         <li class="nav-item">
             <a class="nav-link dropdown-toggle 
-               <?= (str_contains($current, '/admin/tentang-lab') || str_contains($current, '/admin/visi-misi')) ? '' : 'collapsed' ?>"
+               <?= (str_contains($current, '/admin/tentangLab') || str_contains($current, '/admin/visi-misi')) ? '' : 'collapsed' ?>"
                href="#profileSubmenu"
                data-bs-toggle="collapse"
-               aria-expanded="<?= (str_contains($current, '/admin/tentang-lab') || str_contains($current, '/admin/visi-misi')) ? 'true' : 'false' ?>"
+               aria-expanded="<?= (str_contains($current, '/admin/profile/tentangLab') || str_contains($current, '/admin/visi-misi')) ? 'true' : 'false' ?>"
                aria-controls="profileSubmenu">
 
                 <i class="bi bi-person"></i> Profile
             </a>
 
             <div class="collapse 
-                <?= (str_contains($current, '/admin/tentang-lab') || str_contains($current, '/admin/visi-misi')) ? 'show' : '' ?>"
+                <?= (str_contains($current, '/admin/profile/tentangLab') || str_contains($current, '/admin/visi-misi')) ? 'show' : '' ?>"
                 id="profileSubmenu"
                 data-bs-parent="#sidebarMenuList">
 
                 <ul class="list-unstyled fw-normal pb-1 small ms-3">
 
                     <li>
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/tentang-lab"
+                        <a href="<?= $_ENV['APP_URL'] ?>/admin/profile/tentangLab"
                            class="nav-link 
-                           <?= str_contains($current, 'tentang-lab') ? 'active' : '' ?>">
+                           <?= str_contains($current, 'tentangLab') ? 'active' : '' ?>">
                             <i class="bi bi-info-circle"></i> Tentang Lab SE
                         </a>
                     </li>
@@ -130,7 +130,7 @@
 
     </ul>
 
-    <!-- LOGOUT -->
+     <!-- LOGOUT -->
     <div class="sidebar-logout mt-auto p-3 border-top border-secondary">
         <a href="<?= $_ENV['APP_URL'] ?>/logout" class="nav-link">
             <i class="bi bi-box-arrow-left"></i> Log Out

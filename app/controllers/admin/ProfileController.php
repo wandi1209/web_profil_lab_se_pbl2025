@@ -12,4 +12,16 @@ class ProfileController extends Controller {
     public function index() {
         $this->view('pages/admin/profile/index');
     }
+
+    public function tentangLab() {
+    // load model kalau ada
+    // misal $dataTentang = $this->model("TentangModel")->getAll();
+
+    $dataTentang = []; // sementara kosong biar tidak error
+
+    $this->view('pages/admin/profile/tentangLab', [
+        'dataTentang' => $dataTentang
+    ]);
+}
+
 }

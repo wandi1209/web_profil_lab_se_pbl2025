@@ -1,7 +1,9 @@
 #sidebar {
-    width: flex !important;
-    height: flex !important;
+    width: flex; 
+    height: flex; 
     background-color: #343A40 !important;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -45,8 +47,8 @@
     transition: 0.2s ease-in-out !important;
 }
 
-.sidebar-logout a:hover {
+.sidebar-logout a:active {
     background-color: #dc3545 !important; 
     color: #fff !important;
-    border-radius: 6px !important;
+    border-radius: 5px !important;
 }

@@ -17,6 +17,8 @@ $app->post('/login-proses', [AuthController::class, 'processLogin']);
 // admin routes
 $app->get('/admin', [AdminController::class, 'index']);
 
+$app->get('/admin/profile/tentangLab', [ProfileController::class, 'tentangLab']);
+
 $app->get('/admin/blog', [BlogController::class, 'index']);
 
 $app->get('/admin/personil', [PersonilController::class, 'index']);
