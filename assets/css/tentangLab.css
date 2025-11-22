@@ -1,0 +1,98 @@
+.admin-content {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.table-custom {
+    width: 100% !important;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 15px;
+}
+
+.table-custom th {
+    background: #f8f8f8;
+    font-weight: 600;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.table-custom td {
+    padding: 12px;
+    vertical-align: top;
+    border-top: 1px solid #eee;
+}
+
+.table-custom,
+.table-custom th,
+.table-custom td {
+    border: 1px solid #e4e4e4;
+}
+
+.table-custom td {
+    line-height: 1.4;
+}
+
+/* tombol */
+.btn-sm {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* hilangkan padding bootstrap bawaan pada halaman ini */
+main, .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+table {
+    width: 100% !important;
+    table-layout: auto;
+}
+
+/* PERBAIKI AGAR ADMIN CONTENT TIDAK DI TENGAH */
+main.container-fluid {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.admin-content {
+    padding: 20px !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+/* wrapper mirip contoh screenshot 2 */
+.admin-wrapper {
+    padding: 20px 40px;
+}
+
+/* search box fix */
+.search-box {
+    width: 250px;
+}
+
+/* table fix */
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 15px;
+}
+
+h3, h1, .page-title {
+    text-align: left !important;
+}
+
+.admin-content, 
+.container-fluid, 
+.admin-wrapper, 
+main {
+    text-align: left !important;
+}
+
+footer {
+    margin-top: 40px !important;
+    padding-top: 20px;
+}

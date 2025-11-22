@@ -1,0 +1,35 @@
+/* HTML & BODY harus 100% tinggi */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Wrapper halaman seluruh admin */
+.admin-wrapper-page {
+    min-height: 100vh;           /* full height layar */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Konten utama dorong footer ke bawah */
+.admin-content {
+    flex: 1;
+    padding: 20px;               /* sesuai kebutuhan */
+}
+
+/* Footer */
+.admin-footer {
+    width: 100%;                 /* full width */
+    border-top: 1px solid #ddd;  /* garis panjang */
+    padding: 10px 20px;
+    box-sizing: border-box;
+    background: transparent;
+}
+
+/* Teks footer di pojok kanan */
+.admin-footer p {
+    margin: 0;
+    text-align: right;           /* pojok kanan */
+    font-size: 14px;
+    color: #555;
+}
