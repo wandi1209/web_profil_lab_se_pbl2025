@@ -1,8 +1,20 @@
+<div class="admin-wrapper-page">
 
-<footer class="w-100 text-end p-2 bg-light border-top">
-        <p class="m-0">&copy; <?= date('Y') ?> Web Profil Lab SE</p>
+    <!-- Konten utama -->
+    <div class="admin-content">
+        <div class="container-fluid">
+            <!-- Judul, Search, Tombol Tambah, Tabel -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="admin-footer">
+        <p>&copy; <?= date('Y') ?> Web Profil Lab SE</p>
     </footer>
 
+</div>
+
+<!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= $_ENV['APP_URL'] ?>/assets/js/bootstrap.bundle.min.js"></script>
 
@@ -23,17 +35,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Log Out
+    // Log Out Animation
     const logoutBtn = document.querySelector('.sidebar-logout a');
 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault(); 
-
-            this.classList.add('clicked'); 
+            e.preventDefault();
+            this.classList.add('clicked');
             setTimeout(() => {
-                window.location.href = this.href; // lanjutkan logout
-            }, 180); 
+                window.location.href = this.href;
+            }, 180);
         });
     }
 });

@@ -38,15 +38,15 @@
                     </li>
 
                     <li>
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/visi-misi"
+                        <a href="<?= $_ENV['APP_URL'] ?>/admin/profile/visiMisi"
                            class="nav-link 
-                           <?= str_contains($current, 'visi-misi') ? 'active' : '' ?>">
+                           <?= str_contains($current, 'visiMisi') ? 'active' : '' ?>">
                             <i class="bi bi-eye"></i> Visi & Misi
                         </a>
                     </li>
 
                     <li>
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/roadmap"
+                        <a href="<?= $_ENV['APP_URL'] ?>/admin/profile/roadmap"
                            class="nav-link 
                            <?= str_contains($current, 'roadmap') ? 'active' : '' ?>">
                             <i class="bi bi-map"></i> Roadmap
@@ -54,7 +54,7 @@
                     </li>
 
                     <li>
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/scope"
+                        <a href="<?= $_ENV['APP_URL'] ?>/admin/profile/scopePenelitian"
                            class="nav-link 
                            <?= str_contains($current, 'scope') ? 'active' : '' ?>">
                             <i class="bi bi-search"></i> Scope Penelitian
@@ -62,7 +62,7 @@
                     </li>
 
                     <li>
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/album"
+                        <a href="<?= $_ENV['APP_URL'] ?>/admin/profile/album"
                            class="nav-link 
                            <?= str_contains($current, 'album') ? 'active' : '' ?>">
                             <i class="bi bi-images"></i> Album
