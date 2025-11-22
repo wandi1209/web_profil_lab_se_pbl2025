@@ -1,15 +1,29 @@
 <?php
-// Tentukan namespace
+
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
+
 use Polinema\WebProfilLabSe\Core\Controller;
 
-class RekrutmenController extends Controller {
+class RekrutmenController extends Controller
+{
+    public function __construct()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    public function __construct() {
-        // tempat load model
+        if (empty($_SESSION['is_login'])) {
+            header('Location: /web_profil_lab_se/login');
+            exit;
+        }
     }
 
-    public function index() {
-        $this->view('pages/admin/rekrutmen/index');
+    public function index()
+    {
+        $data = [
+            'title' => 'Data Rekrutmen Mahasiswa Lab'
+        ];
+
+        $this->view('pages/admin/rekrutmen/index', $data, true, 'admin');
     }
 }

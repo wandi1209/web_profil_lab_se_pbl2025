@@ -5,7 +5,15 @@ include_once __DIR__ . "/../../../layouts/admin/sidebar.php";
 
 <div class="container-fluid p-4">
 
-    <h3 class="fw-bold mb-3">Tentang Lab SE</h3>
+    <h3 class="fw-bold mb-3">
+        <?= htmlspecialchars($title ?? 'Tentang Lab SE') ?>
+    </h3>
+
+    <p class="text-muted mb-3">
+        Halaman ini digunakan untuk mengelola informasi umum mengenai Laboratorium Software Engineering,
+        seperti deskripsi singkat, sejarah, fokus utama, dan informasi lain yang ingin ditampilkan
+        pada halaman profil publik.
+    </p>
 
     <div class="d-flex justify-content-end mb-3">
         <div class="input-group w-25">
@@ -18,32 +26,46 @@ include_once __DIR__ . "/../../../layouts/admin/sidebar.php";
         <table class="table table-bordered align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>No.</th>
-                    <th>Kategori</th>
+                    <th style="width: 60px;">No.</th>
+                    <th style="width: 180px;">Kategori</th>
                     <th>Konten</th>
-                    <th>Aksi</th>
+                    <th style="width: 160px;">Aksi</th>
                 </tr>
             </thead>
 
             <tbody>
-
-                <?php $no = 1; foreach ($dataTentang as $row): ?>
-                <tr>
-                    <td><?= $no++ ?></td>
-                    <td><?= $row['kategori'] ?></td>
-                    <td><?= nl2br($row['konten']) ?></td>
-                    <td>
-                        <a href="/admin/profile/tentangLab/edit?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="/admin/profile/tentangLab/delete?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Delete</a>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-
+                <?php if (!empty($dataTentang)): ?>
+                    <?php $no = 1; foreach ($dataTentang as $row): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= htmlspecialchars($row['kategori'] ?? '-') ?></td>
+                            <td><?= nl2br(htmlspecialchars($row['konten'] ?? '')) ?></td>
+                            <td>
+                                <a href="/admin/profile/tentangLab/edit?id=<?= urlencode($row['id']) ?>" class="btn btn-warning btn-sm">
+                                    Edit
+                                </a>
+                                <a href="/admin/profile/tentangLab/delete?id=<?= urlencode($row['id']) ?>" 
+                                   class="btn btn-danger btn-sm" 
+                                   onclick="return confirm('Yakin hapus?')">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            Belum ada data tentang lab yang tersimpan.
+                        </td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    <a href="/admin/profile/tentangLab/create" class="btn btn-primary mt-3">Tambah Data</a>
+    <a href="/admin/profile/tentangLab/create" class="btn btn-primary mt-3">
+        Tambah Data
+    </a>
 
 </div>
 
