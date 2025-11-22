@@ -20,10 +20,14 @@ class RekrutmenController extends Controller
 
     public function index()
     {
+        $dataRekrutmen = [];
+
         $data = [
-            'title' => 'Data Rekrutmen Mahasiswa Lab'
+            'title' => 'Data Rekrutmen Mahasiswa Lab',
+            'dataRekrutmen' => $dataRekrutmen
         ];
 
         $this->view('pages/admin/rekrutmen/index', $data, true, 'admin');
     }
+    
 }

@@ -18,7 +18,7 @@ class PersonilController extends Controller
         }
     }
 
-    public function index()
+    public function dosen()
     {
         $dataDosen = [];
 
@@ -28,5 +28,17 @@ class PersonilController extends Controller
         ];
 
         $this->view('pages/admin/personil/dosen', $data);
+    }
+
+    public function mahasiswa() {
+
+        $dataMahasiswa = []; 
+
+        $data = [
+            'title' => 'Mahasiswa',
+            'dataMahasiswa' => $dataMahasiswa
+        ];
+
+        $this->view('pages/admin/personil/mahasiswa', $data, true, 'admin');
     }
 }
