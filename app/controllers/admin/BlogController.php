@@ -1,11 +1,10 @@
 <?php
-
+// Tentukan namespace
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
-
 use Polinema\WebProfilLabSe\Core\Controller;
 
-class BlogController extends Controller
-{
+class BlogController extends Controller {
+
     public function __construct()
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -18,12 +17,18 @@ class BlogController extends Controller
         }
     }
 
-    public function index()
-    {
-        $data = [
-            'title' => 'Kelola Blog Artikel'
-        ];
+    public function index() {
+        $this->view('pages/admin/blog/index');
+    }
 
-        $this->view('pages/admin/blog/index', $data, true, 'admin');
+    public function blog() {
+    $dataBlog = [];
+    
+    $data = [
+        'title' => 'Blog Artikel',
+        'dataBloh' => $dataBlog
+    ];
+
+    $this->view('pages/admin/blog/index', $data, true, 'admin');
     }
 }

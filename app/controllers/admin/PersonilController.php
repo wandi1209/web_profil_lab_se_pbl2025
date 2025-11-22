@@ -1,11 +1,10 @@
 <?php
-
+// Tentukan namespace
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
-
 use Polinema\WebProfilLabSe\Core\Controller;
 
-class PersonilController extends Controller
-{
+class PersonilController extends Controller {
+
     public function __construct()
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -18,20 +17,21 @@ class PersonilController extends Controller
         }
     }
 
-    public function dosen()
-    {
-        $dataDosen = [];
+    public function index() {
+        $this->view('pages/admin/personil/index');
+    }
+    public function dosen() {
+    $dataDosen = []; 
 
-        $data = [
-            'title'     => 'Personil Dosen Lab SE',
-            'dataDosen' => $dataDosen
-        ];
+    $data = [
+        'title' => 'Album',
+        'dataAlbum' => $dataDosen
+    ];
 
-        $this->view('pages/admin/personil/dosen', $data);
+    $this->view('pages/admin/personil/dosen', $data, true, 'admin');
     }
 
     public function mahasiswa() {
-
         $dataMahasiswa = []; 
 
         $data = [

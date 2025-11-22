@@ -1,11 +1,10 @@
 <?php
-
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
 
 use Polinema\WebProfilLabSe\Core\Controller;
 
-class RekrutmenController extends Controller
-{
+class RekrutmenController extends Controller {
+
     public function __construct()
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -18,16 +17,22 @@ class RekrutmenController extends Controller
         }
     }
 
-    public function index()
-    {
-        $dataRekrutmen = [];
+    public function index() {
 
         $data = [
-            'title' => 'Data Rekrutmen Mahasiswa Lab',
+            'title' => 'Rekrutmen'
+        ];
+
+        $this->view('pages/admin/rekrutmen/index', $data, true, 'admin');
+    }
+    public function rekrutmen() {
+        $dataRekrutmen = []; 
+
+        $data = [
+            'title' => 'Visi & Misi',
             'dataRekrutmen' => $dataRekrutmen
         ];
 
         $this->view('pages/admin/rekrutmen/index', $data, true, 'admin');
     }
-    
 }
