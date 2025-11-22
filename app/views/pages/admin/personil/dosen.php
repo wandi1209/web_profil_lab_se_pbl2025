@@ -1,20 +1,22 @@
-<?php 
-include_once __DIR__ . "/../../../layouts/admin/header.php";
-include_once __DIR__ . "/../../../layouts/admin/sidebar.php";
-?>
+<div class="container-fluid">
 
-<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold m-0">Dosen</h3>
 
-    <h3 class="fw-bold mb-3">Tentang Lab SE</h3>
-
-    <div class="d-flex justify-content-end mb-3">
-        <div class="input-group w-25">
+        <!-- Search -->
+        <div class="input-group search-box" style="max-width: 260px;">
             <input type="text" id="searchInput" class="form-control" placeholder="Search">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
     </div>
 
-    <div class="table-responsive">
+    <!-- Tombol Tambah -->
+    <div class="mb-3">
+        <a href="/admin/personil/createDosen" class="btn btn-primary"> + Tambah Data</a>
+    </div>
+
+    <!-- Tabel -->
+    <div class="table-responsive mb-5">
         <table class="table table-bordered align-middle">
             <thead class="table-light">
                 <tr>
@@ -26,27 +28,42 @@ include_once __DIR__ . "/../../../layouts/admin/sidebar.php";
             </thead>
 
             <tbody>
-
-                <?php $no = 1; foreach ($dataTentang as $row): ?>
+            <?php if (!empty($dataDosen)): ?>
+                <?php $no = 1; foreach ($dataDosen as $row): ?>
                 <tr>
                     <td><?= $no++ ?></td>
                     <td><?= $row['kategori'] ?></td>
-                    <td><?= nl2br($row['konten']) ?></td>
+
+                    <td style="min-width:300px;">
+                        <?= nl2br($row['konten']) ?>
+
+                        <?php if (!empty($row['gambar'])): ?>
+                            <br>
+                            <img src="/uploads/dosen/<?= $row['gambar'] ?>"
+                                 alt="dosen Image"
+                                 style="max-width: 280px; margin-top:10px; border-radius:6px;">
+                        <?php endif; ?>
+                    </td>
+
                     <td>
-                        <a href="/admin/profile/tentangLab/edit?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="/admin/profile/tentangLab/delete?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Delete</a>
+                        <a href="/admin/personil/dosen/edit?id=<?= $row['id'] ?>" 
+                           class="btn btn-warning btn-sm">Edit</a>
+
+                        <a href="/admin/personil/dosen/delete?id=<?= $row['id'] ?>" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Yakin hapus gambar ini?')">
+                           Delete
+                        </a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
-
+            <?php else: ?>
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Tidak ada data</td>
+                </tr>
+            <?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    <a href="/admin/profile/tentangLab/create" class="btn btn-primary mt-3">Tambah Data</a>
-
 </div>
-
-<?php 
-include_once __DIR__ . "/../../../layouts/admin/footer.php";
-?>

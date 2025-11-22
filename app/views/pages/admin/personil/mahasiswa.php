@@ -2,7 +2,7 @@
 
    <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Judul -->
-        <h3 class="fw-bold m-0 text-start">Scope Penelitian</h3>
+        <h3 class="fw-bold m-0 text-start">Mahasiswa</h3>
 
         <!-- Search (kanan) -->
         <div class="input-group search-box">
@@ -13,7 +13,7 @@
 
     <!-- TOMBOL TAMBAH DATA (di bawah search, kiri) -->
     <div class="mb-3">
-        <a href="/admin/profile/createScopePenelitian" class="btn btn-primary"> + Tambah Data</a>
+        <a href="/admin/personil/createMahasiswa" class="btn btn-primary"> + Tambah Data</a>
     </div>
 
     <!-- TABEL -->
@@ -28,15 +28,15 @@
                 </tr>
             </thead>
             <tbody>
-            <?php if (!empty($dataScopePenelitian)): ?>
-                <?php $no = 1; foreach ($dataScopePenelitian as $row): ?>
+            <?php if (!empty($dataMahasiswa)): ?>
+                <?php $no = 1; foreach ($dataMahasiswa as $row): ?>
                 <tr>
                     <td><?= $no++ ?></td>
                     <td><?= $row['kategori'] ?></td>
                     <td><?= nl2br($row['konten']) ?></td>
                     <td>
-                        <a href="/admin/profile/scopePenelitianLab/edit?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="/admin/profile/scopePenelitianLab/delete?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Delete</a>
+                        <a href="/admin/personil/mahasiswa/edit?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="/admin/personil/mahasiswa/delete?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Delete</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>

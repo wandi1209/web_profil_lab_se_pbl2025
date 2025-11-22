@@ -1,35 +1,52 @@
-<div class="container-fluid p-4">
-    <h3 class="fw-bold mb-4">
-        <?= htmlspecialchars($title ?? 'Visi & Misi Lab SE') ?>
-    </h3>
+<div class="container-fluid">
 
-    <div class="row g-4">
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <h4 class="fw-bold mb-3 text-primary">VISI</h4>
-                    <p class="mb-0" style="text-align: justify;">
-                        Menjadi pusat unggulan dalam pengembangan ilmu pengetahuan, teknologi,
-                        dan inovasi di bidang Rekayasa Perangkat Lunak yang berdaya saing global,
-                        dengan kontribusi nyata pada kemajuan akademik, industri, dan masyarakat.
-                    </p>
-                </div>
-            </div>
-        </div>
+   <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Judul -->
+        <h3 class="fw-bold m-0 text-start">Visi & Misi</h3>
 
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h4 class="fw-bold mb-3 text-center text-primary">MISI</h4>
-                    <ul class="mb-0">
-                        <li>Mengembangkan kompetensi mahasiswa.</li>
-                        <li>Mendorong penelitian fundamental dan terapan.</li>
-                        <li>Mengintegrasikan kolaborasi multi-disiplin.</li>
-                        <li>Mengoptimalkan pemanfaatan teknologi terkini.</li>
-                        <li>Mewujudkan pengabdian masyarakat berbasis riset.</li>
-                    </ul>
-                </div>
-            </div>
+        <!-- Search (kanan) -->
+        <div class="input-group search-box">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
     </div>
+
+    <!-- TOMBOL TAMBAH DATA (di bawah search, kiri) -->
+    <div class="mb-3">
+        <a href="/admin/profile/createVisiMisi" class="btn btn-primary"> + Tambah Data</a>
+    </div>
+
+    <!-- TABEL -->
+    <div class="table-responsive mb-5">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>No.</th>
+                    <th>Kategori</th>
+                    <th>Konten</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php if (!empty($dataVisiMisi)): ?>
+                <?php $no = 1; foreach ($dataVisiMisi as $row): ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td><?= $row['kategori'] ?></td>
+                    <td><?= nl2br($row['konten']) ?></td>
+                    <td>
+                        <a href="/admin/profile/visiMisi/edit?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="/admin/profile/visiMisi/delete?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Delete</a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Tidak ada data</td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
 </div>
