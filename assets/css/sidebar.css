@@ -52,3 +52,13 @@
     color: #fff !important;
     border-radius: 5px !important;
 }
+
+.active-menu a {
+    background-color: #1abc9c !important;  
+    color: white !important;
+    border-radius: 6px;
+}
+
+.active-menu a i {
+    color: white !important;
+}

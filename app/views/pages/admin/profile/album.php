@@ -17,13 +17,13 @@
 
     <!-- Tabel -->
     <div class="table-responsive mb-5">
-        <table class="table table-bordered align-middle">
+        <table class="table table-bordered align-middle table-hover">
             <thead class="table-light">
                 <tr>
-                    <th>No.</th>
-                    <th>Kategori</th>
+                    <th style="width:60px;">No.</th>
+                    <th style="width:200px;">Kategori</th>
                     <th>Konten</th>
-                    <th>Aksi</th>
+                    <th style="width:160px;">Aksi</th>
                 </tr>
             </thead>
 
@@ -32,34 +32,38 @@
                 <?php $no = 1; foreach ($dataAlbum as $row): ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= $row['kategori'] ?></td>
+                    <td><?= htmlspecialchars($row['kategori']) ?></td>
 
-                    <td style="min-width:300px;">
-                        <?= nl2br($row['konten']) ?>
+                    <td style="min-width: 300px;">
+                        <?= nl2br(htmlspecialchars($row['konten'])) ?>
 
                         <?php if (!empty($row['gambar'])): ?>
-                            <br>
-                            <img src="/uploads/album/<?= $row['gambar'] ?>"
-                                 alt="Album Image"
-                                 style="max-width: 280px; margin-top:10px; border-radius:6px;">
+                            <div class="mt-3">
+                                <img src="/uploads/album/<?= $row['gambar'] ?>"
+                                     alt="Album Image"
+                                     class="img-fluid rounded"
+                                     style="max-width: 280px;">
+                            </div>
                         <?php endif; ?>
                     </td>
 
                     <td>
                         <a href="/admin/album/edit?id=<?= $row['id'] ?>" 
-                           class="btn btn-warning btn-sm">Edit</a>
+                           class="btn btn-warning btn-sm mb-1 w-100">
+                           <i class="bi bi-pencil-square"></i> Edit
+                        </a>
 
                         <a href="/admin/album/delete?id=<?= $row['id'] ?>" 
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Yakin hapus gambar ini?')">
-                           Delete
+                           class="btn btn-danger btn-sm w-100"
+                           onclick="return confirm('Yakin hapus album ini?')">
+                           <i class="bi bi-trash"></i> Delete
                         </a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="4" class="text-center text-muted">Tidak ada data</td>
+                    <td colspan="4" class="text-center text-muted py-4">Tidak ada data</td>
                 </tr>
             <?php endif; ?>
             </tbody>

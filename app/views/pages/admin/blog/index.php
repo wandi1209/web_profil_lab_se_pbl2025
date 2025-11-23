@@ -32,10 +32,10 @@
                 <?php $no = 1; foreach ($dataBlog as $row): ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= $row['kategori'] ?></td>
+                    <td><?= htmlspecialchars($row['kategori']) ?></td>
 
                     <td style="min-width:300px;">
-                        <?= nl2br($row['konten']) ?>
+                        <?= nl2br(htmlspecialchars($row['konten'])) ?>
 
                         <?php if (!empty($row['gambar'])): ?>
                             <br>
@@ -46,14 +46,13 @@
                     </td>
 
                     <td>
-                        <a href="/admin/blog/index/edit?id=<?= $row['id'] ?>" 
+                        <a href="/admin/blog/edit?id=<?= $row['id'] ?>" 
                            class="btn btn-warning btn-sm">Edit</a>
 
-                        <a href="/admin/blog/index/delete?id=<?= $row['id'] ?>" 
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Yakin hapus gambar ini?')">
-                           Delete
-                        </a>
+                        <button onclick="deleteBlog(<?= $row['id'] ?>)" 
+                                class="btn btn-danger btn-sm">
+                            Delete
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -67,3 +66,24 @@
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function deleteBlog(id) {
+    Swal.fire({
+        title: "Yakin menghapus data?",
+        text: "Data tidak dapat dikembalikan setelah dihapus!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Ya, hapus!",
+        cancelButtonText: "Batal"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "/admin/blog/delete?id=" + id;
+        }
+    });
+}
+</script>

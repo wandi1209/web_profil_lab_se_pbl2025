@@ -31,6 +31,17 @@ $app->get('/admin/profile/album',           [ProfileController::class, 'album'])
 
 // personil (admin)
 $app->get('/admin/personil', [PersonilController::class, 'index']);
+// Dosen CRUD
+$app->get('/admin/personil/dosen',               [PersonilController::class, 'dosen']);
+$app->get('/admin/personil/createDosen',        [PersonilController::class, 'createDosen']);
+$app->post('/admin/personil/storeDosen',        [PersonilController::class, 'storeDosen']);
+$app->get('/admin/personil/dosen/editDosen',         [PersonilController::class, 'editDosen']);
+$app->post('/admin/personil/updateDosen',       [PersonilController::class, 'updateDosen']);
+$app->get('/admin/personil/dosen/deleteDosen',       [PersonilController::class, 'deleteDosen']);
+
+$app->get('/admin/personil/mahasiswa', [PersonilController::class, 'mahasiswa']);
+
+$app->get('/admin/rekrutmen', [RekrutmenController::class, 'index']);
 
 // blog (admin)
 $app->get('/admin/blog', [BlogController::class, 'index']);

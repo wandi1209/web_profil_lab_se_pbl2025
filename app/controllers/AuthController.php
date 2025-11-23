@@ -37,7 +37,7 @@ class AuthController extends Controller {
             $_SESSION['username'] = $userData['username'];
 
             // Redirect ke dashboard admin
-            header('Location: /web_profil_lab_se/admin'); 
+            header('Location: /web_profil_lab_se_pbl2025/admin'); 
             exit;
         } else {
             // --- LOGIN GAGAL ---
@@ -46,7 +46,7 @@ class AuthController extends Controller {
             $_SESSION['error'] = "Username atau password salah!";
             
             // Kembalikan ke halaman login
-            header('Location: /web_profil_lab_se/login');
+            header('Location: /web_profil_lab_se_pbl2025/login');
             exit;
         }
     }
@@ -54,7 +54,7 @@ class AuthController extends Controller {
     public function logout() {
         session_start();
         session_destroy();
-        header('Location: /web_profil_lab_se/login');
+        header('Location: /web_profil_lab_se_pbl2025/login');
         exit;
     }
 }
