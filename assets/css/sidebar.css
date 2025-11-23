@@ -11,6 +11,16 @@
     font-size: 13px !important;
 }
 
+/* CMS Dashboard — tidak berubah warna */
+#sidebar .dashboard-noactive {
+    background: transparent !important;
+    color: #d6d6d6 !important;
+}
+#sidebar .dashboard-noactive:hover {
+    background-color: rgba(255,255,255,0.1) !important;
+    color: #fff !important;
+}
+
 /* Default link */
 #sidebar .nav-link {
     padding: 10px 14px !important;
@@ -27,9 +37,11 @@
 
 /* Active */
 #sidebar .nav-link.active {
-    background-color: #0d6efd !important;
-    color: #fff !important;
+    background-color: #f2f2e9 !important;  
+    color: #2c3e50 !important;            
+    font-weight: 600 !important;
 }
+
 
 /* Indent submenu */
 #sidebar .ms-3 .nav-link {
@@ -41,6 +53,26 @@
     float: right !important;
     margin-top: 6px !important;
 }
+
+/* --- RESET AKTIF UNTUK SEMUA MENU --- */
+#sidebar .nav-link.active {
+    background-color: #e8e6e3 !important; /* putih tulang */
+    color: #333 !important;              
+    border: none !important;
+    outline: none !important;
+}
+
+/* Hover */
+#sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+}
+
+#sidebar .nav-link.cms-no-active.active {
+    background: transparent !important;
+    color: #d6d6d6 !important;
+}
+
 
 /* Logout hover */
 .sidebar-logout a {
@@ -62,3 +94,24 @@
 .active-menu a i {
     color: white !important;
 }
+
+/* Hilangkan bullet pada item CMS Dashboard */
+.no-bullet {
+    list-style: none;
+}
+
+/* Bold tulisan CMS Dashboard */
+.cms-title {
+    font-weight: bold;
+}
+
+/* Kalau ingin bold hanya saat active */
+.cms-title.active {
+    font-weight: bold;
+}
+
+/* Hilangkan bullet global untuk jaga-jaga */
+#sidebar li {
+    list-style: none !important;
+}
+

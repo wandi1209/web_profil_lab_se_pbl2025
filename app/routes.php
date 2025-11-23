@@ -20,6 +20,7 @@ $app->post('/login-proses', [AuthController::class, 'processLogin']);
 $app->get('/logout', [AuthController::class, 'logout']);
 
 // admin dashboard
+$app->get('/admin/dashboard', [AdminController::class, 'index']);
 $app->get('/admin', [AdminController::class, 'index']);
 
 // profile (admin)

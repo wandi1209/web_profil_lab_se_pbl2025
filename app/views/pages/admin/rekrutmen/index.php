@@ -17,10 +17,10 @@
         <table class="table table-bordered align-middle">
             <thead class="table-light">
                 <tr>
-                    <th style="width: 60px;">No.</th>
-                    <th style="width: 180px;">Kategori</th>
+                    <th style="width:60px;">No.</th>
+                    <th style="width:200px;">Kategori</th>
                     <th>Konten</th>
-                    <th style="width: 160px;">Aksi</th>
+                    <th style="width:160px;">Aksi</th>
                 </tr>
             </thead>
 
@@ -50,7 +50,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="4" class="text-center text-muted py-3">Tidak ada data</td>
+                    <td colspan="4" class="text-center text-muted py-4">Tidak ada data</td>
                 </tr>
             <?php endif; ?>
             </tbody>
