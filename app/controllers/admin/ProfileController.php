@@ -22,7 +22,7 @@ class ProfileController extends Controller {
             'title' => 'Tentang Lab SE',
             'dataTentang' => $dataTentang
         ];
-        $this->view('pages/admin/profile/tentangLab', $data, true, 'admin');
+        $this->view('pages/admin/profile/tentang/index', $data, true, 'admin');
     }
 
     public function createTentang() {
@@ -40,7 +40,7 @@ class ProfileController extends Controller {
             'dataVisiMisi' => $dataVisiMisi
         ];
 
-        $this->view('pages/admin/profile/visiMisi', $data, true, 'admin');
+        $this->view('pages/admin/profile/visi_misi/index', $data, true, 'admin');
     }
 
     public function roadmap() {
@@ -50,7 +50,7 @@ class ProfileController extends Controller {
             'title' => 'Roadmap',
             'dataRoadmap' => $dataRoadmap
         ];
-        $this->view('pages/admin/profile/roadmap', $data, true, 'admin');
+        $this->view('pages/admin/profile/roadmap/index', $data, true, 'admin');
     }
 
     public function scopePenelitian() {
@@ -61,7 +61,7 @@ class ProfileController extends Controller {
             'dataScopePenelitian' => $dataScopePenelitian
         ];
 
-        $this->view('pages/admin/profile/ScopePenelitian', $data, true, 'admin');
+        $this->view('pages/admin/profile/scope/index', $data, true, 'admin');
     }
 
     public function album() {
@@ -71,6 +71,13 @@ class ProfileController extends Controller {
         'dataAlbum' => $dataAlbum
     ];
 
-    $this->view('pages/admin/profile/album', $data, true, 'admin');
+    $this->view('pages/admin/profile/album/index', $data, true, 'admin');
+    }
+
+    public function createAlbum(){
+        $data = [
+            'title' => 'Album',
+        ];
+        $this->view('pages/admin/profile/album/create', $data, true, 'admin');
     }
 }

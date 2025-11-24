@@ -16,7 +16,7 @@ class User
 
     public function findByUsername($username)
     {
-        $query = "SELECT * FROM user WHERE username = :username LIMIT 1";
+        $query = "SELECT * FROM users WHERE username = :username LIMIT 1";
         $stmt = $this->db->prepare($query);
 
         $stmt->execute([

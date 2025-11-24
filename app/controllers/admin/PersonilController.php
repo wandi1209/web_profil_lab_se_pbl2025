@@ -21,7 +21,7 @@ class PersonilController extends Controller {
         'dataAlbum' => $dataDosen
     ];
 
-    $this->view('pages/admin/personil/dosen', $data, true, 'admin');
+    $this->view('pages/admin/personil/dosen/index', $data, true, 'admin');
     }
 
     public function mahasiswa() {
@@ -32,6 +32,6 @@ class PersonilController extends Controller {
             'dataMahasiswa' => $dataMahasiswa
         ];
 
-        $this->view('pages/admin/personil/mahasiswa', $data, true, 'admin');
+        $this->view('pages/admin/personil/mahasiswa/index', $data, true, 'admin');
     }
 }

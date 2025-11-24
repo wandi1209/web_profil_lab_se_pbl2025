@@ -6,11 +6,11 @@
     <title><?= $title ?? 'CMS' ?></title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/styles.css">
-    <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/sidebar.css">
-    <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/footer.css">
-    <link rel="stylesheet" href="/web_profil_lab_se_pbl2025/assets/css/tentangLab.css">
+    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/styles.css">
+    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/sidebar.css">
+    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/footer.css">
+    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/tentangLab.css">
     
     
 </head>

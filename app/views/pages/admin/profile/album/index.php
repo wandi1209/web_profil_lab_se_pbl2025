@@ -12,7 +12,7 @@
 
     <!-- Tombol Tambah -->
     <div class="mb-3">
-        <a href="/admin/album/createAlbum" class="btn btn-primary"> + Tambah Data</a>
+        <a href="<?= $_ENV['APP_URL'] ?>/admin/profile/album/create" class="btn btn-primary"> + Tambah Data</a>
     </div>
 
     <!-- Tabel -->

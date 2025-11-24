@@ -29,6 +29,7 @@ $app->get('/admin/profile/visiMisi',        [ProfileController::class, 'visiMisi
 $app->get('/admin/profile/roadmap',         [ProfileController::class, 'roadmap']);
 $app->get('/admin/profile/scopePenelitian', [ProfileController::class, 'scopePenelitian']);
 $app->get('/admin/profile/album',           [ProfileController::class, 'album']);
+$app->get('/admin/profile/album/create', [ProfileController::class, 'createAlbum']);
 
 // personil (admin)
 $app->get('/admin/personil', [PersonilController::class, 'index']);
