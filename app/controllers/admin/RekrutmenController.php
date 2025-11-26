@@ -3,29 +3,59 @@ namespace Polinema\WebProfilLabSe\Controllers\Admin;
 
 use Polinema\WebProfilLabSe\Core\Controller;
 
-class RekrutmenController extends Controller {
-
-    public function __construct()
+class RekrutmenController extends Controller
+{
+    // Menampilkan daftar rekrutmen
+    public function index()
     {
-
-    }
-
-    public function index() {
+        // Sementara data rekrutmen dikosongkan dulu
+        $dataRekrutmen = [];
 
         $data = [
-            'title' => 'Rekrutmen'
+            'title'        => 'Rekrutmen',
+            'dataRekrutmen'=> $dataRekrutmen
         ];
 
+        // View: pages/admin/rekrutmen/index.php
         $this->view('pages/admin/rekrutmen/index', $data, true, 'admin');
     }
-    public function rekrutmen() {
-        $dataRekrutmen = []; 
 
+    // Menampilkan form tambah rekrutmen
+    public function create()
+    {
         $data = [
-            'title' => 'Visi & Misi',
-            'dataRekrutmen' => $dataRekrutmen
+            'title' => 'Tambah Rekrutmen'
         ];
 
-        $this->view('pages/admin/rekrutmen/index', $data, true, 'admin');
+        // View: pages/admin/rekrutmen/createRekrutmen.php
+        $this->view('pages/admin/rekrutmen/createRekrutmen', $data, true, 'admin');
+    }
+
+    // Menampilkan form edit rekrutmen
+    public function edit()
+    {
+        $id = $_GET['id'] ?? null;
+
+        // Data dummy, nanti diganti data dari database
+        $rekrutmen = [
+            'id'      => $id,
+            'judul'   => '',
+            'deskripsi' => '',
+            'status'  => ''
+        ];
+
+        $data = [
+            'title'    => 'Edit Rekrutmen',
+            'rekrutmen'=> $rekrutmen
+        ];
+
+        // View: pages/admin/rekrutmen/editRekrutmen.php
+        $this->view('pages/admin/rekrutmen/editRekrutmen', $data, true, 'admin');
+    }
+
+    // Menghapus data rekrutmen (belum diisi)
+    public function delete()
+    {
+        // Proses hapus akan ditambahkan nanti
     }
 }
