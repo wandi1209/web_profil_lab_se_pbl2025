@@ -18,8 +18,21 @@ use Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController;
 // ================== PUBLIC ==================
 $app->get('/',                  [HomeController::class, 'index']);
 $app->get('/about',             [HomeController::class, 'about']);
-$app->get('/personil',          [HomeController::class, 'personil']);
-$app->get('/personil/detail',   [HomeController::class, 'personilDetail']);
+
+// TENTANG
+$app->get('/tentang/profil',    [HomeController::class, 'profil']);
+$app->get('/tentang/visi-misi', [HomeController::class, 'visi_misi']);
+$app->get('/tentang/roadmap', [HomeController::class, 'roadmap']);
+
+// ARTIKEL
+$app->get('/artikel',           [HomeController::class, 'artikel']);
+
+// PENDAFTARAN
+$app->get('/pendaftaran',       [HomeController::class, 'pendaftaran']);
+
+// PERSONIL 
+$app->get('/personil/mahasiswa',          [HomeController::class, 'mahasiswa']);
+$app->get('/personil/dosen/{id}',   [HomeController::class, 'personilDetail']);
 
 // ================== AUTH ==================
 $app->get('/login',             [AuthController::class, 'login']);

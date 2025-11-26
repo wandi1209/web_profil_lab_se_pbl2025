@@ -13,17 +13,41 @@ class HomeController extends Controller
             'description' => 'Halaman utama web profil Laboratorium Software Engineering.'
         ];
 
-        $this->view('pages/home', $data);
+        $this->view('pages/home', $data, true);
     }
 
-    public function about()
+    public function profil()
     {
         $data = [
             'title'       => 'Tentang Laboratorium SE',
             'description' => 'Informasi singkat tentang profil Laboratorium Software Engineering.'
         ];
 
-        $this->view('pages/about', $data);
+        $this->view('pages/tentang/profil', $data, true);
+    }
+
+    public function visi_misi()
+    {
+        $data = [
+            'title'       => 'Visi & Misi Laboratorium SE',
+            'description' => 'Visi dan misi dari Laboratorium Software Engineering.'
+        ];
+
+        $this->view('pages/tentang/visi-misi', $data, true);
+    }
+
+    public function roadmap()
+    {
+        $data = [];
+
+        $this->view('pages/tentang/roadmap', $data, true);
+    }
+
+    public function mahasiswa()
+    {
+        $data = [];
+
+        $this->view('pages/personil/mahasiswa', $data, true);
     }
 
     public function personil()
@@ -73,55 +97,33 @@ class HomeController extends Controller
         ]);
     }
 
-    public function personilDetail()
+    public function personilDetail($id)
     {
-        $id = $_GET['id'] ?? null;
-
+        // Data lengkap dosen
         $dataDosen = [
             1 => [
-                'id'            => 1,
-                'nama'          => 'Imam Fahrur Rozi, ST., MT.',
-                'jabatan'       => 'Tenaga Pengajar',
-                'foto_url'      => '/web_profil_lab_se/assets/img/dosen/imam.png',
-                'nip'           => '198406102008121004',
-                'nidn'          => '0010068402',
-                'program_studi' => 'Teknik Informatika',
-                'bidang'        => ['Programming', 'Software', 'Data Mining', 'Text Processing'],
-                'links'         => [
-                    'linkedin'       => '#',
-                    'google_scholar' => '#',
-                    'sinta'          => '#',
-                    'email'          => 'mailto:imam@polinema.ac.id',
-                    'cv'             => '#'
-                ],
-                'pendidikan'    => [
-                    'S2 – Teknik Elektro, Universitas Brawijaya (2010–2012)',
-                    'S1 – Teknik Elektro, Universitas Brawijaya (2002–2007)'
-                ],
-                'sertifikasi'   => []
+                'id'          => 1,
+                'nama'        => 'Imam Fahrur Rozi, ST., MT.',
+                'jabatan'     => 'Kepala Lab',
+                'foto_url'    => '/web_profil_lab_se/assets/img/dosen/imam.png',
+                'email'       => 'imam.rozi@polinema.ac.id',
+                'phone'       => '+62 812-3456-7890',
+                'nidn'        => '0123456789',
+                'pendidikan'  => 'S2 Teknik Informatika',
+                'bidang_keahlian' => 'Software Engineering, Project Management',
+                'deskripsi'   => 'Kepala Laboratorium Software Engineering dengan pengalaman lebih dari 10 tahun di bidang pengembangan perangkat lunak dan manajemen proyek.'
             ],
             2 => [
-                'id'            => 2,
-                'nama'          => 'Ridwan Rismanto, SST., M.Kom.',
-                'jabatan'       => 'Tenaga Pengajar',
-                'foto_url'      => '/web_profil_lab_se/assets/img/dosen/ridwan.png',
-                'nip'           => '198603182012121001',
-                'nidn'          => '0018038602',
-                'program_studi' => 'Teknik Informatika',
-                'bidang'        => ['Computer Science'],
-                'links'         => [
-                    'linkedin'       => '#',
-                    'google_scholar' => '#',
-                    'sinta'          => '#',
-                    'email'          => 'mailto:rismanto@polinema.ac.id',
-                    'cv'             => '#'
-                ],
-                'pendidikan'    => [
-                    'S3 – Teknologi Informasi',
-                    'S2 – Computer Science, Kumamoto University',
-                    'D4 – Teknik Informatika'
-                ],
-                'sertifikasi'   => []
+                'id'          => 2,
+                'nama'        => 'Ridwan Rismanto, SST., M.Kom.',
+                'jabatan'     => 'Tenaga Pengajar',
+                'foto_url'    => '/web_profil_lab_se/assets/img/dosen/ridwan.png',
+                'email'       => 'ridwan.rismanto@polinema.ac.id',
+                'phone'       => '+62 813-4567-8901',
+                'nidn'        => '0234567890',
+                'pendidikan'  => 'S2 Ilmu Komputer',
+                'bidang_keahlian' => 'Web Development, Database Management',
+                'deskripsi'   => 'Tenaga pengajar dengan spesialisasi dalam pengembangan aplikasi web dan manajemen basis data.'
             ],
             3 => [
                 'id'            => 3,
@@ -221,18 +223,16 @@ class HomeController extends Controller
             ]
         ];
 
-        $detail = $dataDosen[(int) $id] ?? null;
-
-        if (!$detail) {
-            http_response_code(404);
-            $this->view('errors/404');
-            return;
+        // Cek apakah ID dosen ada
+        if (!isset($dataDosen[$id])) {
+            return $this->notFound();
         }
 
-        $this->view('pages/personil/detailDosen', [
-            'title' => 'Profil Dosen',
-            'dosen' => $detail
-        ]);
+        $this->view('pages/personil/detail', [
+            'title' => 'Detail Dosen',
+            'dosen' => $dataDosen[$id],
+            
+        ], $dataDosen[$id], true);
     }
 
     public function notFound()
