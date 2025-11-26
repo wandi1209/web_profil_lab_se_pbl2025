@@ -3,6 +3,8 @@
 namespace Polinema\WebProfilLabSe\Models;
 
 use Polinema\WebProfilLabSe\Core\Database;
+use PDO;
+use Exception;
 
 class Personil
 {
@@ -13,78 +15,84 @@ class Personil
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function getByLab($labId)
+    /*Tambah personil baru*/
+    public function create($nama, $position, $email, $fotoUrl)
     {
-        $stmt = $this->db->prepare("SELECT * FROM personil WHERE lab_profile_id = :id");
-        $stmt->execute([':id' => $labId]);
-        return $stmt->fetchAll();
-    }
-
-    // CRUD Dosen
-    
-    public function getAllDosen()
-    {
-        $stmt = $this->db->query("SELECT * FROM dosen ORDER BY id DESC");
-        return $stmt->fetchAll();
-    }
-
-    public function getDosenById($id)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM dosen WHERE id = :id");
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
-    }
-
-    public function insertDosen($kategori, $konten, $gambar)
-    {
-        $stmt = $this->db->prepare("
-            INSERT INTO dosen (kategori, konten, gambar)
-            VALUES (:kategori, :konten, :gambar)
-        ");
-
-        return $stmt->execute([
-            ':kategori' => $kategori,
-            ':konten'   => $konten,
-            ':gambar'   => $gambar
-        ]);
-    }
-
-    public function updateDosen($id, $kategori, $konten, $gambarBaru = null)
-    {
-        if ($gambarBaru) {
+        try {
             $stmt = $this->db->prepare("
-                UPDATE dosen
-                SET kategori = :kategori,
-                    konten = :konten,
-                    gambar = :gambar
-                WHERE id = :id
+                INSERT INTO personil (nama, position, email, foto_url)
+                VALUES (:nama, :position, :email, :foto)
             ");
 
             return $stmt->execute([
-                ':kategori' => $kategori,
-                ':konten'   => $konten,
-                ':gambar'   => $gambarBaru,
-                ':id'       => $id
+                ':nama'     => $nama,
+                ':position' => $position,
+                ':email'    => $email,
+                ':foto'     => $fotoUrl
             ]);
-        } else {
-            $stmt = $this->db->prepare("
-                UPDATE dosen
-                SET kategori = :kategori,
-                    konten = :konten
-                WHERE id = :id
-            ");
 
-            return $stmt->execute([
-                ':kategori' => $kategori,
-                ':konten'   => $konten,
-                ':id'       => $id
-            ]);
+        } catch (Exception $e) {
+            return false;
         }
     }
 
-    public function deleteDosen($id)
+    /*Update personil*/
+    public function update($id, $nama, $position, $email, $fotoUrl = null)
     {
-        $stmt = $this->db->prepare("DELETE FROM dosen WHERE id = :id");
-        return $stmt->execute([':id' => $id]);
+        try {
+            if ($fotoUrl !== null) {
+                $query = "
+                    UPDATE personil
+                    SET nama = :nama,
+                        position = :position,
+                        email = :email,
+                        foto_url = :foto
+                    WHERE id = :id
+                ";
+
+                $params = [
+                    ':nama'     => $nama,
+                    ':position' => $position,
+                    ':email'    => $email,
+                    ':foto'     => $fotoUrl,
+                    ':id'       => $id
+                ];
+
+            } else {
+                $query = "
+                    UPDATE personil
+                    SET nama = :nama,
+                        position = :position,
+                        email = :email
+                    WHERE id = :id
+                ";
+
+                $params = [
+                    ':nama'     => $nama,
+                    ':position' => $position,
+                    ':email'    => $email,
+                    ':id'       => $id
+                ];
+            }
+
+            $stmt = $this->db->prepare($query);
+            return $stmt->execute($params);
+
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /*Delete personil*/
+    public function delete($id)
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM personil WHERE id = :id");
+            return $stmt->execute([':id' => $id]);
+
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }
+?>
