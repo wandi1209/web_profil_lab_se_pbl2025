@@ -76,10 +76,10 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#">Artikel</a>
+                        <a class="nav-link nav-link-custom" href="<?= $_ENV['APP_URL'] ?>/artikel">Artikel</a>
                     </li>
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
-                        <a class="btn btn-register" href="#">
+                        <a class="btn btn-register" href="<?= $_ENV['APP_URL'] ?>/pendaftaran">
                             Pendaftaran <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </li>

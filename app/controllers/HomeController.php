@@ -50,6 +50,20 @@ class HomeController extends Controller
         $this->view('pages/personil/mahasiswa', $data, true);
     }
 
+    public function pendaftaran()
+    {
+        $data = [];
+
+        $this->view('pages/pendaftaran', $data, true);
+    }
+
+    public function artikel()
+    {
+        $data = [];
+        
+        $this->view('pages/artikel', $data, true);
+    }
+
     public function personil()
     {
         $dataDosen = [
