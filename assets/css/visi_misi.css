@@ -1,0 +1,254 @@
+/* Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Colors - Premium & Muted Palette */
+:root {
+    /* Warna Umum & Kontras */
+    --color-primary-text: #022255;    /* Teks Utama Hampir Hitam */
+    --color-secondary-text: #504e4e;  /* Teks Sekunder Abu-abu */
+    --color-bg-body: #FDFDFD;         /* Latar Belakang Sangat Terang */
+    --color-bg-card: #ffffff;         /* Putih Bersih untuk Card */
+    
+    /* Warna Aksen untuk Border/Garis/Nomor (Visi) */
+    --color-accent-strong: #007bff;   /* Biru cerah (seperti bootstrap primary) */ 
+    
+    /* Warna Misi yang LEBIH KALEM (Muted Pastels) */
+    --color-m1: #0f5796;     /* Muted Gray (Ganti Vivid Coral) */
+    --color-m2: #c3bc0a;     /* Soft Orange (Ganti Kuning) */
+    --color-m3: #157e5f;     /* Soft Teal */
+    --color-m4: #be2f95;     /* Muted Purple */
+    --color-m5: #ca7530;     /* Darker Orange/Terracotta */
+
+    /* Bayangan Sangat Bersih dan Elegan */
+    --shadow-light: 0 4px 18px rgba(0, 0, 0, 0.08);
+    --shadow-hover-card: 0 15px 45px rgba(0, 0, 0, 0.15); /* Bayangan Universal yang Kuat */
+    --shadow-hover-color: 0 10px 30px; /* Akan ditambahkan warnanya secara dinamis */
+}
+
+/* --- Wrapper & Body --- */
+body {
+    background-color: var(--color-bg-body);
+}
+
+.vm-wrapper {
+    max-width: 900px; 
+    margin: 80px auto;
+    padding: 0 25px;
+    font-family: 'Inter', sans-serif;
+    color: var(--color-primary-text);
+}
+
+/* --- Judul (Menggunakan Teks Primary Dark) --- */
+.section-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--color-primary-text);
+    margin-bottom: 50px;
+    text-align: center; 
+    letter-spacing: -1px;
+    text-transform: uppercase;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px; 
+    background-color: var(--color-m1); /* Biru cerah */
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+z/* ===============================
+   CARD VISI
+================================= */
+.vision-card {
+    background: var(--color-bg-card); /* Putih Bersih */
+    color: var(--color-primary-text);
+    padding: 60px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-light);
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent; /* Border awal transparan */
+}
+
+.vision-card:hover {
+    transform: translateY(-8px); /* Gerakan halus ke atas */
+    box-shadow: var(--shadow-hover-card); 
+    border-color: var(--color-accent-strong); /* Border Biru cerah saat hover */
+}
+
+.vision-text {
+    text-align: center;
+    font-size: 1.25rem;
+    line-height: 1.7;
+    color: var(--color-secondary-text);
+    font-weight: 500;
+}
+.vision-section {
+    margin-bottom: 80px;
+}
+
+.vision-card:active,
+.vision-card:focus {
+    transform: translateY(10px); 
+    box-shadow: 0 5px 15px rgba(50, 145, 239, 0.1); 
+    transition: all 0.1s ease;
+    border-color: var(--color-accent-strong); 
+}
+
+/* --- List Misi - Vertikal --- */
+.mission-grid {
+    display: flex;
+    flex-direction: column; 
+    gap: 20px;
+    margin-top: 40px;
+}
+
+/* --- Card Misi (Multi-Color Border Sweep) --- */
+.mission-card {
+    background: var(--color-bg-card);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden; 
+    
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    
+    border-left: 5px solid #E0E0E0; /* Border default */
+}
+
+/* Garis Sweep/Aksen Kiri yang Diperkuat */
+.mission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px; 
+    height: 0%; 
+    background: transparent; 
+    transition: height 0.4s ease, background-color 0.4s ease; 
+    z-index: 1;
+}
+
+.mission-card:hover {
+    transform: translateY(-5px); /* Gerakan ke atas saat hover */
+}
+
+.mission-card:hover::before {
+    height: 100%; 
+}
+
+/* Lingkaran Nomor */
+.mission-index-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #A0A0A0; /* Default abu-abu netral */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-bg-card);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    z-index: 2;
+}
+
+.mission-card:hover .mission-index-circle {
+    transform: scale(1.05);
+}
+
+
+/* --- Pewarnaan Spesifik Setiap Misi (LEBIH KALEM tapi BEDA) --- */
+
+/* Misi 1: Muted Gray */
+.mission-card:nth-child(1)::before { background: var(--color-m1); }
+.mission-card:nth-child(1) .mission-index-circle { background-color: var(--color-m1); }
+.mission-card:nth-child(1):hover { 
+    border-left-color: var(--color-m1); 
+    box-shadow: var(--shadow-hover-color) rgba(14, 81, 139, 0.25);
+}
+
+/* Misi 2: Soft Orange */
+.mission-card:nth-child(2)::before { background: var(--color-m2); }
+.mission-card:nth-child(2) .mission-index-circle { background-color: var(--color-m2); } /* Teks tetap putih, kontras */
+.mission-card:nth-child(2):hover { 
+    border-left-color: var(--color-m2); 
+    box-shadow: var(--shadow-hover-color) rgba(227, 206, 25, 0.25);
+}
+
+/* Misi 3: Soft Teal */
+.mission-card:nth-child(3)::before { background: var(--color-m3); }
+.mission-card:nth-child(3) .mission-index-circle { background-color: var(--color-m3); }
+.mission-card:nth-child(3):hover { 
+    border-left-color: var(--color-m3); 
+    box-shadow: var(--shadow-hover-color) rgba(32, 201, 151, 0.25);
+}
+
+/* Misi 4: Muted Purple */
+.mission-card:nth-child(4)::before { background: var(--color-m4); }
+.mission-card:nth-child(4) .mission-index-circle { background-color: var(--color-m4); }
+.mission-card:nth-child(4):hover { 
+    border-left-color: var(--color-m4); 
+    box-shadow: var(--shadow-hover-color) rgba(166, 94, 236, 0.25);
+}
+
+/* Misi 5: Darker Orange/Terracotta */
+.mission-card:nth-child(5)::before { background: var(--color-m5); }
+.mission-card:nth-child(5) .mission-index-circle { background-color: var(--color-m5); }
+.mission-card:nth-child(5):hover { 
+    border-left-color: var(--color-m5); 
+    box-shadow: var(--shadow-hover-color) rgba(253, 126, 20, 0.25);
+}
+
+
+/* Teks Konten Misi & Responsive (Tidak Berubah) */
+.mission-content-box {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    flex-grow: 1; 
+    z-index: 2;
+}
+
+.mission-text {
+    margin: 0;
+    line-height: 1.6;
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--color-secondary-text); /* Teks abu-abu */
+}
+
+@media (max-width: 768px) {
+    .vm-wrapper {
+        margin: 40px auto;
+        padding: 0 15px;
+    }
+    .vision-card {
+        padding: 40px;
+    }
+    .mission-card {
+        flex-direction: column; 
+        align-items: center;
+        text-align: center;
+        padding: 25px;
+    }
+    .mission-index-circle {
+        margin-bottom: 15px;
+    }
+    .mission-card::before {
+        width: 100%; 
+        height: 100%;
+        opacity: 0.05; 
+    }
+}
