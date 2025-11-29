@@ -40,7 +40,7 @@ body {
 
 /* --- Judul (Menggunakan Teks Primary Dark) --- */
 .section-title {
-    font-size: 3rem;
+    font-size: 2.25rem;
     font-weight: 800;
     color: var(--color-primary-text);
     margin-bottom: 50px;
@@ -52,14 +52,15 @@ body {
 .section-title::after {
     content: '';
     display: block;
-    width: 60px;
-    height: 4px; 
-    background-color: var(--color-m1); /* Biru cerah */
-    margin: 10px auto 0;
-    border-radius: 2px;
+    width: 80px;
+    height: 5px;
+    margin: 12px auto 0;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--color-m1), var(--color-accent-strong));
+    opacity: .8;
 }
 
-z/* ===============================
+/* ===============================
    CARD VISI
 ================================= */
 .vision-card {
@@ -83,7 +84,7 @@ z/* ===============================
 
 .vision-text {
     text-align: center;
-    font-size: 1.25rem;
+    font-size: 1.10rem;
     line-height: 1.7;
     color: var(--color-secondary-text);
     font-weight: 500;
@@ -155,7 +156,7 @@ z/* ===============================
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--color-bg-card);
     flex-shrink: 0;
