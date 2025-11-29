@@ -14,62 +14,33 @@ class Pendaftar
         $this->db = Database::getInstance()->getConnection();
     }
 
-    // Tambah pendaftar baru
-    public function create($data)
+    public function create($nama, $nim, $kelas, $prodi, $alasan, $email, $no_hp)
     {
-        $query = "INSERT INTO pendaftar 
-            (nama, nim, kelas, program_studi, alasan, created_at, email, no_hp, status) 
-            VALUES 
-            (:nama, :nim, :kelas, :program_studi, :alasan, NOW(), :email, :no_hp, :status)";
-
+        $query = "INSERT INTO pendaftar (nama, nim, kelas, program_studi, alasan, email, no_hp, status, created_at) 
+                  VALUES (:nama, :nim, :kelas, :prodi, :alasan, :email, :hp, 'Pending', NOW())";
+        
         $stmt = $this->db->prepare($query);
-
         return $stmt->execute([
-            'nama'          => $data['nama'],
-            'nim'           => $data['nim'],
-            'kelas'         => $data['kelas'],
-            'program_studi' => $data['program_studi'],
-            'alasan'        => $data['alasan'],
-            'email'         => $data['email'],
-            'no_hp'         => $data['no_hp'],
-            'status'        => $data['status'] ?? 'pending'
+            ':nama'   => $nama,
+            ':nim'    => $nim,
+            ':kelas'  => $kelas,
+            ':prodi'  => $prodi,
+            ':alasan' => $alasan,
+            ':email'  => $email,
+            ':hp'     => $no_hp
         ]);
     }
 
-    // Update data pendaftar
-    public function update($id, $data)
+    public function getAll()
     {
-        $query = "UPDATE pendaftar SET 
-            nama = :nama,
-            nim = :nim,
-            kelas = :kelas,
-            program_studi = :program_studi,
-            alasan = :alasan,
-            email = :email,
-            no_hp = :no_hp,
-            status = :status
-        WHERE id = :id";
-
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            'nama'          => $data['nama'],
-            'nim'           => $data['nim'],
-            'kelas'         => $data['kelas'],
-            'program_studi' => $data['program_studi'],
-            'alasan'        => $data['alasan'],
-            'email'         => $data['email'],
-            'no_hp'         => $data['no_hp'],
-            'status'        => $data['status'],
-            'id'            => $id
-        ]);
+        $stmt = $this->db->query("SELECT * FROM pendaftar ORDER BY created_at DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Hapus pendaftar
-    public function delete($id)
+    // Update Status (misal: diterima/ditolak)
+    public function updateStatus($id, $status)
     {
-        $stmt = $this->db->prepare("DELETE FROM pendaftar WHERE id = :id");
-        return $stmt->execute(['id' => $id]);
+        $stmt = $this->db->prepare("UPDATE pendaftar SET status = :status WHERE id = :id");
+        return $stmt->execute([':id' => $id, ':status' => $status]);
     }
 }
-?>

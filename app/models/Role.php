@@ -14,38 +14,16 @@ class Role
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /*CREATE ROLE*/
-    public function create($name)
+    public function getAll()
     {
-        $query = "INSERT INTO role (name) VALUES (:name)";
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            ':name' => $name
-        ]);
+        $stmt = $this->db->query("SELECT * FROM role");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /*UPDATE ROLE*/
-    public function update($id, $name)
+    public function find($id)
     {
-        $query = "UPDATE role SET name = :name WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            ':id'   => $id,
-            ':name' => $name
-        ]);
-    }
-
-    /*DELETE ROLE*/
-    public function delete($id)
-    {
-        $query = "DELETE FROM role WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            ':id' => $id
-        ]);
+        $stmt = $this->db->prepare("SELECT * FROM role WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
-?>

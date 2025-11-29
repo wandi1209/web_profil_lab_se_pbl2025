@@ -14,107 +14,59 @@ class User
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /*FIND USER BY USERNAME*/
+    public function getAll()
+    {
+        // Join dengan tabel role untuk menampilkan nama role
+        $query = 'SELECT u.*, r.name as role_name 
+                  FROM "user" u 
+                  LEFT JOIN role r ON u.role_id = r.id';
+        
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Untuk keperluan Login
     public function findByUsername($username)
     {
-        $query = "SELECT * FROM users WHERE username = :username LIMIT 1";
-        $stmt = $this->db->prepare($query);
-
-        $stmt->execute([
-            ':username' => $username
-        ]);
-
+        $stmt = $this->db->prepare('SELECT * FROM "user" WHERE username = :username');
+        $stmt->execute([':username' => $username]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /*CHECK LOGIN*/
-    public function checkLogin($username, $password)
+    public function create($username, $password, $role_id)
     {
-        $user = $this->findByUsername($username);
+        // Password wajib di-hash sebelum masuk database!
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        if (!$user) {
-            return false;
-        }
-
-        if (!password_verify($password, $user['password_hash'])) {
-            return false;
-        }
-
-        return $user;
-    }
-
-    /*CREATE USER username, password_hash, role_id*/
-    public function create($username, $password, $roleId)
-    {
-        $query = "INSERT INTO users (username, password_hash, role_id)
-                  VALUES (:username, :password_hash, :role_id)";
+        $query = 'INSERT INTO "user" (username, password_hash, role_id) 
+                  VALUES (:username, :pass, :role)';
+        
         $stmt = $this->db->prepare($query);
-
         return $stmt->execute([
-            ':username'      => $username,
-            ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
-            ':role_id'       => $roleId
+            ':username' => $username,
+            ':pass'     => $passwordHash,
+            ':role'     => $role_id
         ]);
     }
 
-    /*UPDATE USER Bisa update username, password (opsional), role_id*/
-    public function update($id, $username, $password = null, $roleId)
+    public function update($id, $username, $role_id, $password = null)
     {
-        // Jika password tidak diubah
-        if ($password === null) {
-            $query = "UPDATE users
-                      SET username = :username,
-                          role_id = :role_id
-                      WHERE id = :id";
-            $stmt = $this->db->prepare($query);
-
-            return $stmt->execute([
-                ':id'       => $id,
-                ':username' => $username,
-                ':role_id'  => $roleId
-            ]);
+        if ($password) {
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $query = 'UPDATE "user" SET username = :username, password_hash = :pass, role_id = :role WHERE id = :id';
+            $params = [':id' => $id, ':username' => $username, ':pass' => $passwordHash, ':role' => $role_id];
+        } else {
+            $query = 'UPDATE "user" SET username = :username, role_id = :role WHERE id = :id';
+            $params = [':id' => $id, ':username' => $username, ':role' => $role_id];
         }
 
-        // Jika password diubah
-        $query = "UPDATE users
-                  SET username = :username,
-                      password_hash = :password_hash,
-                      role_id = :role_id
-                  WHERE id = :id";
-
         $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            ':id'           => $id,
-            ':username'     => $username,
-            ':password_hash'=> password_hash($password, PASSWORD_DEFAULT),
-            ':role_id'      => $roleId
-        ]);
+        return $stmt->execute($params);
     }
 
-    /*
-       DELETE USER */
     public function delete($id)
     {
-        $query = "DELETE FROM users WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            ':id' => $id
-        ]);
-    }
-
-    /*FIND BY ID (jika dibutuhkan CRUD)*/
-    public function findById($id)
-    {
-        $query = "SELECT * FROM users WHERE id = :id LIMIT 1";
-        $stmt = $this->db->prepare($query);
-
-        $stmt->execute([
-            ':id' => $id
-        ]);
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare('DELETE FROM "user" WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
     }
 }
-?>
