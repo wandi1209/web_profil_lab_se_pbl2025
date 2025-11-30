@@ -5,7 +5,6 @@ use Polinema\WebProfilLabSe\Core\Controller;
 
 class ScopeController extends Controller
 {
-    // Menampilkan halaman scope
     public function index()
     {
         $data = [
