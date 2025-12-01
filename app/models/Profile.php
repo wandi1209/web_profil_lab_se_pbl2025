@@ -14,72 +14,71 @@ class Profile
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /*CREATE PROFILE*/
-    public function create($labProfileId, $visi, $misi, $deskripsi, $gambar = null)
+    /**
+     * CREATE PROFILE
+     * Sesuai ERD: kolom title, text, section_key
+     */
+    public function create($title, $text, $section_key)
     {
-        $query = "
-            INSERT INTO profile (lab_profile_id, visi, misi, deskripsi, gambar)
-            VALUES (:lab, :visi, :misi, :desk, :gambar)
-        ";
+        $query = "INSERT INTO profile (title, text, section_key) 
+                  VALUES (:title, :text, :section_key)";
 
         $stmt = $this->db->prepare($query);
 
         return $stmt->execute([
-            ':lab'    => $labProfileId,
-            ':visi'   => $visi,
-            ':misi'   => $misi,
-            ':desk'   => $deskripsi,
-            ':gambar' => $gambar
+            ':title'       => $title,
+            ':text'        => $text,
+            ':section_key' => $section_key
         ]);
     }
 
-    /*UPDATE PROFILE*/
-    public function update($id, $visi, $misi, $deskripsi, $gambar = null)
+    /**
+     * UPDATE PROFILE
+     * Logika gambar dihapus karena tidak ada kolom gambar di tabel profile ERD
+     */
+    public function update($id, $title, $text, $section_key)
     {
-        // Jika gambar tidak diubah, tidak perlu update field gambar
-        if ($gambar === null) {
-            $query = "
-                UPDATE profile
-                SET visi = :visi,
-                    misi = :misi,
-                    deskripsi = :desk
-                WHERE id = :id
-            ";
-
-            $params = [
-                ':id'   => $id,
-                ':visi' => $visi,
-                ':misi' => $misi,
-                ':desk' => $deskripsi,
-            ];
-        } else {
-            $query = "
-                UPDATE profile
-                SET visi = :visi,
-                    misi = :misi,
-                    deskripsi = :desk,
-                    gambar = :gambar
-                WHERE id = :id
-            ";
-
-            $params = [
-                ':id'     => $id,
-                ':visi'   => $visi,
-                ':misi'   => $misi,
-                ':desk'   => $deskripsi,
-                ':gambar' => $gambar,
-            ];
-        }
+        $query = "UPDATE profile 
+                  SET title = :title, 
+                      text = :text, 
+                      section_key = :section_key 
+                  WHERE id = :id";
 
         $stmt = $this->db->prepare($query);
-        return $stmt->execute($params);
+
+        return $stmt->execute([
+            ':id'          => $id,
+            ':title'       => $title,
+            ':text'        => $text,
+            ':section_key' => $section_key
+        ]);
     }
 
-    /*DELETE PROFILE*/
+    /**
+     * DELETE PROFILE
+     */
     public function delete($id)
     {
         $stmt = $this->db->prepare("DELETE FROM profile WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
+    /**
+     * GET ALL PROFILES (Tambahan agar bisa menampilkan data)
+     */
+    public function getAll()
+    {
+        $stmt = $this->db->query("SELECT * FROM profile");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * GET BY ID (Tambahan untuk edit)
+     */
+    public function find($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM profile WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
-?>

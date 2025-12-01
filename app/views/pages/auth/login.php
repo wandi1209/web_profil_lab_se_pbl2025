@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <!-- Bootstrap CSS -->
     <link href="<?= $_ENV['APP_URL'] ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/css/styles.css" rel="stylesheet">
+    <link href="assets/css/login.css" rel="stylesheet">
 
     <!-- Bootstrap JS -->
     <script src="<?= $_ENV['APP_URL'] ?>/assets/js/bootstrap.bundle.min.js"></script>

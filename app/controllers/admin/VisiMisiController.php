@@ -29,7 +29,6 @@ class VisiMisiController extends Controller
             'listMisi' => $listMisi
         ];
 
-        // View: pages/admin/profile/visi_misi/index.php
         $this->view('pages/admin/profile/visi_misi/index', $data, true, 'admin');
     }
 

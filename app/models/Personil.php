@@ -4,7 +4,6 @@ namespace Polinema\WebProfilLabSe\Models;
 
 use Polinema\WebProfilLabSe\Core\Database;
 use PDO;
-use Exception;
 
 class Personil
 {

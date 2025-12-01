@@ -14,39 +14,33 @@ class Roadmap
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /*CREATE ROADMAP*/
-    public function create($labProfileId, $judul, $deskripsi, $tahun, $urutan)
+    public function getAll()
     {
-        $query = "
-            INSERT INTO roadmap (lab_profile_id, judul, deskripsi, tahun, urutan)
-            VALUES (:lab, :judul, :deskripsi, :tahun, :urutan)
-        ";
+        // Biasanya roadmap diurutkan berdasarkan tahun atau urutan
+        $stmt = $this->db->query("SELECT * FROM roadmap ORDER BY tahun ASC, urutan ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
+    public function create($judul, $deskripsi, $tahun, $urutan)
+    {
+        $query = "INSERT INTO roadmap (judul, deskripsi, tahun, urutan) 
+                  VALUES (:judul, :deskripsi, :tahun, :urutan)";
+        
         $stmt = $this->db->prepare($query);
-
         return $stmt->execute([
-            ':lab'      => $labProfileId,
-            ':judul'    => $judul,
-            ':deskripsi'=> $deskripsi,
-            ':tahun'    => $tahun,
-            ':urutan'   => $urutan
+            ':judul'     => $judul,
+            ':deskripsi' => $deskripsi,
+            ':tahun'     => $tahun,
+            ':urutan'    => $urutan
         ]);
     }
 
-    /*UPDATE ROADMAP*/
     public function update($id, $judul, $deskripsi, $tahun, $urutan)
     {
-        $query = "
-            UPDATE roadmap
-            SET judul = :judul,
-                deskripsi = :deskripsi,
-                tahun = :tahun,
-                urutan = :urutan
-            WHERE id = :id
-        ";
-
+        $query = "UPDATE roadmap SET judul = :judul, deskripsi = :deskripsi, 
+                  tahun = :tahun, urutan = :urutan WHERE id = :id";
+        
         $stmt = $this->db->prepare($query);
-
         return $stmt->execute([
             ':id'        => $id,
             ':judul'     => $judul,
@@ -56,11 +50,9 @@ class Roadmap
         ]);
     }
 
-    /*DELETE ROADMAP*/
     public function delete($id)
     {
         $stmt = $this->db->prepare("DELETE FROM roadmap WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
 }
-?>

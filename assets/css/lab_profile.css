@@ -1,0 +1,259 @@
+/* Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* --- Variabel Warna Baru (Minimalis Monokrom) --- */
+:root {
+    --color-primary-text: #1a1a1a;      /* Hitam Solid */
+    --color-secondary-text: #6b7280;    /* Abu-abu Medium */
+    --color-bg-body: #F9FAFB;           /* Latar Belakang Sangat Terang */
+    --color-bg-card: #ffffff;           /* Putih Murni */
+    --color-accent: #0747a6;            /* Biru Tua Premium (Aksen Tunggal) */
+    
+    /* Bayangan Sangat Halus */
+    --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Umum & Wrapper --- */
+body {
+    background-color: var(--color-bg-body);
+    font-family: 'Inter', sans-serif;
+    color: var(--color-primary-text);
+}
+
+.lab-wrapper {
+    max-width: 960px; /* Lebih lebar sedikit */
+    margin: 80px auto;
+    padding: 0 30px;
+}
+
+/* --- Judul & Header --- */
+.lab-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title { /* Judul Utama Lab */
+    font-size: 3rem; 
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin-bottom: 15px;
+    line-height: 1.1;
+}
+
+.lab-subtitle {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-secondary-text);
+    margin-bottom: 0;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 50px 0;
+}
+
+.sub-section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    margin-bottom: 30px;
+    text-align: center;
+    text-transform: uppercase;
+}
+.sub-section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-accent);
+    margin: 15px auto 0;
+    border-radius: 2px;
+}
+
+
+/* ===============================
+    KOMPETENSI GRID (Minimalist Card)
+================================= */
+.competency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 35px;
+    margin-bottom: 60px;
+}
+
+.comp-card {
+    background: var(--color-bg-card);
+    padding: 35px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid #e5e7eb; /* Border halus */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Garis aksen di atas kartu */
+.comp-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: var(--color-accent);
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-out;
+}
+
+.comp-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+.comp-card:hover::before {
+    transform: translateY(0); /* Garis aksen turun saat hover */
+}
+
+.comp-icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    color: var(--color-accent);
+    background-color: rgba(7, 71, 166, 0.1); /* Latar belakang ikon transparan aksen */
+    margin-bottom: 20px;
+}
+
+.comp-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-primary-text);
+    margin-bottom: 10px;
+}
+
+.comp-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-secondary-text);
+}
+
+/* ===============================
+    TABEL PERALATAN (Elegan & Garis Halus)
+================================= */
+.equipment-section {
+    padding-bottom: 40px;
+}
+
+.equipment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--color-bg-card);
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.equipment-table th,
+.equipment-table td {
+    padding: 18px 25px;
+    text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.equipment-table th {
+    background-color: #f9fafb;
+    color: var(--color-secondary-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.equipment-table tbody tr:hover {
+    background-color: #f0f4f8; 
+}
+
+.status-tag {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.status-aktif {
+    background-color: #d1fae5;
+    color: #065f46; /* Hijau Tua */
+}
+
+.status-lisensi {
+    background-color: #dbeafe;
+    color: #1e40af; /* Biru Tua */
+}
+
+/* --- Media Queries (Sama seperti sebelumnya) --- */
+@media (max-width: 768px) {
+    .lab-wrapper {
+        margin: 40px auto;
+        padding: 0 15px;
+    }
+    .section-title {
+        font-size: 2.2rem;
+    }
+    .sub-section-title {
+        font-size: 1.6rem;
+    }
+    .equipment-table, .equipment-table tbody, .equipment-table tr, .equipment-table td {
+        display: block;
+        width: 100%;
+    }
+    .equipment-table thead {
+        display: none;
+    }
+    .equipment-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    /* ... (Aturan responsive table detail) ... */
+
+    /* Tambahkan di akhir file lab_profile.css sebelumnya */
+
+/* ===============================
+    METODE KERJA SECTION
+================================= */
+.methodology-section {
+    margin: 60px 0;
+    text-align: center;
+}
+
+.method-box {
+    background: var(--color-bg-card);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-subtle);
+    border: 1px solid #e5e7eb;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.method-icon {
+    font-size: 3rem;
+    color: var(--color-accent);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.method-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--color-primary-text);
+    font-weight: 500;
+}
+}

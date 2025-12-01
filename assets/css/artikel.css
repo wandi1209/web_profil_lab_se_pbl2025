@@ -1,0 +1,219 @@
+/* --- CSS FINAL ALL-IN-ONE: assets/css/artikel.css --- */
+
+/* 1. VARIABEL GLOBAL & BODY STYLING */
+:root {
+    --color-primary-text: #011946;      
+    --color-secondary-text: #6b7280;    
+    --color-bg-body: #F9FAFB;           
+    --color-bg-card: #ffffff;           
+    --color-accent: #0747a6;            
+    --shadow-subtle: 0 1px 5px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    background-color: var(--color-bg-body);
+    font-family: 'Inter', sans-serif;
+    color: var(--color-primary-text);
+}
+
+/* 2. GLOBAL WRAPPER (PENTING UNTUK KESEJAJARAN) */
+.vm-wrapper {
+    max-width: 1250px; 
+    padding: 0 20px; 
+    margin: 40px auto; 
+}
+
+/* --- 3. LAYOUT ARTIKEL KHUSUS --- */
+
+.article-list-page { padding: 0; }
+
+/* --- Judul Halaman --- */
+.section-title {
+    font-size: 2.3rem; 
+    font-weight: 700;
+    color: var(--color-primary-text);
+    margin-top: 0; 
+    margin-bottom: 8px;
+    text-align: left; 
+    letter-spacing: -0.5px;
+}
+
+.section-subtitle {
+    font-size: 1.05rem;
+    color: var(--color-secondary-text);
+    text-align: left; 
+    margin-bottom: 50px; 
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb; 
+}
+
+/* --- GRID UTAMA --- */
+.article-grid {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr; 
+    gap: 40px;
+}
+
+/* --- KOLOM KIRI: FEATURED CARD (Minimalis & Smooth) --- */
+.multi-featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+@media (min-width: 993px) {
+    .multi-featured-grid { grid-template-columns: repeat(2, 1fr); }
+    .main-featured-card { grid-column: 1 / span 2; }
+}
+
+.featured-card {
+    background: var(--color-bg-body); 
+    border-radius: 12px;
+    box-shadow: none; 
+    overflow: hidden;
+    transition: all 0.5s ease-out;
+    border: none; 
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.featured-card:hover {
+    transform: translateY(-8px); 
+    box-shadow: var(--shadow-hover); 
+}
+
+.featured-image {
+    width: 100%;
+    height: 350px; 
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s ease-out; 
+}
+.featured-card:not(.main-featured-card) .featured-image { height: 200px; }
+.featured-card:hover .featured-image { transform: scale(1.03); }
+
+.featured-content { 
+    padding: 30px; 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.featured-title a {
+    font-size: 1.8rem; 
+    font-weight: 600; 
+    line-height: 1.3;
+    color: var(--color-primary-text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.featured-card:not(.main-featured-card) .featured-title a { font-size: 1.25rem; font-weight: 700; }
+.featured-meta { margin: 15px 0; font-size: 0.9rem; color: var(--color-secondary-text); }
+
+.read-more-btn { margin-top: auto; display: inline-flex; align-items: center; color: var(--color-accent); font-weight: 700; text-decoration: none; transition: transform 0.2s ease; }
+.read-more-btn:hover { transform: translateX(5px); text-decoration: underline; }
+
+/* --- 4. KOLOM KANAN: SIDEBAR (SCROLL VERTIKAL KUSTOM) --- */
+.sidebar-column {
+    /* FIX: Hilangkan kotak-kotak */
+    padding: 0; 
+    background: transparent; 
+    box-shadow: none; 
+    border: none; 
+}
+
+.sidebar-title {
+    font-size: 1.4rem; 
+    font-weight: 700;
+    color: var(--color-primary-text);
+    margin-bottom: 20px; 
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: 10px;
+    margin-top: 0; 
+    padding-left: 5px; 
+}
+
+/* Scroll Wrapper Utama */
+.recent-list-vertical-scroll {
+    max-height: 700px; /* Batas Tinggi Dinaikkan */
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    padding-right: 15px; 
+    margin-right: -15px; 
+}
+
+/* Styling Scrollbar Kustom */
+.recent-list-vertical-scroll::-webkit-scrollbar { width: 12px; }
+.recent-list-vertical-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); 
+    border-radius: 6px; 
+    border: 3px solid var(--color-bg-body); /* FIX: Gunakan warna body */
+}
+
+.recent-list-inner-vertical {
+    display: flex; 
+    flex-direction: column; 
+    gap: 0; 
+}
+
+/* Item di Sidebar (Animasi Hover) */
+.recent-item {
+    display: flex;
+    flex-direction: row; 
+    gap: 15px;
+    width: 100%; 
+    text-decoration: none;
+    background: transparent;
+    padding: 10px 0; 
+    
+    border-bottom: 1px dotted #e5e7eb;
+    transition: all 0.4s ease-out;
+    align-items: flex-start; 
+}
+
+.recent-item:hover {
+    background-color: transparent;
+    box-shadow: none; 
+    border-color: transparent; 
+    transform: none; 
+}
+
+.recent-thumb { width: 80px; height: 60px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+
+.recent-info {
+    flex-grow: 1;
+    white-space: normal;
+    min-height: 60px; /* FIX: Minimal tinggi sebanding dengan gambar */
+    display: flex;
+    flex-direction: column;
+}
+
+.recent-title { font-size: 0.95rem; font-weight: 600; color: var(--color-primary-text); margin: 0; line-height: 1.3; }
+.recent-date { font-size: 0.75rem; color: var(--color-secondary-text); margin-bottom: 5px; }
+
+/* Panah Baca Selengkapnya */
+.read-more-indicator {
+    display: flex; 
+    align-items: center;
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 5px;
+    opacity: 0.8; 
+    transition: all 0.4s ease-out;
+}
+.recent-item:hover .read-more-indicator {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+    .article-grid { grid-template-columns: 1fr; gap: 30px; }
+    .featured-image { height: 250px; }
+    .multi-featured-grid { grid-template-columns: 1fr; }
+    .main-featured-card { grid-column: span 1; }
+    .section-title, .section-subtitle { text-align: center; }
+    .vm-wrapper { padding: 0 15px !important; }
+}
