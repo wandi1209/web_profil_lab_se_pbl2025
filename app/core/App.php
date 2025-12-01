@@ -1,138 +1,102 @@
 <?php
 namespace Polinema\WebProfilLabSe\Core;
 
-class App {
-    
-    // Array untuk menyimpan semua rute
-    protected $routes = [
-        'GET' => [],
-        'POST' => [],
-        'PUT' => [],
-        'DELETE' => []
-    ];
-
+class App
+{
+    protected $routes = [];
     protected $notFoundHandler;
 
-    /**
-     * Metode untuk mendaftarkan rute GET
-     */
-    public function get($uri, $action) {
-        $uri = $this->normalizeUri($uri);
-        $this->routes['GET'][$uri] = $action;
+    public function __construct()
+    {
+        $this->routes = [
+            'GET'  => [],
+            'POST' => []
+        ];
     }
 
-    /**
-     * Metode untuk mendaftarkan rute POST
-     */
-    public function post($uri, $action) {
-        $uri = $this->normalizeUri($uri);
-        $this->routes['POST'][$uri] = $action;
+    public function get($uri, $handler)
+    {
+        $this->routes['GET'][$uri] = $handler;
     }
 
-    /**
-     * Metode untuk mendaftarkan rute PUT
-     */
-    public function put($uri, $action) {
-        $uri = $this->normalizeUri($uri);
-        $this->routes['PUT'][$uri] = $action;
+    public function post($uri, $handler)
+    {
+        $this->routes['POST'][$uri] = $handler;
     }
 
-    /**
-     * Metode untuk mendaftarkan rute DELETE
-     */
-    public function delete($uri, $action) {
-        $uri = $this->normalizeUri($uri);
-        $this->routes['DELETE'][$uri] = $action;
+    public function put($uri, $handler)
+    {
+        $this->routes['PUT'][$uri] = $handler;
     }
 
-    /**
-     * Mendaftarkan handler 404
-     */
-    public function notFound($action) {
-        $this->notFoundHandler = $action;
+    public function delete($uri, $handler)
+    {
+        $this->routes['DELETE'][$uri] = $handler;
     }
 
-    /**
-     * Menjalankan router untuk mencocokkan rute
-     */
-    public function run() {
-        $uri = $this->getCurrentUri();
-        
+    public function notFound($handler)
+    {
+        $this->notFoundHandler = $handler;
+    }
+
+    public function run()
+    {
+        $requestUri  = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $requestMethod = $_SERVER['REQUEST_METHOD'];
+
+        // Hapus base path jika ada
+        $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+        $requestUri = substr($requestUri, strlen($basePath));
+        $requestUri = '/' . ltrim($requestUri, '/');
         
-        if ($requestMethod === 'POST' && isset($_POST['_method'])) {
-            $httpMethod = strtoupper($_POST['_method']);
-        } else {
-            $httpMethod = $requestMethod;
+        // Hapus trailing slash (kecuali root /)
+        if ($requestUri !== '/' && substr($requestUri, -1) === '/') {
+            $requestUri = rtrim($requestUri, '/');
         }
 
-        // Cek apakah ada rute yang cocok untuk metode tersebut
-        if (isset($this->routes[$httpMethod])) {
-            foreach ($this->routes[$httpMethod] as $route => $action) {
-            
-                // Ubah rute menjadi regex untuk parameter (cth: /user/{id})
-                $regexRoute = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([a-zA-Z0-9_-]+)', $route);
-                $regexRoute = '#^' . $regexRoute . '$#';
+        // Cari route yang cocok
+        foreach ($this->routes[$requestMethod] as $route => $handler) {
+            // Convert route pattern ke regex
+            $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^/]+)', $route);
+            $pattern = '#^' . $pattern . '$#';
 
-                $params = [];
-                // Cek apakah URI saat ini cocok dengan regex rute
-                if (preg_match($regexRoute, $uri, $params)) {
-                    // Hapus string lengkap (cocokan pertama)
-                    array_shift($params); 
-                    
-                    // Panggil aksi (controller) dengan parameter
-                    $this->callAction($action, $params);
-                    return; // Rute ditemukan, berhenti
-                }
+            if (preg_match($pattern, $requestUri, $matches)) {
+                // Filter hanya named parameters
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                
+                // Panggil handler dengan params
+                return $this->callAction($handler, array_values($params));
             }
         }
 
-        // Jika loop selesai dan tidak ada rute, panggil 404
+        // Route tidak ditemukan
         if ($this->notFoundHandler) {
-            $this->callAction($this->notFoundHandler);
-        } else {
-            http_response_code(404);
-            echo "404 Not Found (Handler not defined)";
-        }
-    }
-
-    /**
-     * Helper untuk memanggil Controller dan Method
-     */
-    protected function callAction($action, $params = []) {
-        $controllerName = $action[0];
-        $methodName = $action[1];
-
-        // Buat instance controller
-        $controller = new $controllerName();
-
-        // Panggil method controller, kirimkan parameter dari URL
-        call_user_func_array([$controller, $methodName], $params);
-    }
-
-    /**
-     * Helper untuk mengambil URI saat ini dari $_GET['url']
-     */
-    protected function getCurrentUri() {
-        $uri = $_GET['url'] ?? '';
-        return $this->normalizeUri($uri);
-    }
-
-    /**
-     * Helper untuk memastikan URI punya format yang konsisten
-     * (diawali / dan tanpa / di akhir)
-     */
-    protected function normalizeUri($uri) {
-        $uri = rtrim($uri, '/');
-        
-        if (empty($uri)) {
-            return '/';
+            return $this->callAction($this->notFoundHandler, []);
         }
 
-        if ($uri[0] !== '/') {
-            $uri = '/' . $uri;
+        // Default 404
+        http_response_code(404);
+        echo "404 - Page Not Found";
+    }
+
+    protected function callAction($handler, $params = [])
+    {
+        // PERBAIKAN: Cek apakah handler adalah Closure
+        if ($handler instanceof \Closure) {
+            return call_user_func_array($handler, $params);
         }
 
-        return $uri;
+        // Handler adalah array [Controller::class, 'method']
+        if (is_array($handler) && count($handler) === 2) {
+            [$controller, $method] = $handler;
+
+            // Instantiate controller
+            $controllerInstance = new $controller();
+
+            // Panggil method dengan params
+            return call_user_func_array([$controllerInstance, $method], $params);
+        }
+
+        throw new \Exception("Invalid route handler format");
     }
 }

@@ -3,8 +3,9 @@
 use Polinema\WebProfilLabSe\Controllers\HomeController;
 use Polinema\WebProfilLabSe\Controllers\AuthController;
 use Polinema\WebProfilLabSe\Controllers\AdminController;
+use Polinema\WebProfilLabSe\Middlewares\AuthMiddleware;
 
-// admin
+// admin controllers
 use Polinema\WebProfilLabSe\Controllers\Admin\BlogController;
 use Polinema\WebProfilLabSe\Controllers\Admin\RekrutmenController;
 use Polinema\WebProfilLabSe\Controllers\Admin\AlbumController;
@@ -24,6 +25,11 @@ $app->get('/tentang/profil',    [HomeController::class, 'profil']);
 $app->get('/tentang/visi-misi', [HomeController::class, 'visi_misi']);
 $app->get('/tentang/roadmap',   [HomeController::class, 'roadmap']);
 
+// ANGGOTA
+$app->get('/anggota/dosen',     [HomeController::class, 'dosen']);
+$app->get('/anggota/mahasiswa', [HomeController::class, 'mahasiswa']);
+$app->get('/anggota/alumni',    [HomeController::class, 'alumni']);
+
 // ARTIKEL
 $app->get('/artikel',           [HomeController::class, 'artikel']);
 
@@ -31,17 +37,26 @@ $app->get('/artikel',           [HomeController::class, 'artikel']);
 $app->get('/pendaftaran',       [HomeController::class, 'pendaftaran']);
 
 // PERSONIL 
-$app->get('/personil/mahasiswa',        [HomeController::class, 'mahasiswa']);
-$app->get('/personil/dosen/{id}',       [HomeController::class, 'personilDetail']);
+$app->get('/personil/mahasiswa',      [HomeController::class, 'mahasiswa']);
+$app->get('/personil/detail/{id}',    [HomeController::class, 'personilDetail']);
 
 // ================== AUTH ==================
 $app->get('/login',             [AuthController::class, 'login']);
 $app->post('/login-proses',     [AuthController::class, 'processLogin']);
 $app->get('/logout',            [AuthController::class, 'logout']);
 
-// ================== ADMIN DASHBOARD ==================
-$app->get('/admin/dashboard',   [AdminController::class, 'index']);
-$app->get('/admin',             [AdminController::class, 'index']);
+// ================== ADMIN DASHBOARD (PROTECTED) ==================
+$app->get('/admin/dashboard', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminController();
+    $controller->index();
+});
+
+$app->get('/admin', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminController();
+    $controller->index();
+});
 
 // ================== PROFILE (ADMIN) ==================
 // Tentang Lab (pakai tabel profile)
@@ -56,13 +71,10 @@ $app->get('/admin/profile/visiMisi/edit',     [VisiMisiController::class,  'edit
 $app->get('/admin/profile/visiMisi/delete',   [VisiMisiController::class,  'delete']);
 $app->post('/admin/profile/visiMisi/update',  [VisiMisiController::class,  'update']);
 
-// Roadmap
-$app->get('/admin/profile/roadmap',           [RoadmapController::class,   'index']);
-$app->get('/admin/profile/roadmap/create',    [RoadmapController::class,   'create']);
-$app->get('/admin/profile/roadmap/edit',      [RoadmapController::class,   'edit']);
-$app->get('/admin/profile/roadmap/delete',    [RoadmapController::class,   'delete']);
-$app->post('/admin/profile/roadmap/store',    [RoadmapController::class,   'store']);
-$app->post('/admin/profile/roadmap/update',   [RoadmapController::class,   'update']);
+$app->get('/admin/profile/profil',           [RoadmapController::class,   'index']);
+$app->get('/admin/profile/profil/create',    [RoadmapController::class,   'create']);
+$app->get('/admin/profile/profil/edit',      [RoadmapController::class,   'edit']);
+$app->get('/admin/profile/profil/delete',    [RoadmapController::class,   'delete']);
 
 // Scope (read only)
 $app->get('/admin/profile/scopePenelitian',   [ScopeController::class,     'index']);
@@ -107,8 +119,50 @@ $app->get('/admin/rekrutmen',                 [RekrutmenController::class, 'inde
 $app->get('/admin/rekrutmen/createRekrutmen', [RekrutmenController::class, 'create']);
 $app->get('/admin/rekrutmen/editRekrutmen',   [RekrutmenController::class, 'edit']);
 $app->get('/admin/rekrutmen/deleteRekrutmen', [RekrutmenController::class, 'delete']);
-$app->post('/admin/rekrutmen/store',          [RekrutmenController::class, 'store']);
-$app->post('/admin/rekrutmen/update',         [RekrutmenController::class, 'update']);
+
+// ================== VISI MISI ==================
+$app->get('/admin/profile/visiMisi', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new VisiMisiController();
+    $controller->index();
+});
+
+$app->post('/admin/profile/visiMisi/updateVisi', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new VisiMisiController();
+    $controller->updateVisi();
+});
+
+$app->post('/admin/profile/visiMisi/addMisi', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new VisiMisiController();
+    $controller->addMisi();
+});
+
+$app->post('/admin/profile/visiMisi/updateMisi', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new VisiMisiController();
+    $controller->updateMisi();
+});
+
+$app->post('/admin/profile/visiMisi/deleteMisi', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new VisiMisiController();
+    $controller->deleteMisi();
+});
+
+// ================== TENTANG LAB ==================
+$app->get('/admin/profile/tentang', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new TentangController();
+    $controller->index();
+});
+
+$app->post('/admin/profile/tentang/save', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new TentangController();
+    $controller->save();
+});
 
 // ================== FALLBACK 404 ==================
 $app->notFound([HomeController::class, 'notFound']);

@@ -2,96 +2,136 @@
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
 
 use Polinema\WebProfilLabSe\Core\Controller;
-use PDO;
+use Polinema\WebProfilLabSe\Models\VisiMisi;
 
 class VisiMisiController extends Controller
 {
-    private $db;
+    private $visiMisiModel;
 
     public function __construct()
     {
-        parent::__construct();
-
-        $this->db = new PDO(
-            'pgsql:host=localhost;port=5432;dbname=web_profile_lab_se',
-            'postgres',
-            'password'
-        );
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->visiMisiModel = new VisiMisi();
     }
 
+    // Menampilkan halaman visi misi
     public function index()
     {
-        $stmt = $this->db->query('SELECT * FROM profile ORDER BY id');
-        $dataVisiMisi = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $visiData = $this->visiMisiModel->getVisi();
+        $visi = $visiData['konten'] ?? '';
+        $listMisi = $this->visiMisiModel->getAllMisi();
 
         $data = [
-            'title'       => 'Visi dan Misi',
-            'dataVisiMisi'=> $dataVisiMisi
+            'title'    => 'Visi dan Misi',
+            'visi'     => $visi,
+            'listMisi' => $listMisi
         ];
 
         $this->view('pages/admin/profile/visi_misi/index', $data, true, 'admin');
     }
 
-    public function edit()
+    // Mengupdate visi
+    public function updateVisi()
     {
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            header('Location: /admin/profile/visiMisi');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
             exit;
         }
 
-        $stmt = $this->db->prepare('SELECT * FROM profile WHERE id = :id');
-        $stmt->execute([':id' => $id]);
-        $visiMisi = $stmt->fetch(PDO::FETCH_ASSOC);
+        $visi = trim($_POST['visi'] ?? '');
 
-        if (!$visiMisi) {
-            header('Location: /admin/profile/visiMisi');
+        if (empty($visi)) {
+            $_SESSION['error'] = 'Visi tidak boleh kosong!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
             exit;
         }
 
-        $data = [
-            'title'    => 'Edit Visi dan Misi',
-            'visiMisi' => $visiMisi
-        ];
-
-        $this->view('pages/admin/profile/visi_misi/edit', $data, true, 'admin');
-    }
-
-    public function update()
-    {
-        $id    = $_POST['id'] ?? null;
-        $title = $_POST['title'] ?? '';
-        $text  = $_POST['text'] ?? '';
-
-        if (!$id) {
-            header('Location: /admin/profile/visiMisi');
-            exit;
+        try {
+            $this->visiMisiModel->saveVisi($visi);
+            $_SESSION['success'] = 'Visi berhasil disimpan!';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Gagal menyimpan visi: ' . $e->getMessage();
         }
 
-        $sql = 'SELECT sp_profile_update(:id, :title, :text)';
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':id'    => $id,
-            ':title' => $title,
-            ':text'  => $text,
-        ]);
-
-        header('Location: /admin/profile/visiMisi');
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
         exit;
     }
 
-    public function delete()
+    // Menambahkan misi baru
+    public function addMisi()
     {
-        $id = $_GET['id'] ?? null;
-
-        if ($id) {
-            $sql = 'SELECT sp_profile_delete(:id)';
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([':id' => $id]);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
+            exit;
         }
 
-        header('Location: /admin/profile/visiMisi');
+        $misi = trim($_POST['misi'] ?? '');
+
+        if (empty($misi)) {
+            $_SESSION['error'] = 'Misi tidak boleh kosong!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
+            exit;
+        }
+
+        try {
+            $this->visiMisiModel->createMisi($misi);
+            $_SESSION['success'] = 'Misi berhasil ditambahkan!';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Gagal menambahkan misi: ' . $e->getMessage();
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
+        exit;
+    }
+
+    // Mengupdate misi yang sudah ada
+    public function updateMisi()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
+            exit;
+        }
+
+        $id = $_POST['id'] ?? 0;
+        $misi = trim($_POST['misi'] ?? '');
+
+        if (empty($misi)) {
+            $_SESSION['error'] = 'Misi tidak boleh kosong!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
+            exit;
+        }
+
+        try {
+            $this->visiMisiModel->updateMisi($id, $misi);
+            $_SESSION['success'] = 'Misi berhasil diperbarui!';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Gagal memperbarui misi: ' . $e->getMessage();
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
+        exit;
+    }
+
+    // Menghapus misi
+    public function deleteMisi()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
+            exit;
+        }
+
+        $id = $_POST['id'] ?? 0;
+
+        try {
+            $this->visiMisiModel->deleteMisi($id);
+            $_SESSION['success'] = 'Misi berhasil dihapus!';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Gagal menghapus misi: ' . $e->getMessage();
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/profile/visiMisi');
         exit;
     }
 }

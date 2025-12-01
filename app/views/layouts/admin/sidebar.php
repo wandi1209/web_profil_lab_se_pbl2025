@@ -32,7 +32,7 @@ $current = $_SERVER['REQUEST_URI'] ?? '';
                 <ul class="list-unstyled fw-normal pb-1 small ms-3 mt-1 bg-dark bg-opacity-50 rounded">
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/tentangLab" class="nav-link text-white-50 <?= str_contains($current, 'tentangLab') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-info-circle me-2"></i> Tentang Lab SE</a></li>
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/visiMisi" class="nav-link text-white-50 <?= str_contains($current, 'visiMisi') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-eye me-2"></i> Visi & Misi</a></li>
-                    <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/roadmap" class="nav-link text-white-50 <?= str_contains($current, 'roadmap') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-map me-2"></i> Roadmap</a></li>
+                    <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/profil" class="nav-link text-white-50 <?= str_contains($current, 'profil') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-map me-2"></i> Profil</a></li>
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/scopePenelitian" class="nav-link text-white-50 <?= str_contains($current, 'scope') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-search me-2"></i> Scope Penelitian</a></li>
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/album" class="nav-link text-white-50 <?= str_contains($current, 'album') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-images me-2"></i> Album</a></li>
                 </ul>

@@ -34,7 +34,7 @@ class AuthController extends Controller {
             // Simpan data penting ke session
             $_SESSION['is_login'] = true;
             $_SESSION['user_id'] = $userData['id'];
-            $_SESSION['role'] = $userData['role_id']; 
+            $_SESSION['role_id'] = $userData['role_id']; 
             $_SESSION['username'] = $userData['username'];
 
             // Redirect ke dashboard admin

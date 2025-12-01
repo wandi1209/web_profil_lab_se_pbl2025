@@ -1,91 +1,135 @@
 <?php
+
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
 
 use Polinema\WebProfilLabSe\Core\Controller;
-use PDO;
+use Polinema\WebProfilLabSe\Models\Personil;
 
 class DosenController extends Controller
 {
-    private $db;
+    private $personilModel;
+    private $uploadDir;
 
     public function __construct()
     {
-        parent::__construct();
-
-        $this->db = new PDO(
-            'pgsql:host=localhost;port=5432;dbname=web_profile_lab_se',
-            'postgres',
-            'password'
-        );
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        $this->personilModel = new Personil();
+        $this->uploadDir = __DIR__ . '/../../../public/uploads/dosen/';
+        
+        // Buat folder jika belum ada
+        if (!is_dir($this->uploadDir)) {
+            mkdir($this->uploadDir, 0777, true);
+        }
     }
 
+    /**
+     * Menampilkan daftar dosen
+     */
     public function index()
     {
-        $stmt = $this->db->prepare("SELECT * FROM personil WHERE position = 'Dosen' ORDER BY id");
-        $stmt->execute();
-        $dataDosen = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $dataDosen = $this->personilModel->getAll('dosen');
 
         $data = [
-            'title'     => 'Dosen',
+            'title'     => 'Daftar Dosen',
             'dataDosen' => $dataDosen
         ];
 
         $this->view('pages/admin/personil/dosen/index', $data, true, 'admin');
     }
 
+    /**
+     * Menampilkan form tambah dosen
+     */
     public function create()
     {
         $data = [
             'title' => 'Tambah Dosen'
         ];
 
-        $this->view('pages/admin/personil/createDosen', $data, true, 'admin');
+        $this->view('pages/admin/personil/dosen/create', $data, true, 'admin');
     }
 
+    /**
+     * Proses simpan dosen baru
+     */
     public function store()
     {
-        $lab_profile_id = $_POST['lab_profile_id'] ?? null;
-        $nama           = $_POST['nama'] ?? '';
-        $email          = $_POST['email'] ?? '';
-        $foto_url       = $_POST['foto_url'] ?? '';
-        $position       = 'Dosen';
-
-        $sql = 'SELECT sp_personil_insert(
-                    :lab_profile_id,
-                    :nama,
-                    :position,
-                    :email,
-                    :foto_url
-                )';
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':lab_profile_id' => $lab_profile_id,
-            ':nama'           => $nama,
-            ':position'       => $position,
-            ':email'          => $email,
-            ':foto_url'       => $foto_url,
-        ]);
-
-        header('Location: /admin/personil/dosen');
-        exit;
-    }
-
-    public function edit()
-    {
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            header('Location: /admin/personil/dosen');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
             exit;
         }
 
-        $stmt = $this->db->prepare('SELECT * FROM personil WHERE id = :id');
-        $stmt->execute([':id' => $id]);
-        $dosen = $stmt->fetch(PDO::FETCH_ASSOC);
+        $nama = trim($_POST['nama'] ?? '');
+        $position = trim($_POST['position'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+
+        // Validasi
+        if (empty($nama) || empty($position) || empty($email)) {
+            $_SESSION['error'] = 'Semua field wajib diisi!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/createDosen');
+            exit;
+        }
+
+        // Validasi email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Format email tidak valid!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/createDosen');
+            exit;
+        }
+
+        try {
+            $fotoUrl = null;
+
+            // Handle upload foto
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                $fotoUrl = $this->handleImageUpload($_FILES['foto']);
+                
+                if (!$fotoUrl) {
+                    $_SESSION['error'] = 'Gagal mengupload foto!';
+                    header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/createDosen');
+                    exit;
+                }
+            }
+
+            // Simpan ke database
+            $result = $this->personilModel->create($nama, 'dosen', $position, $email, $fotoUrl);
+
+            if ($result) {
+                $_SESSION['success'] = 'Data dosen berhasil ditambahkan!';
+            } else {
+                $_SESSION['error'] = 'Gagal menyimpan data dosen!';
+            }
+
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('DosenController store Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
+        exit;
+    }
+
+    /**
+     * Menampilkan form edit dosen
+     */
+    public function edit()
+    {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            $_SESSION['error'] = 'ID tidak valid!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
+            exit;
+        }
+
+        $dosen = $this->personilModel->getById($id);
 
         if (!$dosen) {
-            header('Location: /admin/personil/dosen');
+            $_SESSION['error'] = 'Data dosen tidak ditemukan!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
             exit;
         }
 
@@ -94,57 +138,166 @@ class DosenController extends Controller
             'dosen' => $dosen
         ];
 
-        $this->view('pages/admin/personil/editDosen', $data, true, 'admin');
+        $this->view('pages/admin/personil/dosen/edit', $data, true, 'admin');
     }
 
+    /**
+     * Proses update dosen
+     */
     public function update()
     {
-        $id             = $_POST['id'] ?? null;
-        $lab_profile_id = $_POST['lab_profile_id'] ?? null;
-        $nama           = $_POST['nama'] ?? '';
-        $email          = $_POST['email'] ?? '';
-        $foto_url       = $_POST['foto_url'] ?? '';
-        $position       = 'Dosen';
-
-        if (!$id) {
-            header('Location: /admin/personil/dosen');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
             exit;
         }
 
-        $sql = 'SELECT sp_personil_update(
-                    :id,
-                    :lab_profile_id,
-                    :nama,
-                    :position,
-                    :email,
-                    :foto_url
-                )';
+        $id = $_POST['id'] ?? null;
+        $nama = trim($_POST['nama'] ?? '');
+        $position = trim($_POST['position'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $hapusFoto = isset($_POST['hapus_foto']);
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':id'             => $id,
-            ':lab_profile_id' => $lab_profile_id,
-            ':nama'           => $nama,
-            ':position'       => $position,
-            ':email'          => $email,
-            ':foto_url'       => $foto_url,
-        ]);
+        // Validasi
+        if (!$id || empty($nama) || empty($position) || empty($email)) {
+            $_SESSION['error'] = 'Semua field wajib diisi!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen/edit?id=' . $id);
+            exit;
+        }
 
-        header('Location: /admin/personil/dosen');
+        // Validasi email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Format email tidak valid!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen/edit?id=' . $id);
+            exit;
+        }
+
+        try {
+            $fotoUrl = null;
+
+            // Handle upload foto baru
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                $fotoUrl = $this->handleImageUpload($_FILES['foto']);
+                
+                if (!$fotoUrl) {
+                    $_SESSION['error'] = 'Gagal mengupload foto!';
+                    header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen/edit?id=' . $id);
+                    exit;
+                }
+
+                // Hapus foto lama
+                $oldData = $this->personilModel->getById($id);
+                if ($oldData && !empty($oldData['foto_url'])) {
+                    $oldImagePath = __DIR__ . '/../../../public' . $oldData['foto_url'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+            } elseif ($hapusFoto) {
+                // Hapus foto lama
+                $oldData = $this->personilModel->getById($id);
+                if ($oldData && !empty($oldData['foto_url'])) {
+                    $oldImagePath = __DIR__ . '/../../../public' . $oldData['foto_url'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+                $fotoUrl = ''; // Set empty untuk hapus dari database
+            }
+
+            // Update ke database
+            $result = $this->personilModel->update($id, $nama, 'dosen', $position, $email, $fotoUrl);
+
+            if ($result) {
+                $_SESSION['success'] = 'Data dosen berhasil diperbarui!';
+            } else {
+                $_SESSION['error'] = 'Gagal memperbarui data dosen!';
+            }
+
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('DosenController update Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
         exit;
     }
 
+    /**
+     * Hapus dosen
+     */
     public function delete()
     {
         $id = $_GET['id'] ?? null;
 
-        if ($id) {
-            $sql = 'SELECT sp_personil_delete(:id)';
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([':id' => $id]);
+        if (!$id) {
+            $_SESSION['error'] = 'ID tidak valid!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
+            exit;
         }
 
-        header('Location: /admin/personil/dosen');
+        try {
+            // Ambil data dosen untuk hapus foto
+            $dosen = $this->personilModel->getById($id);
+            
+            if ($dosen) {
+                // Hapus foto jika ada
+                if (!empty($dosen['foto_url'])) {
+                    $imagePath = __DIR__ . '/../../../public' . $dosen['foto_url'];
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                }
+
+                // Hapus dari database
+                $result = $this->personilModel->delete($id);
+
+                if ($result) {
+                    $_SESSION['success'] = 'Data dosen berhasil dihapus!';
+                } else {
+                    $_SESSION['error'] = 'Gagal menghapus data dosen!';
+                }
+            } else {
+                $_SESSION['error'] = 'Data dosen tidak ditemukan!';
+            }
+
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('DosenController delete Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/personil/dosen');
         exit;
+    }
+
+    /**
+     * Handle upload image
+     */
+    private function handleImageUpload($file)
+    {
+        // Validasi tipe file
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        
+        if (!in_array($file['type'], $allowedTypes)) {
+            return false;
+        }
+
+        // Validasi ukuran file (max 5MB)
+        $maxSize = 5 * 1024 * 1024;
+        if ($file['size'] > $maxSize) {
+            return false;
+        }
+
+        // Generate nama file unik
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'dosen_' . time() . '_' . uniqid() . '.' . $extension;
+        $targetPath = $this->uploadDir . $filename;
+
+        // Upload file
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            chmod($targetPath, 0644);
+            return '/uploads/dosen/' . $filename;
+        }
+
+        return false;
     }
 }
