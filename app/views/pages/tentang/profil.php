@@ -16,7 +16,7 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
 </head>
 <body>
 
-<section class="py-5 bg-light-blue">
+<section class="py-1 bg-light-blue">
     <div class="container py-lg-5">
         
         <div class="row justify-content-center text-center mb-5">
@@ -25,7 +25,7 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
                     🏢 Profil Institusi
                 </span>
                 <h1 class="display-6 fw-bold text-dark mt-2 mb-3">
-                    Laboratorium Rekayasa Perangkat Lunak (SE) 
+                    Laboratorium Rekayasa Perangkat Lunak
                 </h1>
                 <p class="fs-5 text-secondary mx-auto">
                     Pusat Unggulan di bawah naungan Jurusan Teknologi Informasi Politeknik Negeri Malang, berfokus pada pengembangan dan penelitian teknologi perangkat lunak.
