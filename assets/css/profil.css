@@ -1,0 +1,66 @@
+/* =========================================================
+   1. Variabel Kustom & Utilitas
+   ========================================================= */
+
+:root {
+    --custom-blue: #007bff; /* Warna Primer */
+    --text-color: #4b5563;
+}
+
+.bg-custom-blue {
+    background-color: var(--custom-blue) !important;
+}
+
+.text-custom-blue {
+    color: var(--custom-blue) !important;
+}
+
+.shadow-lg {
+    /* Shadow yang lebih kuat untuk gambar/card */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* =========================================================
+   2. STYLING UNTUK PROFIL BARU
+   ========================================================= */
+
+/* Latar belakang biru muda lembut untuk bagian pertama */
+.bg-light-blue {
+    background-color: #f0f7ff !important;
+}
+
+/* Penyesuaian untuk gambar di desain baru */
+.img-fluid.rounded-3.shadow-lg {
+    max-height: 350px; /* Batasi tinggi agar tidak terlalu besar */
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Styling untuk list highlight (Cakupan Aktivitas) */
+.highlight-item {
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+.highlight-item:hover {
+    transform: translateX(5px);
+    border-color: var(--custom-blue);
+}
+
+/* =========================================================
+   3. STYLING KETENTUAN SKRIPSI
+   ========================================================= */
+
+/* Styling untuk kartu ketentuan skripsi */
+.card.border-start {
+    transition: all 0.3s ease;
+}
+
+.card.border-start:hover {
+    background-color: #fcfcfc;
+    /* Tambahkan sedikit angkat/shadow pada hover */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+}
