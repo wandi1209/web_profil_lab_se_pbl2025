@@ -4,6 +4,7 @@ namespace Polinema\WebProfilLabSe\Models;
 
 use Polinema\WebProfilLabSe\Core\Database;
 use PDO;
+use Exception;
 
 class Personil
 {
@@ -58,20 +59,32 @@ class Personil
     /**
      * Create personil baru
      */
-    public function create($nama, $kategori, $position, $email, $fotoUrl = null)
+    public function create($data)
     {
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO personil (nama, kategori, position, email, foto_url)
-                VALUES (:nama, :kategori, :position, :email, :foto)
+                INSERT INTO personil (
+                    nama, kategori, position, email, nidn, keahlian, 
+                    pendidikan, publikasi, linkedin, github, foto_url
+                )
+                VALUES (
+                    :nama, :kategori, :position, :email, :nidn, :keahlian,
+                    :pendidikan, :publikasi, :linkedin, :github, :foto
+                )
             ");
 
             return $stmt->execute([
-                ':nama'     => $nama,
-                ':kategori' => $kategori,
-                ':position' => $position,
-                ':email'    => $email,
-                ':foto'     => $fotoUrl
+                ':nama'        => $data['nama'],
+                ':kategori'    => $data['kategori'],
+                ':position'    => $data['position'],
+                ':email'       => $data['email'],
+                ':nidn'        => $data['nidn'] ?? null,
+                ':keahlian'    => $data['keahlian'] ?? null,
+                ':pendidikan'  => $data['pendidikan'] ?? null,
+                ':publikasi'   => $data['publikasi'] ?? null,
+                ':linkedin'    => $data['linkedin'] ?? null,
+                ':github'      => $data['github'] ?? null,
+                ':foto'        => $data['foto_url'] ?? null
             ]);
 
         } catch (Exception $e) {
@@ -83,49 +96,45 @@ class Personil
     /**
      * Update personil
      */
-    public function update($id, $nama, $kategori, $position, $email, $fotoUrl = null)
+    public function update($id, $data)
     {
         try {
-            if ($fotoUrl !== null) {
-                $query = "
-                    UPDATE personil
-                    SET nama = :nama,
-                        kategori = :kategori,
-                        position = :position,
-                        email = :email,
-                        foto_url = :foto,
-                        updated_at = CURRENT_TIMESTAMP
-                    WHERE id = :id
-                ";
+            $query = "
+                UPDATE personil
+                SET nama = :nama,
+                    kategori = :kategori,
+                    position = :position,
+                    email = :email,
+                    nidn = :nidn,
+                    keahlian = :keahlian,
+                    pendidikan = :pendidikan,
+                    publikasi = :publikasi,
+                    linkedin = :linkedin,
+                    github = :github,
+                    updated_at = CURRENT_TIMESTAMP
+            ";
 
-                $params = [
-                    ':nama'     => $nama,
-                    ':kategori' => $kategori,
-                    ':position' => $position,
-                    ':email'    => $email,
-                    ':foto'     => $fotoUrl,
-                    ':id'       => $id
-                ];
+            $params = [
+                ':nama'        => $data['nama'],
+                ':kategori'    => $data['kategori'],
+                ':position'    => $data['position'],
+                ':email'       => $data['email'],
+                ':nidn'        => $data['nidn'] ?? null,
+                ':keahlian'    => $data['keahlian'] ?? null,
+                ':pendidikan'  => $data['pendidikan'] ?? null,
+                ':publikasi'   => $data['publikasi'] ?? null,
+                ':linkedin'    => $data['linkedin'] ?? null,
+                ':github'      => $data['github'] ?? null,
+                ':id'          => $id
+            ];
 
-            } else {
-                $query = "
-                    UPDATE personil
-                    SET nama = :nama,
-                        kategori = :kategori,
-                        position = :position,
-                        email = :email,
-                        updated_at = CURRENT_TIMESTAMP
-                    WHERE id = :id
-                ";
-
-                $params = [
-                    ':nama'     => $nama,
-                    ':kategori' => $kategori,
-                    ':position' => $position,
-                    ':email'    => $email,
-                    ':id'       => $id
-                ];
+            // Jika ada foto baru
+            if (isset($data['foto_url'])) {
+                $query .= ", foto_url = :foto";
+                $params[':foto'] = $data['foto_url'];
             }
+
+            $query .= " WHERE id = :id";
 
             $stmt = $this->db->prepare($query);
             return $stmt->execute($params);
@@ -167,6 +176,34 @@ class Personil
             error_log('Personil countByKategori Error: ' . $e->getMessage());
             return 0;
         }
+    }
+
+    /**
+     * Parse JSON field (untuk pendidikan & publikasi)
+     * Convert JSON string ke array
+     */
+    public function parseJsonField($jsonString)
+    {
+        // Jika kosong atau null, return array kosong
+        if (empty($jsonString) || is_null($jsonString)) {
+            return [];
+        }
+
+        // Jika sudah array, langsung return
+        if (is_array($jsonString)) {
+            return $jsonString;
+        }
+
+        // Decode JSON
+        $decoded = json_decode($jsonString, true);
+
+        // Jika decode gagal atau bukan array, return array kosong
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+            error_log('JSON Parse Error: ' . json_last_error_msg());
+            return [];
+        }
+
+        return $decoded;
     }
 }
 ?>

@@ -66,17 +66,26 @@
                                     </div>
                                 <?php endif; ?>
                             </td>
-                            <td><?= htmlspecialchars($row['nama']) ?></td>
+                            <td>
+                                <strong><?= htmlspecialchars($row['nama']) ?></strong>
+                                <?php if (!empty($row['nidn'])): ?>
+                                    <br><small class="text-muted">NIDN: <?= htmlspecialchars($row['nidn']) ?></small>
+                                <?php endif; ?>
+                            </td>
                             <td><?= htmlspecialchars($row['position']) ?></td>
-                            <td><?= htmlspecialchars($row['email']) ?></td>
+                            <td>
+                                <a href="mailto:<?= htmlspecialchars($row['email']) ?>">
+                                    <?= htmlspecialchars($row['email']) ?>
+                                </a>
+                            </td>
                             <td class="text-center">
                                 <a href="<?= $_ENV['APP_URL'] ?>/admin/personil/dosen/edit?id=<?= $row['id'] ?>" 
-                                   class="btn btn-warning btn-sm">
+                                   class="btn btn-warning btn-sm" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
                                 <button onclick="deleteDosen(<?= $row['id'] ?>)" 
-                                        class="btn btn-danger btn-sm">
+                                        class="btn btn-danger btn-sm" title="Hapus">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>

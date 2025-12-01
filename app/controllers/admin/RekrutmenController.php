@@ -1,149 +1,159 @@
 <?php
+
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
 
 use Polinema\WebProfilLabSe\Core\Controller;
-use PDO;
+use Polinema\WebProfilLabSe\Models\Pendaftar;
+use Exception;
 
 class RekrutmenController extends Controller
 {
-    private $db;
+    private $pendaftarModel;
 
     public function __construct()
     {
-        parent::__construct();
-
-        $this->db = new PDO(
-            'pgsql:host=localhost;port=5432;dbname=web_profile_lab_se',
-            'postgres',
-            'password'
-        );
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->pendaftarModel = new Pendaftar();
     }
 
+    /**
+     * Halaman daftar pendaftar rekrutmen
+     */
     public function index()
     {
-        $stmt = $this->db->query('SELECT * FROM pendaftar ORDER BY created_at DESC');
-        $dataRekrutmen = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $dataPendaftar = $this->pendaftarModel->getAll();
+        $statistics = $this->pendaftarModel->getStatistics();
 
         $data = [
-            'title'        => 'Rekrutmen',
-            'dataRekrutmen'=> $dataRekrutmen
+            'title'         => 'Rekrutmen Anggota',
+            'dataPendaftar' => $dataPendaftar,
+            'stats'         => $statistics
         ];
 
         $this->view('pages/admin/rekrutmen/index', $data, true, 'admin');
     }
 
-    public function create()
+    /**
+     * Halaman detail pendaftar
+     */
+    public function detail()
     {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
+        }
+
+        $pendaftar = $this->pendaftarModel->getById($id);
+
+        if (!$pendaftar) {
+            $_SESSION['error'] = 'Data pendaftar tidak ditemukan!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
+        }
+
         $data = [
-            'title' => 'Tambah Rekrutmen'
+            'title'     => 'Detail Pendaftar',
+            'pendaftar' => $pendaftar
         ];
 
-        $this->view('pages/admin/rekrutmen/createRekrutmen', $data, true, 'admin');
+        $this->view('pages/admin/rekrutmen/detail', $data, true, 'admin');
     }
 
-    public function store()
-    {
-        $nama          = $_POST['nama'] ?? '';
-        $nim           = $_POST['nim'] ?? '';
-        $kelas         = $_POST['kelas'] ?? '';
-        $program_studi = $_POST['program_studi'] ?? '';
-        $alasan        = $_POST['alasan'] ?? '';
-
-        $sql = 'SELECT sp_pendaftar_insert(
-                    :nama,
-                    :nim,
-                    :kelas,
-                    :program_studi,
-                    :alasan
-                )';
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':nama'          => $nama,
-            ':nim'           => $nim,
-            ':kelas'         => $kelas,
-            ':program_studi' => $program_studi,
-            ':alasan'        => $alasan,
-        ]);
-
-        header('Location: /admin/rekrutmen');
-        exit;
-    }
-
+    /**
+     * Halaman edit status pendaftar
+     */
     public function edit()
     {
         $id = $_GET['id'] ?? null;
+
         if (!$id) {
-            header('Location: /admin/rekrutmen');
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
             exit;
         }
 
-        $stmt = $this->db->prepare('SELECT * FROM pendaftar WHERE id = :id');
-        $stmt->execute([':id' => $id]);
-        $rekrutmen = $stmt->fetch(PDO::FETCH_ASSOC);
+        $pendaftar = $this->pendaftarModel->getById($id);
 
-        if (!$rekrutmen) {
-            header('Location: /admin/rekrutmen');
+        if (!$pendaftar) {
+            $_SESSION['error'] = 'Data pendaftar tidak ditemukan!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
             exit;
         }
 
         $data = [
-            'title'    => 'Edit Rekrutmen',
-            'rekrutmen'=> $rekrutmen
+            'title'     => 'Update Status Pendaftar',
+            'pendaftar' => $pendaftar
         ];
 
-        $this->view('pages/admin/rekrutmen/editRekrutmen', $data, true, 'admin');
+        $this->view('pages/admin/rekrutmen/edit', $data, true, 'admin');
     }
 
-    public function update()
+    /**
+     * Proses update status
+     */
+    public function updateStatus()
     {
-        $id            = $_POST['id'] ?? null;
-        $nama          = $_POST['nama'] ?? '';
-        $nim           = $_POST['nim'] ?? '';
-        $kelas         = $_POST['kelas'] ?? '';
-        $program_studi = $_POST['program_studi'] ?? '';
-        $alasan        = $_POST['alasan'] ?? '';
-
-        if (!$id) {
-            header('Location: /admin/rekrutmen');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
             exit;
         }
 
-        $sql = 'SELECT sp_pendaftar_update(
-                    :id,
-                    :nama,
-                    :nim,
-                    :kelas,
-                    :program_studi,
-                    :alasan
-                )';
+        $id = $_POST['id'] ?? null;
+        $status = $_POST['status'] ?? 'Pending';
+        $catatan = trim($_POST['catatan'] ?? '');
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':id'            => $id,
-            ':nama'          => $nama,
-            ':nim'           => $nim,
-            ':kelas'         => $kelas,
-            ':program_studi' => $program_studi,
-            ':alasan'        => $alasan,
-        ]);
+        if (!$id) {
+            $_SESSION['error'] = 'ID pendaftar tidak valid!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
+        }
 
-        header('Location: /admin/rekrutmen');
+        try {
+            $result = $this->pendaftarModel->updateStatus($id, $status, $catatan);
+
+            if ($result) {
+                $_SESSION['success'] = 'Status pendaftar berhasil diperbarui!';
+            } else {
+                $_SESSION['error'] = 'Gagal memperbarui status!';
+            }
+
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('RekrutmenController updateStatus Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
         exit;
     }
 
+    /**
+     * Proses hapus pendaftar
+     */
     public function delete()
     {
         $id = $_GET['id'] ?? null;
 
-        if ($id) {
-            $sql = 'SELECT sp_pendaftar_delete(:id)';
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([':id' => $id]);
+        if (!$id) {
+            $_SESSION['error'] = 'ID pendaftar tidak valid!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
         }
 
-        header('Location: /admin/rekrutmen');
+        try {
+            $result = $this->pendaftarModel->delete($id);
+
+            if ($result) {
+                $_SESSION['success'] = 'Data pendaftar berhasil dihapus!';
+            } else {
+                $_SESSION['error'] = 'Gagal menghapus data!';
+            }
+
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('RekrutmenController delete Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
         exit;
     }
 }

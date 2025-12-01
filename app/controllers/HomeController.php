@@ -111,142 +111,35 @@ class HomeController extends Controller
         ]);
     }
 
-    public function personilDetail($id)
+    public function personilDetail()
     {
-        // Data lengkap dosen
-        $dataDosen = [
-            1 => [
-                'id'          => 1,
-                'nama'        => 'Imam Fahrur Rozi, ST., MT.',
-                'jabatan'     => 'Kepala Lab',
-                'foto_url'    => '/web_profil_lab_se/assets/img/dosen/imam.png',
-                'email'       => 'imam.rozi@polinema.ac.id',
-                'phone'       => '+62 812-3456-7890',
-                'nidn'        => '0123456789',
-                'pendidikan'  => 'S2 Teknik Informatika',
-                'bidang_keahlian' => 'Software Engineering, Project Management',
-                'deskripsi'   => 'Kepala Laboratorium Software Engineering dengan pengalaman lebih dari 10 tahun di bidang pengembangan perangkat lunak dan manajemen proyek.'
-            ],
-            2 => [
-                'id'          => 2,
-                'nama'        => 'Ridwan Rismanto, SST., M.Kom.',
-                'jabatan'     => 'Tenaga Pengajar',
-                'foto_url'    => '/web_profil_lab_se/assets/img/dosen/ridwan.png',
-                'email'       => 'ridwan.rismanto@polinema.ac.id',
-                'phone'       => '+62 813-4567-8901',
-                'nidn'        => '0234567890',
-                'pendidikan'  => 'S2 Ilmu Komputer',
-                'bidang_keahlian' => 'Web Development, Database Management',
-                'deskripsi'   => 'Tenaga pengajar dengan spesialisasi dalam pengembangan aplikasi web dan manajemen basis data.'
-            ],
-            3 => [
-                'id'            => 3,
-                'nama'          => 'Dian Hanifudin Subhi, S.Kom., M.Kom.',
-                'jabatan'       => 'Tenaga Pengajar',
-                'foto_url'      => '/web_profil_lab_se/assets/img/dosen/dian.png',
-                'nip'           => '198806102019031018',
-                'nidn'          => '0010068807',
-                'program_studi' => 'Teknik Informatika',
-                'bidang'        => ['Cloud Computing'],
-                'links'         => [
-                    'linkedin'       => '#',
-                    'google_scholar' => '#',
-                    'sinta'          => '#',
-                    'email'          => 'mailto:subhi1@mhs.if.its.ac.id',
-                    'cv'             => '#'
-                ],
-                'pendidikan'    => [
-                    'S2 – Teknik Informatika, Institut Teknologi Sepuluh Nopember',
-                    'S1 – Teknik Informatika, Institut Teknologi Sepuluh Nopember'
-                ],
-                'sertifikasi'   => [
-                    'IT Specialist – Software Development',
-                    'Associate Cloud Engineer',
-                    'AWS Knowledge: Cloud Essentials'
-                ]
-            ],
-            4 => [
-                'id'            => 4,
-                'nama'          => 'Moch. Zawaruddin Abdullah, S.ST., M.Kom.',
-                'jabatan'       => 'Tenaga Pengajar',
-                'foto_url'      => '/web_profil_lab_se/assets/img/dosen/zawa.png',
-                'nip'           => '198902102019031019',
-                'nidn'          => '0010028906',
-                'program_studi' => 'Sistem Informasi Bisnis',
-                'bidang'        => ['Information Retrieval', 'Data Mining', 'Information System', 'Data Science', 'AI'],
-                'links'         => [
-                    'linkedin'       => '#',
-                    'google_scholar' => '#',
-                    'sinta'          => '#',
-                    'email'          => 'mailto:zawaruddin@polinema.ac.id',
-                    'cv'             => '#'
-                ],
-                'pendidikan'    => [
-                    'S2 – Teknik Informatika, Institut Teknologi Sepuluh Nopember',
-                    'D4 – Teknik Informatika, PENS',
-                    'D3 – Teknik Informatika, Politeknik Negeri Bandung'
-                ],
-                'sertifikasi'   => [
-                    'IT Specialist – Software Development',
-                    'Certified Data Science Practitioner (DSP-110)',
-                    'Associate Cloud Engineer'
-                ]
-            ],
-            5 => [
-                'id'            => 5,
-                'nama'          => 'Ariadi Retno Ririd, S.Kom., M.Kom.',
-                'jabatan'       => 'Tenaga Pengajar',
-                'foto_url'      => '/web_profil_lab_se/assets/img/dosen/ariadi.png',
-                'nip'           => '198108102005012002',
-                'nidn'          => '0010088101',
-                'program_studi' => 'Sistem Informasi Bisnis',
-                'bidang'        => ['Data Mining'],
-                'links'         => [
-                    'linkedin'       => '#',
-                    'google_scholar' => '#',
-                    'sinta'          => '#',
-                    'email'          => 'mailto:faniri4education@gmail.com',
-                    'cv'             => '#'
-                ],
-                'pendidikan'    => [
-                    'S2 – Magister Komputer, Institut Teknologi Sepuluh Nopember',
-                    'S1 – Sarjana Komputer, Institut Teknologi Sepuluh Nopember'
-                ],
-                'sertifikasi'   => []
-            ],
-            6 => [
-                'id'            => 6,
-                'nama'          => 'Elok Nur Hamdana, S.T., M.T.',
-                'jabatan'       => 'Tenaga Pengajar',
-                'foto_url'      => '/web_profil_lab_se/assets/img/dosen/elok.png',
-                'nip'           => '198610022019032011',
-                'nidn'          => '0702108601',
-                'program_studi' => 'Teknologi Informasi (Kampus Kab. Lumajang)',
-                'bidang'        => ['Sistem Informasi'],
-                'links'         => [
-                    'linkedin'       => '#',
-                    'google_scholar' => '#',
-                    'sinta'          => '#',
-                    'email'          => 'mailto:elok@polinema.ac.id',
-                    'cv'             => '#'
-                ],
-                'pendidikan'    => [
-                    'S2 – Magister Teknik, Universitas Brawijaya'
-                ],
-                'sertifikasi'   => []
-            ]
-        ];
+        $id = $_GET['id'] ?? null;
 
-        // Cek apakah ID dosen ada
-        if (!isset($dataDosen[$id])) {
-            return $this->notFound();
+        if (!$id) {
+            header('Location: ' . $_ENV['APP_URL'] . '/anggota/dosen');
+            exit;
         }
 
-        $this->view('pages/personil/detail', [
-            'title' => 'Detail Dosen',
-            'dosen' => $dataDosen[$id],
-            
-        ], $dataDosen[$id], true);
+        $personilModel = new \Polinema\WebProfilLabSe\Models\Personil();
+        $personil = $personilModel->getById($id);
+
+        if (!$personil) {
+            header('Location: ' . $_ENV['APP_URL'] . '/anggota/dosen');
+            exit;
+        }
+
+        // Parse JSON fields
+        $pendidikan = $personilModel->parseJsonField($personil['pendidikan']);
+        $publikasi = $personilModel->parseJsonField($personil['publikasi']);
+
+        $data = [
+            'title'      => 'Detail ' . $personil['nama'],
+            'personil'   => $personil,
+            'pendidikan' => $pendidikan,
+            'publikasi'  => $publikasi
+        ];
+
+        $this->view('pages/personil/detail', $data);
     }
 
     public function notFound()

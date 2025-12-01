@@ -166,3 +166,182 @@ $app->post('/admin/profile/tentang/save', function() {
 
 // ================== FALLBACK 404 ==================
 $app->notFound([HomeController::class, 'notFound']);
+
+// ADMIN - ALBUM
+$app->get('/admin/album', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\AlbumController();
+    $controller->index();
+});
+
+$app->get('/admin/album/create', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\AlbumController();
+    $controller->create();
+});
+
+$app->post('/admin/album/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\AlbumController();
+    $controller->store();
+});
+
+$app->get('/admin/album/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\AlbumController();
+    $controller->edit();
+});
+
+$app->post('/admin/album/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\AlbumController();
+    $controller->update();
+});
+
+$app->get('/admin/album/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\AlbumController();
+    $controller->delete();
+});
+
+// ADMIN - SCOPE PENELITIAN
+$app->get('/admin/scope', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\ScopeController();
+    $controller->index();
+});
+
+$app->get('/admin/scope/create', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\ScopeController();
+    $controller->create();
+});
+
+$app->post('/admin/scope/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\ScopeController();
+    $controller->store();
+});
+
+$app->get('/admin/scope/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\ScopeController();
+    $controller->edit();
+});
+
+$app->post('/admin/scope/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\ScopeController();
+    $controller->update();
+});
+
+$app->get('/admin/scope/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\ScopeController();
+    $controller->delete();
+});
+
+// ADMIN - BLOG/ARTIKEL
+$app->get('/admin/blog', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\BlogController();
+    $controller->index();
+});
+
+$app->get('/admin/blog/create', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\BlogController();
+    $controller->create();
+});
+
+$app->post('/admin/blog/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\BlogController();
+    $controller->store();
+});
+
+$app->get('/admin/blog/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\BlogController();
+    $controller->edit();
+});
+
+$app->post('/admin/blog/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\BlogController();
+    $controller->update();
+});
+
+$app->get('/admin/blog/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\BlogController();
+    $controller->delete();
+});
+
+// ADMIN - REKRUTMEN
+$app->get('/admin/rekrutmen', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\RekrutmenController();
+    $controller->index();
+});
+
+$app->get('/admin/rekrutmen/detail', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\RekrutmenController();
+    $controller->detail();
+});
+
+$app->get('/admin/rekrutmen/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\RekrutmenController();
+    $controller->edit();
+});
+
+$app->post('/admin/rekrutmen/updateStatus', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\RekrutmenController();
+    $controller->updateStatus();
+});
+
+$app->get('/admin/rekrutmen/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\RekrutmenController();
+    $controller->delete();
+});
+
+// ADMIN - PERSONIL MAHASISWA
+$app->get('/admin/personil/mahasiswa', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController();
+    $controller->index();
+});
+
+$app->get('/admin/personil/mahasiswa/create', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController();
+    $controller->create();
+});
+
+$app->post('/admin/personil/mahasiswa/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController();
+    $controller->store();
+});
+
+$app->get('/admin/personil/mahasiswa/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController();
+    $controller->edit();
+});
+
+$app->post('/admin/personil/mahasiswa/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController();
+    $controller->update();
+});
+
+$app->get('/admin/personil/mahasiswa/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new \Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController();
+    $controller->delete();
+});

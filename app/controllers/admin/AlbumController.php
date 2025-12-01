@@ -1,39 +1,38 @@
 <?php
+
 namespace Polinema\WebProfilLabSe\Controllers\Admin;
 
 use Polinema\WebProfilLabSe\Core\Controller;
-use PDO;
+use Polinema\WebProfilLabSe\Models\Album;
+use Exception;
 
 class AlbumController extends Controller
 {
-    /** @var PDO */
-    private $db;
+    private $albumModel;
 
     public function __construct()
     {
-        parent::__construct();
-
-        $this->db = new PDO(
-            'pgsql:host=localhost;port=5432;dbname=web_profile_lab_se',
-            'postgres',
-            'password'
-        );
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->albumModel = new Album();
     }
 
+    /**
+     * Halaman daftar album
+     */
     public function index()
     {
-        $stmt = $this->db->query('SELECT * FROM album ORDER BY id DESC');
-        $dataAlbum = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $dataAlbum = $this->albumModel->getAll();
 
         $data = [
-            'title'     => 'Album',
-            'dataAlbum' => $dataAlbum
+            'title'      => 'Kelola Album',
+            'dataAlbum'  => $dataAlbum
         ];
 
         $this->view('pages/admin/profile/album/index', $data, true, 'admin');
     }
 
+    /**
+     * Halaman form tambah album
+     */
     public function create()
     {
         $data = [
@@ -43,49 +42,87 @@ class AlbumController extends Controller
         $this->view('pages/admin/profile/album/create', $data, true, 'admin');
     }
 
+    /**
+     * Proses simpan album baru
+     */
     public function store()
     {
-        $lab_profile_id = $_POST['lab_profile_id'] ?? null;
-        $judul          = $_POST['judul'] ?? '';
-        $gambar_url     = $_POST['gambar_url'] ?? '';
-        $tautan_url     = $_POST['tautan_url'] ?? '';
-        $aktif          = isset($_POST['aktif']);
-
-        $sql = 'SELECT sp_album_insert(
-                    :lab_profile_id,
-                    :judul,
-                    :gambar_url,
-                    :tautan_url,
-                    :aktif
-                )';
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':lab_profile_id' => $lab_profile_id,
-            ':judul'          => $judul,
-            ':gambar_url'     => $gambar_url,
-            ':tautan_url'     => $tautan_url,
-            ':aktif'          => $aktif,
-        ]);
-
-        header('Location: /admin/profile/album');
-        exit;
-    }
-
-    public function edit()
-    {
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            header('Location: /admin/profile/album');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
             exit;
         }
 
-        $stmt = $this->db->prepare('SELECT * FROM album WHERE id = :id');
-        $stmt->execute([':id' => $id]);
-        $album = $stmt->fetch(PDO::FETCH_ASSOC);
+        $judul = trim($_POST['judul'] ?? '');
+        $deskripsi = trim($_POST['deskripsi'] ?? '');
+        $kategori = trim($_POST['kategori'] ?? 'kegiatan');
+
+        // Validasi
+        if (empty($judul)) {
+            $_SESSION['error'] = 'Judul wajib diisi!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album/create');
+            exit;
+        }
+
+        // Validasi upload foto
+        if (!isset($_FILES['foto']) || $_FILES['foto']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = 'Foto wajib diupload!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album/create');
+            exit;
+        }
+
+        try {
+            // Handle upload foto
+            $fotoUrl = $this->handleImageUpload($_FILES['foto'], 'album');
+
+            if (!$fotoUrl) {
+                $_SESSION['error'] = 'Gagal mengupload foto!';
+                header('Location: ' . $_ENV['APP_URL'] . '/admin/album/create');
+                exit;
+            }
+
+            // Data untuk insert
+            $data = [
+                'judul'     => $judul,
+                'deskripsi' => $deskripsi,
+                'foto_url'  => $fotoUrl,
+                'kategori'  => $kategori
+            ];
+
+            // Simpan ke database
+            $result = $this->albumModel->create($data);
+
+            if ($result) {
+                $_SESSION['success'] = 'Album berhasil ditambahkan!';
+            } else {
+                $_SESSION['error'] = 'Gagal menyimpan album!';
+            }
+
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('AlbumController store Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
+        exit;
+    }
+
+    /**
+     * Halaman form edit album
+     */
+    public function edit()
+    {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
+            exit;
+        }
+
+        $album = $this->albumModel->getById($id);
 
         if (!$album) {
-            header('Location: /admin/profile/album');
+            $_SESSION['error'] = 'Album tidak ditemukan!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
             exit;
         }
 
@@ -97,54 +134,175 @@ class AlbumController extends Controller
         $this->view('pages/admin/profile/album/edit', $data, true, 'admin');
     }
 
+    /**
+     * Proses update album
+     */
     public function update()
     {
-        $id             = $_POST['id'] ?? null;
-        $lab_profile_id = $_POST['lab_profile_id'] ?? null;
-        $judul          = $_POST['judul'] ?? '';
-        $gambar_url     = $_POST['gambar_url'] ?? '';
-        $tautan_url     = $_POST['tautan_url'] ?? '';
-        $aktif          = isset($_POST['aktif']);
-
-        if (!$id) {
-            header('Location: /admin/profile/album');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
             exit;
         }
 
-        $sql = 'SELECT sp_album_update(
-                    :id,
-                    :lab_profile_id,
-                    :judul,
-                    :gambar_url,
-                    :tautan_url,
-                    :aktif
-                )';
+        $id = $_POST['id'] ?? null;
+        $judul = trim($_POST['judul'] ?? '');
+        $deskripsi = trim($_POST['deskripsi'] ?? '');
+        $kategori = trim($_POST['kategori'] ?? 'kegiatan');
+        $hapusFoto = isset($_POST['hapus_foto']);
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':id'             => $id,
-            ':lab_profile_id' => $lab_profile_id,
-            ':judul'          => $judul,
-            ':gambar_url'     => $gambar_url,
-            ':tautan_url'     => $tautan_url,
-            ':aktif'          => $aktif,
-        ]);
+        // Validasi
+        if (!$id || empty($judul)) {
+            $_SESSION['error'] = 'Judul wajib diisi!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album/edit?id=' . $id);
+            exit;
+        }
 
-        header('Location: /admin/profile/album');
+        try {
+            $fotoUrl = null;
+
+            // Handle upload foto baru
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                $fotoUrl = $this->handleImageUpload($_FILES['foto'], 'album');
+
+                if (!$fotoUrl) {
+                    $_SESSION['error'] = 'Gagal mengupload foto!';
+                    header('Location: ' . $_ENV['APP_URL'] . '/admin/album/edit?id=' . $id);
+                    exit;
+                }
+
+                // Hapus foto lama
+                $oldData = $this->albumModel->getById($id);
+                if ($oldData && !empty($oldData['foto_url'])) {
+                    $oldImagePath = __DIR__ . '/../../../public' . $oldData['foto_url'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+            } elseif ($hapusFoto) {
+                // Hapus foto lama
+                $oldData = $this->albumModel->getById($id);
+                if ($oldData && !empty($oldData['foto_url'])) {
+                    $oldImagePath = __DIR__ . '/../../../public' . $oldData['foto_url'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+                $fotoUrl = '';
+            }
+
+            // Data untuk update
+            $data = [
+                'judul'     => $judul,
+                'deskripsi' => $deskripsi,
+                'kategori'  => $kategori
+            ];
+
+            if ($fotoUrl !== null) {
+                $data['foto_url'] = $fotoUrl;
+            }
+
+            // Update ke database
+            $result = $this->albumModel->update($id, $data);
+
+            if ($result) {
+                $_SESSION['success'] = 'Album berhasil diperbarui!';
+            } else {
+                $_SESSION['error'] = 'Gagal memperbarui album!';
+            }
+
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('AlbumController update Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
         exit;
     }
 
+    /**
+     * Proses hapus album
+     */
     public function delete()
     {
         $id = $_GET['id'] ?? null;
 
-        if ($id) {
-            $sql = 'SELECT sp_album_delete(:id)';
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([':id' => $id]);
+        if (!$id) {
+            $_SESSION['error'] = 'ID album tidak valid!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
+            exit;
         }
 
-        header('Location: /admin/profile/album');
+        try {
+            // Ambil data album untuk hapus foto
+            $album = $this->albumModel->getById($id);
+
+            if (!$album) {
+                $_SESSION['error'] = 'Album tidak ditemukan!';
+                header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
+                exit;
+            }
+
+            // Hapus foto dari storage
+            if (!empty($album['foto_url'])) {
+                $imagePath = __DIR__ . '/../../../public' . $album['foto_url'];
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
+            // Hapus dari database
+            $result = $this->albumModel->delete($id);
+
+            if ($result) {
+                $_SESSION['success'] = 'Album berhasil dihapus!';
+            } else {
+                $_SESSION['error'] = 'Gagal menghapus album!';
+            }
+
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
+            error_log('AlbumController delete Error: ' . $e->getMessage());
+        }
+
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/album');
         exit;
+    }
+
+    /**
+     * Handle upload gambar
+     */
+    private function handleImageUpload($file, $folder = 'album')
+    {
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+
+        // Validasi tipe file
+        if (!in_array($file['type'], $allowedTypes)) {
+            return false;
+        }
+
+        // Validasi ukuran file
+        if ($file['size'] > $maxSize) {
+            return false;
+        }
+
+        // Generate nama file unik
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = uniqid() . '_' . time() . '.' . $extension;
+
+        // Path upload
+        $uploadPath = __DIR__ . '/../../../public/uploads/' . $folder . '/';
+
+        // Buat folder jika belum ada
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        // Upload file
+        if (move_uploaded_file($file['tmp_name'], $uploadPath . $filename)) {
+            return '/uploads/' . $folder . '/' . $filename;
+        }
+
+        return false;
     }
 }

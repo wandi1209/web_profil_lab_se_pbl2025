@@ -1,8 +1,8 @@
 <div class="container-fluid">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold m-0">Tambah Album</h3>
-        <a href="<?= $_ENV['APP_URL'] ?>/admin/album" class="btn btn-secondary">
+        <h3 class="fw-bold m-0">Tambah Scope Penelitian</h3>
+        <a href="<?= $_ENV['APP_URL'] ?>/admin/scope" class="btn btn-secondary">
             <i class="bi bi-arrow-left me-2"></i>Kembali
         </a>
     </div>
@@ -17,62 +17,69 @@
 
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="bi bi-images me-2"></i>Form Tambah Album</h5>
+            <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Form Tambah Scope Penelitian</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="<?= $_ENV['APP_URL'] ?>/admin/album/store" enctype="multipart/form-data">
+            <form method="POST" action="<?= $_ENV['APP_URL'] ?>/admin/scope/store" enctype="multipart/form-data">
 
-                <!-- Judul -->
+                <!-- Kategori -->
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Judul <span class="text-danger">*</span></label>
+                    <label class="form-label fw-bold">Kategori <span class="text-danger">*</span></label>
                     <input
                         type="text"
-                        name="judul"
+                        name="kategori"
                         class="form-control input-bordered"
-                        placeholder="Contoh: Kegiatan Workshop 2024"
+                        placeholder="Contoh: Web Development, Artificial Intelligence"
                         required>
                 </div>
 
                 <!-- Deskripsi -->
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Deskripsi</label>
+                    <label class="form-label fw-bold">Deskripsi <span class="text-danger">*</span></label>
                     <textarea
                         name="deskripsi"
                         class="form-control input-bordered"
                         rows="4"
-                        placeholder="Deskripsi singkat tentang album..."></textarea>
+                        placeholder="Deskripsi singkat tentang scope penelitian..."
+                        required></textarea>
                 </div>
 
-                <!-- Kategori -->
+                <!-- Icon/Logo -->
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Kategori <span class="text-danger">*</span></label>
-                    <select name="kategori" class="form-select input-bordered" required>
-                        <option value="">-- Pilih Kategori --</option>
-                        <option value="kegiatan">Kegiatan</option>
-                        <option value="workshop">Workshop</option>
-                        <option value="seminar">Seminar</option>
-                        <option value="kompetisi">Kompetisi</option>
-                        <option value="lainnya">Lainnya</option>
-                    </select>
-                </div>
-
-                <!-- Foto -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Foto <span class="text-danger">*</span></label>
+                    <label class="form-label fw-bold">Icon/Logo (Opsional)</label>
                     <input
                         type="file"
-                        name="foto"
+                        name="icon"
                         class="form-control input-bordered"
                         accept="image/*"
-                        id="inputFoto"
-                        required>
-                    <small class="text-muted">Format: JPG, PNG, GIF, WEBP | Maksimal 5MB</small>
+                        id="inputIcon">
+                    <small class="text-muted">Format: JPG, PNG, SVG | Maksimal 2MB | Ukuran disarankan 100x100px</small>
 
                     <!-- Preview -->
                     <div id="previewContainer" class="mt-3" style="display: none;">
                         <label class="form-label fw-bold">Preview:</label><br>
-                        <img id="previewImage" src="" alt="Preview" class="img-thumbnail border-preview" style="max-width: 300px;">
+                        <img id="previewImage" src="" alt="Preview" class="border-preview" style="max-width: 100px; max-height: 100px;">
                     </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Tags (Teknologi/Topik)</label>
+                    <div id="tagsContainer">
+                        <div class="input-group mb-2">
+                            <input
+                                type="text"
+                                name="tags[]"
+                                class="form-control input-bordered"
+                                placeholder="Contoh: Fullstack, PWA, Microservices">
+                            <button type="button" class="btn btn-danger" onclick="removeTag(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success" onclick="addTag()">
+                        <i class="bi bi-plus-circle me-1"></i>Tambah Tag
+                    </button>
                 </div>
 
                 <hr class="my-4">
@@ -85,7 +92,7 @@
                     <button type="reset" class="btn btn-secondary">
                         <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
                     </button>
-                    <a href="<?= $_ENV['APP_URL'] ?>/admin/album" class="btn btn-outline-secondary">
+                    <a href="<?= $_ENV['APP_URL'] ?>/admin/scope" class="btn btn-outline-secondary">
                         <i class="bi bi-x-circle me-2"></i>Batal
                     </a>
                 </div>
@@ -97,7 +104,6 @@
 </div>
 
 <style>
-/* Input Border Styling */
 .input-bordered {
     border: 2px solid #dee2e6 !important;
     border-radius: 8px !important;
@@ -115,27 +121,26 @@
     border-color: #adb5bd !important;
 }
 
-/* Card Styling */
 .card {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border: 1px solid #e0e0e0;
 }
 
-/* Preview Image Border */
 .border-preview {
     border: 3px solid #dee2e6 !important;
     border-radius: 8px !important;
     padding: 5px !important;
 }
 
-.border-preview:hover {
-    border-color: #0d6efd !important;
+.input-group .input-bordered {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
 }
 </style>
 
 <script>
-// Preview foto
-document.getElementById('inputFoto').addEventListener('change', function(e) {
+// Preview icon
+document.getElementById('inputIcon').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
         const reader = new FileReader();
@@ -149,7 +154,30 @@ document.getElementById('inputFoto').addEventListener('change', function(e) {
     }
 });
 
-// Reset preview saat form direset
+// Tambah tag
+function addTag() {
+    const container = document.getElementById('tagsContainer');
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+        <input
+            type="text"
+            name="tags[]"
+            class="form-control input-bordered"
+            placeholder="Contoh: API, Deep Learning">
+        <button type="button" class="btn btn-danger" onclick="removeTag(this)">
+            <i class="bi bi-trash"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+// Hapus tag
+function removeTag(button) {
+    button.parentElement.remove();
+}
+
+// Reset preview
 document.querySelector('button[type="reset"]').addEventListener('click', function() {
     document.getElementById('previewContainer').style.display = 'none';
 });

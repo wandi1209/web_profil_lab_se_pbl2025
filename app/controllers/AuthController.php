@@ -9,8 +9,18 @@ class AuthController extends Controller {
 
     // 2. Menampilkan Halaman Login (GET)
     public function login() {
-        $this->view('pages/auth/login');
+        // Pastikan session dimulai
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
 
+        // Jika sudah login, redirect ke dashboard
+        if (isset($_SESSION['is_login']) && $_SESSION['is_login'] === true) {
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/dashboard');
+            exit;
+        }
+
+        $this->view('pages/auth/login');
     }
 
     // 3. Memproses Login (POST)
@@ -20,16 +30,33 @@ class AuthController extends Controller {
             session_start();
         }
 
+        // Validasi request method
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/login');
+            exit;
+        }
+
         // Ambil input dari form
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
+        $username = trim($_POST['username'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+
+        // Validasi input tidak kosong
+        if (empty($username) || empty($password)) {
+            $_SESSION['error'] = "Username dan password tidak boleh kosong!";
+            header('Location: ' . $_ENV['APP_URL'] . '/login');
+            exit;
+        }
 
         // Panggil Model
         $userModel = new User();
-        $userData = $userModel->checkLogin($username, $password);
+        $userData = $userModel->findByUsername($username);
 
-        if ($userData) {
+        // Cek apakah user ditemukan dan password cocok
+        if ($userData && password_verify($password, $userData['password_hash'])) {
             // --- LOGIN SUKSES ---
+            
+            // Regenerate session ID untuk keamanan
+            session_regenerate_id(true);
             
             // Simpan data penting ke session
             $_SESSION['is_login'] = true;
@@ -37,25 +64,44 @@ class AuthController extends Controller {
             $_SESSION['role_id'] = $userData['role_id']; 
             $_SESSION['username'] = $userData['username'];
 
+            // Set flash message success
+            $_SESSION['success'] = "Login berhasil! Selamat datang, " . $userData['username'];
+
             // Redirect ke dashboard admin
-            header('Location: ' . $_ENV['APP_URL'] . '/admin');
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/dashboard');
             exit;
         } else {
             // --- LOGIN GAGAL ---
             
-            // Set flash message error (opsional, bisa pakai session juga)
+            // Set flash message error
             $_SESSION['error'] = "Username atau password salah!";
             
             // Kembalikan ke halaman login
-            header('Location:  ' . $_ENV['APP_URL'] . '/login');
+            header('Location: ' . $_ENV['APP_URL'] . '/login');
             exit;
         }
     }
     
+    // 4. Logout
     public function logout() {
-        session_start();
+        // Pastikan session dimulai
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Hapus semua data session
+        $_SESSION = array();
+
+        // Hapus cookie session jika ada
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', time() - 3600, '/');
+        }
+
+        // Destroy session
         session_destroy();
-        header('Location:  ' . $_ENV['APP_URL'] . '/login');
+
+        // Redirect ke halaman login
+        header('Location: ' . $_ENV['APP_URL'] . '/login');
         exit;
     }
 }

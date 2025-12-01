@@ -22,6 +22,9 @@
         <div class="card-body">
             <form method="POST" action="<?= $_ENV['APP_URL'] ?>/admin/personil/dosen/store" enctype="multipart/form-data">
                 
+                <!-- INFORMASI DASAR -->
+                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-2"></i>Informasi Dasar</h6>
+                
                 <!-- Nama -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
@@ -44,15 +47,27 @@
                         required>
                 </div>
 
-                <!-- Email -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        class="form-control input-bordered" 
-                        placeholder="Contoh: john.doe@polinema.ac.id"
-                        required>
+                <div class="row">
+                    <!-- Email -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            class="form-control input-bordered" 
+                            placeholder="Contoh: john.doe@polinema.ac.id"
+                            required>
+                    </div>
+
+                    <!-- NIDN -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label fw-bold">NIDN</label>
+                        <input 
+                            type="text" 
+                            name="nidn" 
+                            class="form-control input-bordered" 
+                            placeholder="Contoh: 0123456789">
+                    </div>
                 </div>
 
                 <!-- Foto -->
@@ -73,6 +88,95 @@
                     </div>
                 </div>
 
+                <hr class="my-4">
+
+                <!-- KEAHLIAN & RIWAYAT -->
+                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-mortarboard me-2"></i>Keahlian & Riwayat</h6>
+
+                <!-- Bidang Keahlian -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Bidang Keahlian</label>
+                    <textarea 
+                        name="keahlian" 
+                        class="form-control input-bordered" 
+                        rows="3"
+                        placeholder="Contoh: Artificial Intelligence, Machine Learning, Deep Learning"></textarea>
+                    <small class="text-muted">Pisahkan dengan koma (,) untuk beberapa keahlian</small>
+                </div>
+
+                <!-- Riwayat Pendidikan -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Riwayat Pendidikan</label>
+                    <div id="pendidikanContainer">
+                        <div class="input-group mb-2">
+                            <input 
+                                type="text" 
+                                name="pendidikan[]" 
+                                class="form-control input-bordered" 
+                                placeholder="Contoh: S3 – Ilmu Komputer, Universitas Indonesia (2018-2021)">
+                            <button type="button" class="btn btn-danger" onclick="removeField(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success" onclick="addPendidikan()">
+                        <i class="bi bi-plus-circle me-1"></i>Tambah Pendidikan
+                    </button>
+                </div>
+
+                <!-- Publikasi -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Publikasi Terbaru</label>
+                    <div id="publikasiContainer">
+                        <div class="input-group mb-2">
+                            <input 
+                                type="text" 
+                                name="publikasi[]" 
+                                class="form-control input-bordered" 
+                                placeholder="Contoh: Machine Learning for Smart Cities – International Journal of AI, 2024">
+                            <button type="button" class="btn btn-danger" onclick="removeField(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success" onclick="addPublikasi()">
+                        <i class="bi bi-plus-circle me-1"></i>Tambah Publikasi
+                    </button>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- SOSIAL MEDIA -->
+                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-link-45deg me-2"></i>Link Sosial Media</h6>
+
+                <div class="row">
+                    <!-- LinkedIn -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-linkedin text-primary me-2"></i>LinkedIn
+                        </label>
+                        <input 
+                            type="url" 
+                            name="linkedin" 
+                            class="form-control input-bordered" 
+                            placeholder="https://linkedin.com/in/username">
+                    </div>
+
+                    <!-- GitHub -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-github me-2"></i>GitHub
+                        </label>
+                        <input 
+                            type="url" 
+                            name="github" 
+                            class="form-control input-bordered" 
+                            placeholder="https://github.com/username">
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
                 <!-- Buttons -->
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
@@ -81,6 +185,9 @@
                     <button type="reset" class="btn btn-secondary">
                         <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
                     </button>
+                    <a href="<?= $_ENV['APP_URL'] ?>/admin/personil/dosen" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Batal
+                    </a>
                 </div>
 
             </form>
@@ -115,6 +222,11 @@
 .img-thumbnail {
     border: 2px solid #dee2e6;
 }
+
+.input-group .input-bordered {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
 </style>
 
 <script>
@@ -132,4 +244,45 @@ document.getElementById('inputFoto').addEventListener('change', function(e) {
         document.getElementById('previewContainer').style.display = 'none';
     }
 });
+
+// Tambah field pendidikan
+function addPendidikan() {
+    const container = document.getElementById('pendidikanContainer');
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+        <input 
+            type="text" 
+            name="pendidikan[]" 
+            class="form-control input-bordered" 
+            placeholder="Contoh: S2 – Teknologi Informasi, ITB (2015-2017)">
+        <button type="button" class="btn btn-danger" onclick="removeField(this)">
+            <i class="bi bi-trash"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+// Tambah field publikasi
+function addPublikasi() {
+    const container = document.getElementById('publikasiContainer');
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+        <input 
+            type="text" 
+            name="publikasi[]" 
+            class="form-control input-bordered" 
+            placeholder="Contoh: Deep Learning Optimization – IEEE Conference, 2023">
+        <button type="button" class="btn btn-danger" onclick="removeField(this)">
+            <i class="bi bi-trash"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+// Hapus field
+function removeField(button) {
+    button.parentElement.remove();
+}
 </script>
