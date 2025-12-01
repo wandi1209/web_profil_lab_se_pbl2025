@@ -55,10 +55,5 @@ $pageTitle = "Daftar Mahasiswa Peneliti";
 
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-5 p-4 text-center text-secondary small border-top">
-            &copy; <?= date('Y') ?> Laboratorium Teknologi Informasi
-        </footer>
-
     </div>
 </section>

@@ -125,10 +125,5 @@ $pageTitle = $personil['kategori'] == 'dosen' ? "Detail Profil Dosen" : "Detail 
             </a>
         </div>
 
-        <!-- FOOTER -->
-        <footer class="mt-5 p-4 text-center text-secondary small border-top">
-            &copy; <?= date('Y') ?> Laboratorium Software Engineering
-        </footer>
-
     </div>
 </section>
