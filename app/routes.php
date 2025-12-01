@@ -38,7 +38,7 @@ $app->get('/pendaftaran',       [HomeController::class, 'pendaftaran']);
 
 // PERSONIL 
 $app->get('/personil/mahasiswa',      [HomeController::class, 'mahasiswa']);
-$app->get('/personil/detail/{id}',    [HomeController::class, 'personilDetail']);
+$app->get('/personil/dosen/{id}',    [HomeController::class, 'personilDetail']);
 
 // ================== AUTH ==================
 $app->get('/login',             [AuthController::class, 'login']);
