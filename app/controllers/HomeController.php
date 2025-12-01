@@ -111,9 +111,9 @@ class HomeController extends Controller
         ]);
     }
 
-    public function personilDetail()
+    public function personilDetail($userId)
     {
-        $id = $_GET['id'] ?? null;
+        $id = $userId ?? null;
 
         if (!$id) {
             header('Location: ' . $_ENV['APP_URL'] . '/anggota/dosen');
@@ -139,7 +139,7 @@ class HomeController extends Controller
             'publikasi'  => $publikasi
         ];
 
-        $this->view('pages/personil/detail', $data);
+        $this->view('pages/personil/detail', $data, true);
     }
 
     public function notFound()
