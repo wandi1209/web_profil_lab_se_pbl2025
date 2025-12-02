@@ -36,11 +36,18 @@ class HomeController extends Controller
         $this->view('pages/tentang/visi-misi', $data, true);
     }
 
-    public function roadmap()
+    public function fokus_riset()
     {
         $data = [];
 
-        $this->view('pages/tentang/roadmap', $data, true);
+        $this->view('pages/tentang/fokus-riset', $data, true);
+    }
+
+        public function scope_penelitian()
+    {
+        $data = [];
+
+        $this->view('pages/tentang/scope-penelitian', $data, true);
     }
 
     public function mahasiswa()

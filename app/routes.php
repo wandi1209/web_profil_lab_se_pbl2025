@@ -23,7 +23,8 @@ $app->get('/about',             [HomeController::class, 'about']);
 // TENTANG
 $app->get('/tentang/profil',    [HomeController::class, 'profil']);
 $app->get('/tentang/visi-misi', [HomeController::class, 'visi_misi']);
-$app->get('/tentang/roadmap',   [HomeController::class, 'roadmap']);
+$app->get('/tentang/fokus-riset',   [HomeController::class, 'fokus_riset']);
+$app->get('/tentang/scope-penelitian',   [HomeController::class, 'scope_penelitian']);
 
 // ANGGOTA
 $app->get('/anggota/dosen',     [HomeController::class, 'dosen']);
