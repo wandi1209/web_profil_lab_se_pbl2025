@@ -21,8 +21,8 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
         
         <div class="row justify-content-center text-center mb-5">
             <div class="col-lg-8">
-                <span class="badge bg-custom-blue bg-opacity-75 text-white mb-2 px-3 py-2 rounded-pill fw-medium">
-                    🏢 Profil Institusi
+                <span class="text-custom-blue fw-bold small text-uppercase ls-1">
+                    Profil Laboratorium
                 </span>
                 <h1 class="display-6 fw-bold text-dark mt-2 mb-3">
                     Laboratorium Rekayasa Perangkat Lunak
@@ -49,9 +49,9 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
                     <div class="d-flex align-items-center gap-3">
                         <i class="bi bi-award-fill text-info fs-3"></i>
                         <div>
-                            <h5 class="fw-bold mb-0 text-dark">Akreditasi A Program Studi</h5>
+                            <h5 class="fw-bold mb-0 text-dark">Akreditasi Unggul</h5>
                             <p class="text-secondary mb-0 small">
-                                Kualitas pendidikan terjamin dengan status Akreditasi A pada Program Studi Teknologi Informasi.
+                                Kualitas pendidikan terjamin dengan status Akreditasi Unggul pada Program Studi Teknologi Informasi.
                             </p>
                         </div>
                     </div>
@@ -103,7 +103,7 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
                         <div class="card h-100 p-4 border-start border-5 border-info shadow-sm">
                             <h5 class="fw-bold text-dark mb-2">Keselarasan Topik & Area Riset</h5>
                             <p class="text-secondary small mb-0">
-                                Judul skripsi harus selaras dengan area riset yang difokuskan oleh lab RPL serta sesuai dengan topik-topik yang telah ditetapkan dalam setiap area penelitian].
+                                Judul skripsi harus selaras dengan area riset yang difokuskan oleh lab RPL serta sesuai dengan topik-topik yang telah ditetapkan dalam setiap area penelitian.
                             </p>
                         </div>
                     </div>
@@ -112,7 +112,7 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
                         <div class="card h-100 p-4 border-start border-5 border-primary shadow-sm">
                             <h5 class="fw-bold text-dark mb-2">Fokus pada Aspek Rekayasa Perangkat Lunak</h5>
                             <p class="text-secondary small mb-0">
-                                Konten utama dalam pembahasan, analisis, dan diskusi diharapkan lebih menitikberatkan pada aspek rekayasa perangkat lunak (RPL), bukan hanya implementasi fungsional].
+                                Konten utama dalam pembahasan, analisis, dan diskusi diharapkan lebih menitikberatkan pada aspek rekayasa perangkat lunak (RPL), bukan hanya implementasi fungsional.
                             </p>
                         </div>
                     </div>
@@ -121,7 +121,7 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
                         <div class="card h-100 p-4 border-start border-5 border-success shadow-sm">
                             <h5 class="fw-bold text-dark mb-2">Tahapan Kerja Well-Organized</h5>
                             <p class="text-secondary small mb-0">
-                                Setiap tahapan dalam proses rekayasa perangkat lunak yang dilakukan harus well-organized (mengikuti metodologi/teknik yang jelas, terencana dan terstruktur dengan baik)].
+                                Setiap tahapan dalam proses rekayasa perangkat lunak yang dilakukan harus well-organized (mengikuti metodologi/teknik yang jelas, terencana dan terstruktur dengan baik).
                             </p>
                         </div>
                     </div>
@@ -130,7 +130,7 @@ $pageTitle = "Profil - Laboratorium Rekayasa Perangkat Lunak";
                         <div class="card h-100 p-4 border-start border-5 border-warning shadow-sm">
                             <h5 class="fw-bold text-dark mb-2">Proses & Hasil Well-Documented</h5>
                             <p class="text-secondary small mb-0">
-                                Setiap tahapan rekayasa perangkat lunak dalam pengerjaan skripsi, harus disertai proses dan hasil yang well-documented].
+                                Setiap tahapan rekayasa perangkat lunak dalam pengerjaan skripsi, harus disertai proses dan hasil yang well-documented.
                             </p>
                         </div>
                     </div>
