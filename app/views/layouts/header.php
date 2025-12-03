@@ -1,3 +1,20 @@
+<?php
+$currentPage = strtok($_SERVER['REQUEST_URI'], '?');
+$appUrl = $_ENV['APP_URL'] ?? '';
+$isBeranda = ($currentPage === '/') || ($currentPage === '/home.php');
+if (!empty($appUrl) && $appUrl !== '/') {
+    $basePath = parse_url($appUrl, PHP_URL_PATH) ?? $appUrl; 
+
+    if (rtrim($currentPage, '/') === rtrim($basePath, '/')) {
+        $isBeranda = true;
+    }
+}
+$isTentang = strpos($currentPage, '/tentang') !== false;
+$isAnggota = strpos($currentPage, '/personil') !== false;   
+$isArtikel = strpos($currentPage, '/artikel') !== false;
+$isPendaftaran = strpos($currentPage, '/pendaftaran') !== false;
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,20 +25,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/bootstrap.min.css">
-    <!-- Link ke file styles.css yang baru -->
-    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/landing_page.css">
+    <link rel="stylesheet" href="<?= $appUrl ?>/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= $appUrl ?>/assets/css/landing_page.css">
 </head>
 <body>
-
+    
     <nav class="navbar navbar-expand-lg navbar-dark navbar-glass py-3 sticky-top">
         <div class="container px-4">
             
-            <a class="navbar-brand d-flex align-items-center gap-3" href="<?= $_ENV['APP_URL'] ?>/index.php">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="<?= $appUrl ?>/index.php">
                 <div class="d-flex align-items-center bg-white bg-opacity-10 rounded-3 px-2 py-1">
-                    <img src="<?= $_ENV['APP_URL'] ?>/assets/icons/lab_se.svg" alt="Lab SE" width="36" height="36">
+                    <img src="<?= $appUrl ?>/assets/icons/lab_se.svg" alt="Lab SE" width="36" height="36">
                     <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.3); margin: 0 8px;"></div>
-                    <img src="<?= $_ENV['APP_URL'] ?>/assets/icons/jti.svg" alt="Polinema" width="34" height="34">
+                    <img src="<?= $appUrl ?>/assets/icons/jti.svg" alt="Polinema" width="34" height="34">
                 </div>
                 
                 <div class="d-flex flex-column brand-text">
@@ -36,53 +52,102 @@
             
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center gap-1">
+
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom active" href="<?= $_ENV['APP_URL'] ?>/">Beranda</a>
+                        <a class="nav-link nav-link-custom <?= $isBeranda ? 'active' : '' ?>" 
+                        href="<?= $appUrl ?>/">
+                            Beranda
+                        </a>
                     </li>
                     
-                    <!-- DROPDOWN TENTANG -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link nav-link-custom" href="#" role="button" aria-expanded="false">
+                        <a class="nav-link nav-link-custom <?= $isTentang ? 'active' : '' ?>" 
+                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Tentang
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?= $_ENV['APP_URL'] ?>/tentang/profil">
-                                <i class="bi bi-building me-2"></i> Profil Lab
-                            </a></li>
-                            <li><a class="dropdown-item" href="<?= $_ENV['APP_URL'] ?>/tentang/visi-misi">
-                                <i class="bi bi-bullseye me-2"></i> Visi & Misi
-                            </a></li>
-                            <li><a class="dropdown-item" href="<?= $_ENV['APP_URL'] ?>/tentang/roadmap">
-                                <i class="bi bi-box-seam me-2"></i> Roadmap
-                            </a></li>
+
+                            <li>
+                                <a class="dropdown-item <?= strpos($currentPage, '/tentang/profil') !== false ? 'active' : '' ?>" 
+                                href="<?= $appUrl ?>/tentang/profil">
+                                <i class="bi bi-building me-2"></i> 
+                                    Profil Lab
+                                </a>
+                            </li>
+
                             <li><hr class="dropdown-divider bg-light opacity-25"></li>
+
+                            <li>
+                                <a class="dropdown-item <?= strpos($currentPage, '/tentang/visi-misi') !== false ? 'active' : '' ?>" 
+                                href="<?= $appUrl ?>/tentang/visi-misi">
+                                <i class="bi bi-bullseye me-2"></i>
+                                    Visi & Misi
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider bg-light opacity-25"></li>
+
+                            <li>
+                                <a class="dropdown-item <?= strpos($currentPage, '/tentang/fokus-riset') !== false ? 'active' : '' ?>" 
+                                href="<?= $appUrl ?>/tentang/fokus-riset">
+                                <i class="bi bi-lightbulb me-2"></i> Fokus Riset
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider bg-light opacity-25"></li>
+
+                            <li>
+                                <a class="dropdown-item <?= strpos($currentPage, '/tentang/scope-penelitian') !== false ? 'active' : '' ?>" 
+                                href="<?= $appUrl ?>/tentang/scope-penelitian">
+                                <i class="bi bi-search me-2"></i>
+                                    Scope Penelitian
+                                </a>
+                            </li>
                         </ul>
                     </li>
 
-                    <!-- DROPDOWN ANGGOTA -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link nav-link-custom" href="#" role="button" aria-expanded="false">
+                        <a class="nav-link nav-link-custom <?= $isAnggota ? 'active' : '' ?>" 
+                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Anggota
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?= $_ENV['APP_URL'] ?>/personil/dosen/1">
-                                <i class="bi bi-person-badge me-2"></i> Nama Dosen
-                            </a></li>
+
+                            <li>
+                                <a class="dropdown-item <?= strpos($currentPage, '/personil/dosen') !== false ? 'active' : '' ?>" 
+                                href="<?= $appUrl ?>/personil/dosen/1">
+                                <i class="bi bi-person-badge me-2"></i>
+                                    Nama Dosen
+                                </a>
+                            </li>
+
                             <li><hr class="dropdown-divider bg-light opacity-25"></li>
-                            <li><a class="dropdown-item" href="<?= $_ENV['APP_URL'] ?>/personil/mahasiswa">
-                                <i class="bi bi-people me-2"></i> Mahasiswa
-                            </a></li>
+
+                            <li>
+                                <a class="dropdown-item <?= strpos($currentPage, '/personil/mahasiswa') !== false ? 'active' : '' ?>" 
+                                href="<?= $appUrl ?>/personil/mahasiswa">
+                                <i class="bi bi-people me-2"></i>
+                                    Mahasiswa
+                                </a>
+                            </li>
                         </ul>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="<?= $_ENV['APP_URL'] ?>/artikel">Artikel</a>
-                    </li>
-                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
-                        <a class="btn btn-register" href="<?= $_ENV['APP_URL'] ?>/pendaftaran">
-                            Pendaftaran <i class="bi bi-arrow-right ms-1"></i>
+                        <a class="nav-link nav-link-custom <?= $isArtikel ? 'active' : '' ?>" 
+                        href="<?= $appUrl ?>/artikel">
+                            Artikel
                         </a>
                     </li>
+
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
+                        <a class="btn btn-register <?= $isPendaftaran ? 'active' : '' ?>" 
+                        href="<?= $appUrl ?>/pendaftaran">
+                            Pendaftaran Anggota
+                        <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </div>
