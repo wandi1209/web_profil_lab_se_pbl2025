@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/sidebar.css">
     <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/footer.css">
     <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/tentangLab.css">
+    <link rel="stylesheet" href="<?= $_ENV['APP_URL'] ?>/assets/css/summernote-bs5.css">
     
     
 </head>

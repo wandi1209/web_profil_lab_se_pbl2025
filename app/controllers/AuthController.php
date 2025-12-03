@@ -4,6 +4,7 @@ namespace Polinema\WebProfilLabSe\Controllers;
 
 use Polinema\WebProfilLabSe\Core\Controller;
 use Polinema\WebProfilLabSe\Models\User;
+use Polinema\WebProfilLabSe\Models\PasswordReset; // Tambahkan ini di atas
 
 class AuthController extends Controller {
 
@@ -101,6 +102,36 @@ class AuthController extends Controller {
         session_destroy();
 
         // Redirect ke halaman login
+        header('Location: ' . $_ENV['APP_URL'] . '/login');
+        exit;
+    }
+
+    // 5. Halaman Lupa Password
+    public function forgotPassword() {
+        $this->view('pages/auth/forgot_password');
+    }
+
+    // 6. Proses Request Reset
+    public function processForgotPassword() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . $_ENV['APP_URL'] . '/forgot-password');
+            exit;
+        }
+
+        $username = trim($_POST['username'] ?? '');
+
+        if (empty($username)) {
+            $_SESSION['error'] = "Username harus diisi!";
+            header('Location: ' . $_ENV['APP_URL'] . '/forgot-password');
+            exit;
+        }
+
+        $resetModel = new PasswordReset();
+        // Kita selalu bilang sukses demi keamanan (agar orang tidak bisa cek username valid/tidak)
+        // Tapi logic di model akan cek user exist atau tidak
+        $resetModel->createRequest($username);
+
+        $_SESSION['success'] = "Permintaan reset password dikirim! Silakan hubungi Super Admin untuk persetujuan.";
         header('Location: ' . $_ENV['APP_URL'] . '/login');
         exit;
     }

@@ -1,5 +1,32 @@
 <?php
 $current = $_SERVER['REQUEST_URI'] ?? '';
+
+// AMBIL ROLE ID
+$roleId = $_SESSION['role_id'] ?? $_SESSION['user']['role_id'] ?? 0;
+
+// --- LOGIKA NOTIFIKASI ---
+$pendingResetCount = 0;
+$pendingRekrutmenCount = 0;
+
+try {
+    $db = \Polinema\WebProfilLabSe\Core\Database::getInstance()->getConnection();
+
+    // 1. Hitung Pendaftar Baru (Rekrutmen) - Untuk Semua Admin
+    // Asumsi nama tabel adalah 'pendaftar' sesuai Model Pendaftar
+    $stmtRekrutmen = $db->query("SELECT COUNT(*) FROM pendaftar WHERE status = 'Pending'");
+    $pendingRekrutmenCount = $stmtRekrutmen->fetchColumn();
+
+    // 2. Hitung Reset Password - Hanya Super Admin
+    if ($roleId == 1) {
+        $stmtReset = $db->query("SELECT COUNT(*) FROM password_reset_requests WHERE status = 'pending'");
+        $pendingResetCount = $stmtReset->fetchColumn();
+    }
+
+} catch (Exception $e) {
+    // Silent fail agar sidebar tetap render meski DB error
+    $pendingResetCount = 0;
+    $pendingRekrutmenCount = 0;
+}
 ?>
 
 <div id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" 
@@ -16,7 +43,7 @@ $current = $_SERVER['REQUEST_URI'] ?? '';
         </li>
 
         <div class="sidebar-header text-center border-bottom border-secondary mb-3 pb-3">
-            <h6 class="text-white m-0"><?= $_SESSION['username'] ?? 'Admin' ?></h6>
+            <h6 class="text-white m-0"><?= $_SESSION['username'] ?? $_SESSION['user']['username'] ?? 'Admin' ?></h6>
         </div>
 
         <li class="nav-item">
@@ -32,7 +59,6 @@ $current = $_SERVER['REQUEST_URI'] ?? '';
                 <ul class="list-unstyled fw-normal pb-1 small ms-3 mt-1 bg-dark bg-opacity-50 rounded">
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/tentangLab" class="nav-link text-white-50 <?= str_contains($current, 'tentangLab') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-info-circle me-2"></i> Tentang Lab SE</a></li>
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/visiMisi" class="nav-link text-white-50 <?= str_contains($current, 'visiMisi') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-eye me-2"></i> Visi & Misi</a></li>
-                    <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/profil" class="nav-link text-white-50 <?= str_contains($current, 'profil') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-map me-2"></i> Profil</a></li>
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/scopePenelitian" class="nav-link text-white-50 <?= str_contains($current, 'scope') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-search me-2"></i> Scope Penelitian</a></li>
                     <li><a href="<?= $_ENV['APP_URL'] ?>/admin/profile/album" class="nav-link text-white-50 <?= str_contains($current, 'album') ? 'text-white fw-bold' : '' ?>"><i class="bi bi-images me-2"></i> Album</a></li>
                 </ul>
@@ -57,15 +83,47 @@ $current = $_SERVER['REQUEST_URI'] ?? '';
         </li>
 
         <li class="nav-item mt-1">
+            <a href="<?= $_ENV['APP_URL'] ?>/admin/publikasi" class="nav-link text-white <?= str_contains($current, '/admin/publikasi') ? 'active' : '' ?>">
+                <i class="bi bi-journal-text me-2"></i> Publikasi
+            </a>
+        </li>
+
+        <li class="nav-item mt-1">
             <a href="<?= $_ENV['APP_URL'] ?>/admin/blog" class="nav-link text-white <?= str_contains($current, '/admin/blog') ? 'active' : '' ?>">
                 <i class="bi bi-newspaper me-2"></i> Blog Artikel
             </a>
         </li>
+
+        <!-- MENU REKRUTMEN DENGAN BADGE -->
         <li class="nav-item mt-1">
-            <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen" class="nav-link text-white <?= str_contains($current, '/admin/rekrutmen') ? 'active' : '' ?>">
-                <i class="bi bi-megaphone me-2"></i> Rekrutmen
+            <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen" class="nav-link text-white d-flex justify-content-between align-items-center <?= str_contains($current, '/admin/rekrutmen') ? 'active' : '' ?>">
+                <span><i class="bi bi-megaphone me-2"></i> Rekrutmen</span>
+                <?php if ($pendingRekrutmenCount > 0): ?>
+                    <span class="badge bg-warning text-dark rounded-pill"><?= $pendingRekrutmenCount ?></span>
+                <?php endif; ?>
             </a>
         </li>
+
+        <!-- MENU KHUSUS SUPER ADMIN -->
+        <?php if ($roleId == 1): ?>
+            
+            <li class="nav-item mt-3 mb-1 text-uppercase small text-white-50 fw-bold">Super Admin</li>
+
+            <li class="nav-item">
+                <a href="<?= $_ENV['APP_URL'] ?>/admin/reset-requests" class="nav-link text-white d-flex justify-content-between align-items-center <?= str_contains($current, '/admin/reset-requests') ? 'active' : '' ?>">
+                    <span><i class="bi bi-key me-2"></i> Reset Password</span>
+                    <?php if ($pendingResetCount > 0): ?>
+                        <span class="badge bg-danger rounded-pill"><?= $pendingResetCount ?></span>
+                    <?php endif; ?>
+                </a>
+            </li>
+
+            <li class="nav-item mt-1">
+                <a href="<?= $_ENV['APP_URL'] ?>/admin/users" class="nav-link text-white <?= str_contains($current, '/admin/users') ? 'active' : '' ?>">
+                    <i class="bi bi-people me-2"></i> Users
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
 
     <div class="sidebar-logout mt-auto pt-3 border-top border-secondary">

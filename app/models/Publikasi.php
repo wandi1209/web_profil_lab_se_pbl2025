@@ -14,50 +14,68 @@ class Publikasi
         $this->db = Database::getInstance()->getConnection();
     }
 
-
-    /*CREATE PUBLIKASI*/
-    public function create($labProfileId, $judul, $penulis, $tahun, $url)
+    public function getAll()
     {
-        $query = "
-            INSERT INTO publikasi (lab_profile_id, judul, penulis, tahun, url)
-            VALUES (:lab, :judul, :penulis, :tahun, :url)
-        ";
-
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            ':lab'     => $labProfileId,
-            ':judul'   => $judul,
-            ':penulis' => $penulis,
-            ':tahun'   => $tahun,
-            ':url'     => $url
-        ]);
+        // Join ke tabel personil untuk ambil nama penulis
+        $query = "SELECT p.*, per.nama as nama_penulis, per.kategori 
+                  FROM publikasi p
+                  JOIN personil per ON p.personil_id = per.id
+                  ORDER BY p.tahun DESC, p.created_at DESC";
+        
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /*UPDATE PUBLIKASI*/
-    public function update($id, $judul, $penulis, $tahun, $url)
+    public function getById($id)
     {
-        $query = "
-            UPDATE publikasi
-            SET judul   = :judul,
-                penulis = :penulis,
-                tahun   = :tahun,
-                url     = :url
-            WHERE id = :id
-        ";
-
+        $query = "SELECT * FROM publikasi WHERE id = :id";
         $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            ':id'      => $id,
-            ':judul'   => $judul,
-            ':penulis' => $penulis,
-            ':tahun'   => $tahun,
-            ':url'     => $url
-        ]);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /*DELETE PUBLIKASI*/
+    public function create($data)
+    {
+        try {
+            $query = "INSERT INTO publikasi (personil_id, judul, tahun, url) 
+                      VALUES (:personil_id, :judul, :tahun, :url)";
+            
+            $stmt = $this->db->prepare($query);
+            return $stmt->execute([
+                ':personil_id' => $data['personil_id'],
+                ':judul'       => $data['judul'],
+                ':tahun'       => $data['tahun'],
+                ':url'         => $data['url']
+            ]);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function update($id, $data)
+    {
+        try {
+            $query = "UPDATE publikasi 
+                      SET personil_id = :personil_id, 
+                          judul = :judul, 
+                          tahun = :tahun, 
+                          url = :url,
+                          updated_at = CURRENT_TIMESTAMP
+                      WHERE id = :id";
+            
+            $stmt = $this->db->prepare($query);
+            return $stmt->execute([
+                ':id'          => $id,
+                ':personil_id' => $data['personil_id'],
+                ':judul'       => $data['judul'],
+                ':tahun'       => $data['tahun'],
+                ':url'         => $data['url']
+            ]);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function delete($id)
     {
         $stmt = $this->db->prepare("DELETE FROM publikasi WHERE id = :id");

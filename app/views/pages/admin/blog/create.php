@@ -41,7 +41,8 @@
                         name="ringkasan"
                         class="form-control input-bordered"
                         rows="3"
-                        placeholder="Ringkasan singkat artikel (opsional)..."></textarea>
+                        placeholder="Ringkasan singkat artikel (opsional)..."
+                        maxlength="200"></textarea>
                     <small class="text-muted">Maksimal 200 karakter</small>
                 </div>
 
@@ -63,15 +64,13 @@
                     </div>
                 </div>
 
-                <!-- Konten -->
+                <!-- Konten dengan Summernote -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Konten Artikel <span class="text-danger">*</span></label>
                     <textarea
                         name="content"
-                        id="contentEditor"
-                        class="form-control input-bordered"
-                        rows="15"
-                        placeholder="Tulis konten artikel di sini..."
+                        id="summernote"
+                        class="form-control"
                         required></textarea>
                 </div>
 
@@ -82,7 +81,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-save me-2"></i>Publish Artikel
                     </button>
-                    <button type="reset" class="btn btn-secondary">
+                    <button type="reset" class="btn btn-secondary" id="btnReset">
                         <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
                     </button>
                     <a href="<?= $_ENV['APP_URL'] ?>/admin/blog" class="btn btn-outline-secondary">
@@ -124,40 +123,114 @@
     border-radius: 8px !important;
     padding: 5px !important;
 }
+
+/* Summernote custom styling */
+.note-editor.note-frame {
+    border: 2px solid #dee2e6 !important;
+    border-radius: 8px !important;
+}
+
+.note-editor.note-frame:focus-within {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15) !important;
+}
+
+.note-toolbar {
+    background-color: #f8f9fa !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
 </style>
 
-<!-- Include CKEditor 5 (Optional - untuk rich text editor) -->
-<script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+<!-- Summernote CSS -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+<!-- jQuery (required for Summernote) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Summernote JS -->
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
 <script>
-// Preview gambar
-document.getElementById('inputGambar').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('previewImage').src = e.target.result;
-            document.getElementById('previewContainer').style.display = 'block';
+$(document).ready(function() {
+    // Inisialisasi Summernote
+    $('#summernote').summernote({
+        placeholder: 'Tulis konten artikel di sini...',
+        height: 400,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
+        fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
+        dialogsInBody: true,
+        callbacks: {
+            onImageUpload: function(files) {
+                // Handle image upload jika diperlukan
+                for (let i = 0; i < files.length; i++) {
+                    uploadImage(files[i]);
+                }
+            }
         }
-        reader.readAsDataURL(file);
-    } else {
-        document.getElementById('previewContainer').style.display = 'none';
-    }
-});
-
-// CKEditor (Optional - uncomment jika ingin pakai rich text editor)
-/*
-ClassicEditor
-    .create(document.querySelector('#contentEditor'), {
-        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo']
-    })
-    .catch(error => {
-        console.error(error);
     });
-*/
 
-// Reset preview
-document.querySelector('button[type="reset"]').addEventListener('click', function() {
-    document.getElementById('previewContainer').style.display = 'none';
+    // Preview gambar cover
+    $('#inputGambar').on('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#previewImage').attr('src', e.target.result);
+                $('#previewContainer').show();
+            }
+            reader.readAsDataURL(file);
+        } else {
+            $('#previewContainer').hide();
+        }
+    });
+
+    // Reset form dan Summernote
+    $('#btnReset').on('click', function() {
+        $('#summernote').summernote('reset');
+        $('#previewContainer').hide();
+    });
 });
+
+// Function untuk upload image ke Summernote (opsional)
+function uploadImage(file) {
+    let data = new FormData();
+    data.append("file", file);
+    
+    // Buat reader untuk preview langsung
+    let reader = new FileReader();
+    reader.onload = function(e) {
+        $('#summernote').summernote('insertImage', e.target.result);
+    }
+    reader.readAsDataURL(file);
+    
+    // Atau upload ke server terlebih dahulu
+    /*
+    $.ajax({
+        url: "<?= $_ENV['APP_URL'] ?>/admin/blog/upload-image",
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: data,
+        type: "POST",
+        success: function(url) {
+            $('#summernote').summernote('insertImage', url);
+        },
+        error: function(data) {
+            console.log(data);
+        }
+    });
+    */
+}
 </script>
