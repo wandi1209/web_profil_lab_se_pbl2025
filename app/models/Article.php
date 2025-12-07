@@ -65,16 +65,17 @@ class Article
     public function create($data)
     {
         try {
-            $query = "INSERT INTO article (title, slug, gambar_url, ringkasan, content, created_at) 
-                      VALUES (:title, :slug, :gambar_url, :ringkasan, :content, CURRENT_TIMESTAMP)";
+            $query = "INSERT INTO article (title, slug, gambar_url, ringkasan, content, is_featured, created_at) 
+                      VALUES (:title, :slug, :gambar_url, :ringkasan, :content, :is_featured, CURRENT_TIMESTAMP)";
 
             $stmt = $this->db->prepare($query);
             return $stmt->execute([
-                ':title'      => $data['title'],
-                ':slug'       => $data['slug'],
-                ':gambar_url' => $data['gambar_url'] ?? null,
-                ':ringkasan'  => $data['ringkasan'] ?? null,
-                ':content'    => $data['content']
+                ':title'       => $data['title'],
+                ':slug'        => $data['slug'],
+                ':gambar_url'  => $data['gambar_url'] ?? null,
+                ':ringkasan'   => $data['ringkasan'] ?? null,
+                ':content'     => $data['content'],
+                ':is_featured' => $data['is_featured'] ?? false // Tambahan
             ]);
         } catch (Exception $e) {
             error_log('Article create Error: ' . $e->getMessage());
@@ -93,17 +94,18 @@ class Article
                           slug = :slug, 
                           ringkasan = :ringkasan, 
                           content = :content,
+                          is_featured = :is_featured,
                           updated_at = CURRENT_TIMESTAMP";
 
             $params = [
-                ':title'     => $data['title'],
-                ':slug'      => $data['slug'],
-                ':ringkasan' => $data['ringkasan'] ?? null,
-                ':content'   => $data['content'],
-                ':id'        => $id
+                ':title'       => $data['title'],
+                ':slug'        => $data['slug'],
+                ':ringkasan'   => $data['ringkasan'] ?? null,
+                ':content'     => $data['content'],
+                ':is_featured' => $data['is_featured'] ?? false, // Tambahan
+                ':id'          => $id
             ];
 
-            // Jika ada gambar baru
             if (isset($data['gambar_url'])) {
                 $query .= ", gambar_url = :gambar_url";
                 $params[':gambar_url'] = $data['gambar_url'];
@@ -169,6 +171,25 @@ class Article
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Article getLatest Error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getFeaturedForMenu($limit = 5)
+    {
+        try {
+            // PostgreSQL syntax: menggunakan "IS TRUE" atau "= TRUE"
+            $query = "SELECT title, slug FROM article 
+                      WHERE is_featured IS TRUE 
+                      ORDER BY created_at DESC 
+                      LIMIT :limit";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
             return [];
         }
     }

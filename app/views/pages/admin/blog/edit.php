@@ -89,11 +89,16 @@
                 <!-- Konten dengan Summernote -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Konten Artikel <span class="text-danger">*</span></label>
-                    <textarea
-                        name="content"
-                        id="summernote"
-                        class="form-control"
-                        required><?= htmlspecialchars($blog['content']) ?></textarea>
+                    <textarea name="content" id="summernote" class="form-control" required><?= htmlspecialchars($blog['content']) ?></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="featured" id="featuredSwitch" 
+                            <?= ($blog['is_featured'] ?? false) ? 'checked' : '' ?>>
+                        <label class="form-check-label fw-bold" for="featuredSwitch">Jadikan Featured Article (Sorotan)</label>
+                    </div>
+                    <small class="text-muted">Artikel featured akan muncul di menu dropdown "Tentang > Sorotan"</small>
                 </div>
 
                 <hr class="my-4">

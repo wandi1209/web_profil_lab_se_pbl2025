@@ -30,19 +30,16 @@ class AuthMiddleware
 
     /**
      * Cek apakah user adalah ADMIN (Bisa Super Admin atau Admin Biasa)
-     * Digunakan untuk akses dashboard umum, blog, personil, dll.
      */
     public static function isAdmin()
     {
         self::handle(); // Pastikan login dulu
 
-        // Asumsi: Role 1 = Super Admin, Role 2 = Admin
-        // Jika role tidak ada di whitelist ini, tendang keluar
         $allowedRoles = [1, 2]; 
 
         if (!in_array($_SESSION['role_id'], $allowedRoles)) {
-            // User login tapi bukan admin (misal user biasa/mahasiswa jika ada login publik)
-            header('Location: ' . $_ENV['APP_URL'] . '/?error=forbidden');
+            // UBAH REDIRECT KE /admin (KONSISTEN DENGAN ROUTES)
+            header('Location: ' . $_ENV['APP_URL'] . '/admin');
             exit;
         }
     }

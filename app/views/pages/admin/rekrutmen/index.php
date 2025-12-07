@@ -2,15 +2,8 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold m-0">Rekrutmen Anggota</h3>
-
-        <!-- Search -->
-        <div class="input-group search-box" style="max-width: 260px;">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-        </div>
     </div>
 
-    <!-- Alert Messages -->
     <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <?= $_SESSION['success'] ?>
@@ -27,127 +20,137 @@
         <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
 
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
+    <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card border-primary">
+            <div class="card shadow-sm border-start border-4 border-primary h-100">
                 <div class="card-body">
-                    <h6 class="text-muted mb-2">Total Pendaftar</h6>
-                    <h3 class="mb-0 text-primary"><?= $stats['total'] ?? 0 ?></h3>
+                    <div class="text-muted small text-uppercase fw-bold mb-1">Total Pendaftar</div>
+                    <div class="h3 mb-0 text-primary fw-bold"><?= $stats['total'] ?? 0 ?></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-warning">
+            <div class="card shadow-sm border-start border-4 border-warning h-100">
                 <div class="card-body">
-                    <h6 class="text-muted mb-2">Pending</h6>
-                    <h3 class="mb-0 text-warning"><?= $stats['pending'] ?? 0 ?></h3>
+                    <div class="text-muted small text-uppercase fw-bold mb-1">Pending</div>
+                    <div class="h3 mb-0 text-warning fw-bold"><?= $stats['pending'] ?? 0 ?></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-success">
+            <div class="card shadow-sm border-start border-4 border-success h-100">
                 <div class="card-body">
-                    <h6 class="text-muted mb-2">Diterima</h6>
-                    <h3 class="mb-0 text-success"><?= $stats['diterima'] ?? 0 ?></h3>
+                    <div class="text-muted small text-uppercase fw-bold mb-1">Diterima</div>
+                    <div class="h3 mb-0 text-success fw-bold"><?= $stats['diterima'] ?? 0 ?></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-danger">
+            <div class="card shadow-sm border-start border-4 border-danger h-100">
                 <div class="card-body">
-                    <h6 class="text-muted mb-2">Ditolak</h6>
-                    <h3 class="mb-0 text-danger"><?= $stats['ditolak'] ?? 0 ?></h3>
+                    <div class="text-muted small text-uppercase fw-bold mb-1">Ditolak</div>
+                    <div class="h3 mb-0 text-danger fw-bold"><?= $stats['ditolak'] ?? 0 ?></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Tabel -->
-    <div class="table-responsive mb-5">
-        <table class="table table-bordered table-hover align-middle" id="pendaftarTable">
-            <thead class="table-light">
-                <tr>
-                    <th width="5%">No</th>
-                    <th width="15%">Nama</th>
-                    <th width="10%">NIM</th>
-                    <th width="10%">Kelas</th>
-                    <th width="15%">Program Studi</th>
-                    <th width="10%">Kontak</th>
-                    <th width="10%">Status</th>
-                    <th width="10%">Tanggal</th>
-                    <th width="15%" class="text-center">Aksi</th>
-                </tr>
-            </thead>
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3 border-0">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <h5 class="mb-0 fw-bold text-dark">Data Pendaftar</h5>
+                
+                <div class="input-group" style="max-width: 300px;">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" id="searchInput" class="form-control bg-light border-start-0" placeholder="Cari nama atau NIM...">
+                </div>
+            </div>
+        </div>
 
-            <tbody>
-            <?php if (!empty($dataPendaftar)): ?>
-                <?php $no = 1; foreach ($dataPendaftar as $row): ?>
-                <tr>
-                    <td><?= $no++ ?></td>
-                    <td><?= htmlspecialchars($row['nama']) ?></td>
-                    <td><?= htmlspecialchars($row['nim']) ?></td>
-                    <td><?= htmlspecialchars($row['kelas']) ?></td>
-                    <td><?= htmlspecialchars($row['program_studi']) ?></td>
-                    <td>
-                        <small>
-                            <?= htmlspecialchars($row['email']) ?><br>
-                            <?= htmlspecialchars($row['no_hp']) ?>
-                        </small>
-                    </td>
-                    <td>
-                        <?php
-                        $badgeClass = '';
-                        switch($row['status']) {
-                            case 'Diterima':
-                                $badgeClass = 'bg-success';
-                                break;
-                            case 'Ditolak':
-                                $badgeClass = 'bg-danger';
-                                break;
-                            default:
-                                $badgeClass = 'bg-warning';
-                        }
-                        ?>
-                        <span class="badge <?= $badgeClass ?>">
-                            <?= htmlspecialchars($row['status']) ?>
-                        </span>
-                    </td>
-                    <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-                    <td class="text-center">
-                        <!-- Detail -->
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/detail?id=<?= $row['id'] ?>" 
-                           class="btn btn-info btn-sm mb-1"
-                           title="Detail">
-                            <i class="bi bi-eye"></i>
-                        </a>
-
-                        <!-- Edit Status -->
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/edit?id=<?= $row['id'] ?>" 
-                           class="btn btn-warning btn-sm mb-1"
-                           title="Update Status">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-
-                        <!-- Delete -->
-                        <button onclick="deletePendaftar(<?= $row['id'] ?>)" 
-                                class="btn btn-danger btn-sm mb-1"
-                                title="Hapus">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="9" class="text-center text-muted py-4">
-                        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                        <p class="mt-2">Belum ada data pendaftar</p>
-                    </td>
-                </tr>
-            <?php endif; ?>
-            </tbody>
-        </table>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="pendaftarTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="5%" class="ps-4">No</th>
+                            <th width="20%">Nama & NIM</th>
+                            <th width="15%">Prodi</th>
+                            <th width="20%">Kontak</th>
+                            <th width="10%">Status</th>
+                            <th width="15%">Tanggal Daftar</th>
+                            <th width="15%" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php if (!empty($dataPendaftar)): ?>
+                        <?php $no = 1; foreach ($dataPendaftar as $row): ?>
+                        <tr>
+                            <td class="ps-4"><?= $no++ ?></td>
+                            <td>
+                                <div class="fw-bold text-dark"><?= htmlspecialchars($row['nama']) ?></div>
+                                <div class="text-muted small font-monospace"><?= htmlspecialchars($row['nim']) ?></div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    <?= htmlspecialchars($row['program_studi']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="small">
+                                    <i class="bi bi-envelope me-1 text-muted"></i> <?= htmlspecialchars($row['email']) ?><br>
+                                    <i class="bi bi-whatsapp me-1 text-success"></i> <?= htmlspecialchars($row['no_hp']) ?>
+                                </div>
+                            </td>
+                            <td>
+                                <?php
+                                $badgeClass = match($row['status']) {
+                                    'Diterima' => 'bg-success',
+                                    'Ditolak' => 'bg-danger',
+                                    default => 'bg-warning text-dark'
+                                };
+                                ?>
+                                <span class="badge <?= $badgeClass ?> rounded-pill">
+                                    <?= htmlspecialchars($row['status']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted">
+                                    <?= date('d M Y, H:i', strtotime($row['created_at'])) ?>
+                                </small>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/detail?id=<?= $row['id'] ?>" 
+                                       class="btn btn-outline-primary"
+                                       title="Detail">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/edit?id=<?= $row['id'] ?>" 
+                                       class="btn btn-outline-warning"
+                                       title="Update Status">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button onclick="deletePendaftar(<?= $row['id'] ?>)" 
+                                            class="btn btn-outline-danger"
+                                            title="Hapus">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
+                                <p class="m-0">Belum ada pendaftar baru</p>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -161,6 +164,7 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
     const table = document.getElementById('pendaftarTable');
     const rows = table.getElementsByTagName('tr');
 
+    // Mulai dari 1 karena 0 adalah header
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         const text = row.textContent.toLowerCase();
@@ -176,13 +180,13 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
 // Delete function
 function deletePendaftar(id) {
     Swal.fire({
-        title: "Hapus data pendaftar?",
-        text: "Data yang dihapus tidak dapat dikembalikan!",
+        title: "Yakin hapus data?",
+        text: "Data pendaftar ini akan dihapus permanen!",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Ya, hapus!",
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Ya, Hapus!",
         cancelButtonText: "Batal"
     }).then((result) => {
         if (result.isConfirmed) {

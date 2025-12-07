@@ -1,5 +1,6 @@
 <?php 
-$pageTitle = "Scope Penelitian | Laboratorium Software Engineering"; 
+// Jika pageTitle belum dikirim dari controller, pakai default
+$pageTitle = $pageTitle ?? "Scope Penelitian | Laboratorium Software Engineering"; 
 ?>
 
 <section class="py-5 bg-light border-bottom">
@@ -25,82 +26,77 @@ $pageTitle = "Scope Penelitian | Laboratorium Software Engineering";
 <section class="py-5 bg-white">
     <div class="container">
 
-        <?php 
-        // Data Scope Penelitian
-        $scopes = [
-            [
-                'title' => 'Web Development',
-                'desc'  => 'Rancang bangun aplikasi web modern yang responsif, scalable, dan aman menggunakan teknologi terkini.',
-                'icon'  => 'bi-globe',
-                'theme' => 'theme-blue',
-                'tags'  => ['Fullstack', 'PWA', 'Microservices', 'API']
-            ],
-            [
-                'title' => 'Artificial Intelligence',
-                'desc'  => 'Implementasi kecerdasan buatan untuk pemrosesan data, visi komputer, dan sistem pengambilan keputusan.',
-                'icon'  => 'bi-cpu-fill',
-                'theme' => 'theme-purple',
-                'tags'  => ['Deep Learning', 'NLP', 'Computer Vision', 'Data Mining']
-            ],
-            [
-                'title' => 'Mobile Computing',
-                'desc'  => 'Pengembangan aplikasi mobile native dan cross-platform yang mengutamakan User Experience (UX).',
-                'icon'  => 'bi-phone-fill',
-                'theme' => 'theme-green',
-                'tags'  => ['Android', 'iOS', 'Flutter', 'IoT Integration']
-            ],
-            [
-                'title' => 'Cyber Security',
-                'desc'  => 'Analisis keamanan sistem, pengujian celah keamanan (pentest), dan perlindungan data privasi.',
-                'icon'  => 'bi-shield-lock-fill',
-                'theme' => 'theme-red',
-                'tags'  => ['Network Security', 'Cryptography', 'Forensic', 'Ethical Hacking']
-            ],
-            [
-                'title' => 'Data Science',
-                'desc'  => 'Pengolahan big data dan visualisasi interaktif untuk mendukung analisis bisnis dan prediksi tren.',
-                'icon'  => 'bi-bar-chart-fill',
-                'theme' => 'theme-orange',
-                'tags'  => ['Big Data', 'Visualization', 'Business Intelligence', 'Statistics']
-            ],
-            [
-                'title' => 'Cloud Computing',
-                'desc'  => 'Arsitektur sistem berbasis awan, manajemen server, dan deployment otomatis (DevOps).',
-                'icon'  => 'bi-cloud-check-fill',
-                'theme' => 'theme-cyan',
-                'tags'  => ['AWS', 'Docker', 'Kubernetes', 'Serverless']
-            ],
-        ];
-        ?>
-
         <div class="row g-4">
+            <?php if (!empty($scopes)): ?>
+                <?php foreach ($scopes as $index => $s) : 
+                    // 1. Tentukan Tema Warna (Looping: Biru, Ungu, Hijau, Merah, Orange, Cyan)
+                    $themes = ['theme-blue', 'theme-purple', 'theme-green', 'theme-red', 'theme-orange', 'theme-cyan'];
+                    // Gunakan modulus (%) agar warna berulang jika data lebih dari 6
+                    $theme = $themes[$index % count($themes)];
+                    
+                    // 2. Parse Tags (JSON ke Array)
+                    $tags = [];
+                    if (!empty($s['tags'])) {
+                        // Cek apakah formatnya JSON
+                        $decoded = json_decode($s['tags'], true);
+                        if (is_array($decoded)) {
+                            $tags = $decoded;
+                        } else {
+                            // Jika disimpan sebagai string biasa dipisah koma (fallback)
+                            $tags = explode(',', $s['tags']);
+                        }
+                    }
+                    
+                    // 3. Logika Icon: Prioritaskan Bootstrap Icon, lalu Image Upload, lalu Default
+                    $iconElement = '';
+                    if (!empty($s['icon_bootstrap'])) {
+                        $iconClass = htmlspecialchars($s['icon_bootstrap']);
+                        // Tampilkan ikon Bootstrap
+                        $iconElement = '<i class="bi ' . $iconClass . '"></i>';
+                        $bgIconClass = 'bi ' . $iconClass . ' scope-bg-icon';
+                    } elseif (!empty($s['icon_url'])) {
+                        // Tampilkan gambar upload
+                        $imgSrc = $_ENV['APP_URL'] . '/public' . htmlspecialchars($s['icon_url']);
+                        $iconElement = '<img src="' . $imgSrc . '" alt="Icon" style="width: 32px; height: 32px; object-fit: contain;">';
+                        // Untuk background icon mungkin tidak pakai gambar agar tidak pecah, atau kosongkan
+                        $bgIconClass = ''; 
+                    } else {
+                        // Default Icon
+                        $iconElement = '<i class="bi bi-layers-fill"></i>';
+                        $bgIconClass = 'bi bi-layers-fill scope-bg-icon';
+                    }
+                ?>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="scope-card <?= $theme ?>">
 
-            <?php foreach ($scopes as $s) : ?>
-                <div class="col-lg-4 col-md-6">
-                    <div class="scope-card <?= $s['theme'] ?>">
+                            <?php if (!empty($bgIconClass)): ?>
+                                <i class="<?= $bgIconClass ?>"></i>
+                            <?php endif; ?>
 
-                        <i class="bi <?= $s['icon'] ?> scope-bg-icon"></i>
+                            <div class="scope-icon-wrapper">
+                                <?= $iconElement ?>
+                            </div>
 
-                        <div class="scope-icon-wrapper">
-                            <i class="bi <?= $s['icon'] ?>"></i>
+                            <h4 class="fw-bold text-dark mb-3"><?= htmlspecialchars($s['kategori']) ?></h4>
+
+                            <p class="text-secondary small mb-4">
+                                <?= htmlspecialchars($s['deskripsi']) ?>
+                            </p>
+
+                            <div class="scope-tags">
+                                <?php foreach ($tags as $tag) : ?>
+                                    <span class="scope-tag"><?= htmlspecialchars(trim($tag)) ?></span>
+                                <?php endforeach; ?>
+                            </div>
+
                         </div>
-
-                        <h4 class="fw-bold text-dark mb-3"><?= $s['title'] ?></h4>
-
-                        <p class="text-secondary small mb-4">
-                            <?= $s['desc'] ?>
-                        </p>
-
-                        <div class="scope-tags">
-                            <?php foreach ($s['tags'] as $tag) : ?>
-                                <span class="scope-tag"><?= $tag ?></span>
-                            <?php endforeach; ?>
-                        </div>
-
                     </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Belum ada data scope penelitian yang ditambahkan.</p>
                 </div>
-            <?php endforeach; ?>
-
+            <?php endif; ?>
         </div>
 
     </div>

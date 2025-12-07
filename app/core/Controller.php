@@ -2,6 +2,9 @@
 // Tentukan namespace
 namespace Polinema\WebProfilLabSe\Core;
 
+// Import Model Personil untuk Global Injection
+use Polinema\WebProfilLabSe\Models\Personil;
+
 class Controller {
 
     /**
@@ -12,6 +15,35 @@ class Controller {
      * @param string $layoutType Tentukan jenis layout ('default' atau 'admin')
      */
     public function view($view, $data = [], $useLayout = false, $layoutType = 'default') {
+        
+        // --- GLOBAL DATA INJECTION ---
+        if ($layoutType !== 'admin') {
+            try {
+                if (class_exists('Polinema\WebProfilLabSe\Models\Personil')) {
+                    $personilModel = new \Polinema\WebProfilLabSe\Models\Personil(); // Pakai backslash di depan
+                    
+                    if (method_exists($personilModel, 'getDosenList')) {
+                        $data['globalDosenMenu'] = $personilModel->getDosenList();
+                        
+                        // --- DEBUG SEMENTARA (HAPUS NANTI) ---
+                        // var_dump($data['globalDosenMenu']); die(); 
+                        // -------------------------------------
+                    }
+                }
+                $articleClass = 'Polinema\\WebProfilLabSe\\Models\\Article';
+                if (class_exists($articleClass)) {
+                    $articleModel = new $articleClass();
+                    if (method_exists($articleModel, 'getFeaturedForMenu')) {
+                        $data['globalFeaturedArticles'] = $articleModel->getFeaturedForMenu();
+                    }
+                }
+            } catch (\Exception $e) {
+                $data['globalFeaturedArticles'] = [];
+                $data['globalDosenMenu'] = [];
+            }
+        }
+        // ---------------------------------------------
+
         // Ekstrak data agar variabelnya tersedia langsung di dalam view
         extract($data); 
 

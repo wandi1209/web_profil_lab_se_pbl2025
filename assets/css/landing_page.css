@@ -235,7 +235,9 @@ a { text-decoration: none; }
         transition: width 0.3s ease;
     }
 
-    .navbar .nav-item.dropdown:hover > .nav-link-custom::after {
+    /* TAMBAHKAN SELECTOR .active DI SINI */
+    .navbar .nav-item.dropdown:hover > .nav-link-custom::after,
+    .navbar .nav-item.dropdown > .nav-link-custom.active::after {
         width: 100%;
     }
 }

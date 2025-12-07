@@ -3,14 +3,66 @@
 namespace Polinema\WebProfilLabSe\Controllers;
 
 use Polinema\WebProfilLabSe\Core\Controller;
+use Polinema\WebProfilLabSe\Models\Tentang;
+use Polinema\WebProfilLabSe\Models\Album;
+use Polinema\WebProfilLabSe\Models\VisiMisi;
+use Polinema\WebProfilLabSe\Models\Article;
+use Polinema\WebProfilLabSe\Models\FokusRiset; 
+use Polinema\WebProfilLabSe\Models\Publikasi;
+use Polinema\WebProfilLabSe\Models\Personil;
+use Polinema\WebProfilLabSe\Models\Scope; 
 
 class HomeController extends Controller
 {
     public function index()
     {
+        // 1. Ambil Data Tentang
+        $tentangModel = new Tentang();
+        $tentang = $tentangModel->getTentang();
+
+        // 2. Ambil Data Album
+        $albumModel = new Album();
+        $album = $albumModel->getAll();
+
+        // 3. Ambil Visi & Misi
+        $visiMisiModel = new VisiMisi();
+        $visiMisiData = $visiMisiModel->getAll();
+
+        // 4. Ambil Artikel
+        $articleModel = new Article();
+        $latestArticles = $articleModel->getLatest(4);
+
+        // 5. Ambil Fokus Riset (Core Competency - Section Tengah)
+        $fokusRisetModel = new FokusRiset();
+        $fokusRiset = $fokusRisetModel->getAll();
+        
+        // 6. Ambil Publikasi
+        $publikasiModel = new Publikasi();
+        $publikasi = array_slice($publikasiModel->getAll(), 0, 4);
+
+        // 7. Ambil Personil
+        $personilModel = new Personil();
+
+        // Ambil semua dosen dan mahasiswa (tanpa dipotong)
+        $dosen = $personilModel->getAll('Dosen');
+        $mahasiswa = $personilModel->getAll('Mahasiswa');
+
+        // 8. Ambil Scope Penelitian
+        $scopeModel = new Scope();
+        $scopes = $scopeModel->getAll();
+
         $data = [
-            'title'       => 'Beranda Laboratorium SE',
-            'description' => 'Halaman utama web profil Laboratorium Software Engineering.'
+            'title'          => 'Beranda Laboratorium SE',
+            'tentang'        => $tentang,
+            'album'          => $album,
+            'visi'           => $visiMisiData['visi'],
+            'misi'           => $visiMisiData['misi'],
+            'articles'       => $latestArticles,
+            'publikasi'      => $publikasi,
+            'dataDosen'          => $dosen,              
+            'mahasiswa'      => array_slice($mahasiswa, 0, 4),          
+            'fokusRiset'     => $fokusRiset,
+            'scopes'         => $scopes     
         ];
 
         $this->view('pages/home', $data, true);
@@ -18,9 +70,14 @@ class HomeController extends Controller
 
     public function profil()
     {
+        // Panggil Model Tentang
+        $tentangModel = new Tentang();
+        $dataTentang = $tentangModel->getTentang();
+
         $data = [
             'title'       => 'Tentang Laboratorium SE',
-            'description' => 'Informasi singkat tentang profil Laboratorium Software Engineering.'
+            'description' => 'Informasi singkat tentang profil Laboratorium Software Engineering.',
+            'tentang'     => $dataTentang // Kirim data ke View
         ];
 
         $this->view('pages/tentang/profil', $data, true);
@@ -28,9 +85,17 @@ class HomeController extends Controller
 
     public function visi_misi()
     {
+        // 1. Panggil Model
+        $visiMisiModel = new VisiMisi();
+        
+        // 2. Ambil data (method getAll sudah mengembalikan array ['visi' => ..., 'misi' => ...])
+        $dataVisiMisi = $visiMisiModel->getAll();
+
         $data = [
             'title'       => 'Visi & Misi Laboratorium SE',
-            'description' => 'Visi dan misi dari Laboratorium Software Engineering.'
+            'description' => 'Visi dan misi dari Laboratorium Software Engineering.',
+            'visi'        => $dataVisiMisi['visi'], // String konten visi
+            'misi'        => $dataVisiMisi['misi']  // Array list misi
         ];
 
         $this->view('pages/tentang/visi-misi', $data, true);
@@ -38,14 +103,33 @@ class HomeController extends Controller
 
     public function fokus_riset()
     {
-        $data = [];
+        // 1. Panggil Model
+        $fokusModel = new FokusRiset();
+        
+        // 2. Ambil data dari database
+        $fokusData = $fokusModel->getAll();
+
+        $data = [
+            // Kirim data ke view dengan key 'fokus'
+            'fokus' => $fokusData 
+        ];
 
         $this->view('pages/tentang/fokus-riset', $data, true);
     }
 
-        public function scope_penelitian()
+    public function scope_penelitian()
     {
-        $data = [];
+        // 1. Panggil Model
+        $scopeModel = new Scope();
+        
+        // 2. Ambil data dari database
+        $scopesData = $scopeModel->getAll();
+
+        $data = [
+            'pageTitle' => "Scope Penelitian | Laboratorium Software Engineering",
+            // Kirim data ke view dengan key 'scopes'
+            'scopes'    => $scopesData 
+        ];
 
         $this->view('pages/tentang/scope-penelitian', $data, true);
     }
@@ -62,13 +146,6 @@ class HomeController extends Controller
         $data = [];
 
         $this->view('pages/pendaftaran', $data, true);
-    }
-
-    public function artikel()
-    {
-        $data = [];
-        
-        $this->view('pages/artikel', $data, true);
     }
 
     public function personil()

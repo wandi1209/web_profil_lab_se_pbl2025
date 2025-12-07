@@ -37,27 +37,18 @@ class RekrutmenController extends Controller
      */
     public function detail()
     {
-        $id = $_GET['id'] ?? null;
-
-        if (!$id) {
-            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
-            exit;
-        }
-
-        $pendaftar = $this->pendaftarModel->getById($id);
+        $id = (int)($_GET['id'] ?? 0);
+        $model = new \Polinema\WebProfilLabSe\Models\Pendaftar();
+        $pendaftar = $model->findById($id);
 
         if (!$pendaftar) {
-            $_SESSION['error'] = 'Data pendaftar tidak ditemukan!';
+            $_SESSION['error'] = 'Data pendaftar tidak ditemukan.';
             header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
             exit;
         }
 
-        $data = [
-            'title'     => 'Detail Pendaftar',
-            'pendaftar' => $pendaftar
-        ];
-
-        $this->view('pages/admin/rekrutmen/detail', $data, true, 'admin');
+        // Render view yang sudah membaca $pendaftar['catatan']
+        $this->view('pages/admin/rekrutmen/detail', ['pendaftar' => $pendaftar], true, 'admin');
     }
 
     /**
@@ -93,36 +84,36 @@ class RekrutmenController extends Controller
      */
     public function updateStatus()
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        // Bersihkan pesan lama
+        unset($_SESSION['error'], $_SESSION['success']);
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
             exit;
         }
-
-        $id = $_POST['id'] ?? null;
-        $status = $_POST['status'] ?? 'Pending';
+        $id = (int)($_POST['id'] ?? 0);
+        $status = trim($_POST['status'] ?? '');
         $catatan = trim($_POST['catatan'] ?? '');
 
-        if (!$id) {
-            $_SESSION['error'] = 'ID pendaftar tidak valid!';
-            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
-            exit;
-        }
+        $model = new Pendaftar();
 
-        try {
-            $result = $this->pendaftarModel->updateStatus($id, $status, $catatan);
-
-            if ($result) {
-                $_SESSION['success'] = 'Status pendaftar berhasil diperbarui!';
-            } else {
-                $_SESSION['error'] = 'Gagal memperbarui status!';
+        // Jika status kosong, ambil status saat ini dari DB agar tidak mengosongkan
+        if ($status === '') {
+            $row = $model->findById($id);
+            if (!$row) {
+                $_SESSION['error'] = 'Data pendaftar tidak ditemukan.';
+                header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+                exit;
             }
-
-        } catch (Exception $e) {
-            $_SESSION['error'] = 'Terjadi kesalahan: ' . $e->getMessage();
-            error_log('RekrutmenController updateStatus Error: ' . $e->getMessage());
+            $status = $row['status']; // pakai status lama
         }
 
-        header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+        $ok = $model->updateStatus($id, $status, $catatan);
+
+        $_SESSION[$ok ? 'success' : 'error'] = $ok ? 'Perubahan disimpan.' : 'Gagal menyimpan status.';
+        header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen/detail?id=' . $id);
         exit;
     }
 

@@ -24,8 +24,16 @@
                             <td>: <?= htmlspecialchars($pendaftar['nim']) ?></td>
                         </tr>
                         <tr>
-                            <th>Kelas</th>
-                            <td>: <?= htmlspecialchars($pendaftar['kelas']) ?></td>
+                            <th>Peminatan</th>
+                            <td>: <?= htmlspecialchars($pendaftar['peminatan'] ?? '-') ?></td>
+                        </tr>
+                        <tr>
+                            <th>Keahlian</th>
+                            <td>: <?= htmlspecialchars($pendaftar['keahlian'] ?? '-') ?></td>
+                        </tr>
+                        <tr>
+                            <th>Angkatan</th>
+                            <td>: <?= htmlspecialchars($pendaftar['angkatan'] ?? '-') ?></td>
                         </tr>
                         <tr>
                             <th>Program Studi</th>

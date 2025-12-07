@@ -26,11 +26,11 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="footer-title">Jelajahi</h5>
                     <ul class="list-unstyled d-flex flex-column gap-3 small">
-                        <li><a href="<?= $_ENV['APP_URL'] ?>/index.php" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Beranda</a></li>
-                        <li><a href="#" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Profil Anggota</a></li>
-                        <li><a href="#" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Riset & Publikasi</a></li>
-                        <li><a href="#" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Blog Artikel</a></li>
-                        <li><a href="#" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Fasilitas</a></li>
+                        <li><a href="<?= $_ENV['APP_URL'] ?>/" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Beranda</a></li>
+                        <li><a href="<?= $_ENV['APP_URL'] ?>/#people" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Profil Anggota</a></li>
+                        <li><a href="<?= $_ENV['APP_URL'] ?>/#publikasi" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Riset & Publikasi</a></li>
+                        <li><a href="<?= $_ENV['APP_URL'] ?>/#artikel" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Blog Artikel</a></li>
+                        <li><a href="<?= $_ENV['APP_URL'] ?>/login" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Login</a></li>
                     </ul>
                 </div>
 
@@ -71,5 +71,6 @@
     </footer>
 
     <script src="<?= $_ENV['APP_URL'] ?>/assets/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>

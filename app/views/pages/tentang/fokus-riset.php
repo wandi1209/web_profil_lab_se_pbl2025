@@ -45,52 +45,40 @@ $pageTitle = "Fokus Riset | Laboratorium Software Engineering";
 <section class="py-5 bg-white">
     <div class="container">
 
-        <?php 
-        $fokus = [
-            [
-                "title" => "Software Engineering Methodologies and Architecture",
-                "icon"  => "bi-diagram-3-fill",
-                "desc"  => "Pengembangan metodologi modern seperti Agile, Scrum, DevOps, 
-                            serta eksplorasi arsitektur sistem seperti microservices dan cloud-native."
-            ],
-            [
-                "title" => "Domain-Specific Software Engineering Applications",
-                "icon"  => "bi-window-stack",
-                "desc"  => "Penerapan rekayasa perangkat lunak pada sektor kesehatan, pendidikan, 
-                            pemerintahan, smart city, dan industri 4.0."
-            ],
-            [
-                "title" => "Emerging Technologies in Software Engineering",
-                "icon"  => "bi-rocket-takeoff-fill",
-                "desc"  => "Eksplorasi teknologi terbaru seperti AI, IoT, Blockchain,
-                            serta pengembangan sistem autonomous dan immersive tech."
-            ]
-        ];
-        ?>
-
         <div class="row g-4">
-            <?php foreach ($fokus as $item) : ?>
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm h-100 focus-card">
-                        <div class="card-body p-4 d-flex flex-column">
+            <?php if (!empty($fokus)): ?>
+                <?php foreach ($fokus as $item) : 
+                    // Setup default icon jika kosong di database
+                    $iconClass = !empty($item['icon']) ? $item['icon'] : 'bi-diagram-3-fill';
+                    // Pastikan nama kolom sesuai dengan database (description/desc)
+                    $desc = $item['description'] ?? $item['desc'] ?? '';
+                ?>
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm h-100 focus-card">
+                            <div class="card-body p-4 d-flex flex-column">
 
-                            <div class="icon-box focus-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10" 
-                                 style="width: 58px; height: 58px;">
-                                <i class="bi <?= $item['icon'] ?> text-primary" style="font-size: 1.6rem;"></i>
+                                <div class="icon-box focus-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10" 
+                                     style="width: 58px; height: 58px;">
+                                    <i class="bi <?= htmlspecialchars($iconClass) ?> text-primary" style="font-size: 1.6rem;"></i>
+                                </div>
+
+                                <h4 class="fw-bold text-dark mb-3">
+                                    <?= htmlspecialchars($item['title']) ?>
+                                </h4>
+
+                                <p class="text-secondary small mb-3">
+                                    <?= htmlspecialchars($desc) ?>
+                                </p>
+
                             </div>
-
-                            <h4 class="fw-bold text-dark mb-3">
-                                <?= $item['title'] ?>
-                            </h4>
-
-                            <p class="text-secondary small mb-3">
-                                <?= $item['desc'] ?>
-                            </p>
-
                         </div>
                     </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Belum ada data fokus riset yang ditambahkan.</p>
                 </div>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </div>
 
     </div>

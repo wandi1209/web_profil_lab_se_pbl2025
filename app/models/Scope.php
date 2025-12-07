@@ -15,9 +15,6 @@ class Scope
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /**
-     * Get all scope penelitian
-     */
     public function getAll()
     {
         try {
@@ -30,9 +27,6 @@ class Scope
         }
     }
 
-    /**
-     * Get scope by ID
-     */
     public function getById($id)
     {
         try {
@@ -45,22 +39,20 @@ class Scope
         }
     }
 
-    /**
-     * Create new scope penelitian
-     */
+    // CREATE: Hapus icon_url
     public function create($data)
     {
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO scope_penelitian (kategori, deskripsi, icon_url, tags)
-                VALUES (:kategori, :deskripsi, :icon_url, :tags)
+                INSERT INTO scope_penelitian (kategori, deskripsi, icon_bootstrap, tags)
+                VALUES (:kategori, :deskripsi, :icon_bootstrap, :tags)
             ");
 
             return $stmt->execute([
-                ':kategori'   => $data['kategori'],
-                ':deskripsi'  => $data['deskripsi'],
-                ':icon_url'   => $data['icon_url'] ?? null,
-                ':tags'       => $data['tags'] ?? null
+                ':kategori'       => $data['kategori'],
+                ':deskripsi'      => $data['deskripsi'],
+                ':icon_bootstrap' => $data['icon_bootstrap'] ?? null,
+                ':tags'           => $data['tags'] ?? null
             ]);
         } catch (Exception $e) {
             error_log('Scope create Error: ' . $e->getMessage());
@@ -68,9 +60,7 @@ class Scope
         }
     }
 
-    /**
-     * Update scope penelitian
-     */
+    // UPDATE: Hapus icon_url
     public function update($id, $data)
     {
         try {
@@ -89,10 +79,10 @@ class Scope
                 ':id'         => $id
             ];
 
-            // Jika ada icon baru
-            if (isset($data['icon_url'])) {
-                $query .= ", icon_url = :icon_url";
-                $params[':icon_url'] = $data['icon_url'];
+            // Cek icon_bootstrap (menggunakan array_key_exists agar bisa update jadi NULL/Kosong)
+            if (array_key_exists('icon_bootstrap', $data)) {
+                $query .= ", icon_bootstrap = :icon_bootstrap";
+                $params[':icon_bootstrap'] = $data['icon_bootstrap'];
             }
 
             $query .= " WHERE id = :id";
@@ -105,9 +95,6 @@ class Scope
         }
     }
 
-    /**
-     * Delete scope penelitian
-     */
     public function delete($id)
     {
         try {
@@ -119,25 +106,12 @@ class Scope
         }
     }
 
-    /**
-     * Parse tags JSON ke array
-     */
     public function parseTags($jsonString)
     {
-        if (empty($jsonString) || is_null($jsonString)) {
-            return [];
-        }
-
-        if (is_array($jsonString)) {
-            return $jsonString;
-        }
-
+        if (empty($jsonString) || is_null($jsonString)) return [];
+        if (is_array($jsonString)) return $jsonString;
         $decoded = json_decode($jsonString, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
-            return [];
-        }
-
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) return [];
         return $decoded;
     }
 }

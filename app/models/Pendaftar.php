@@ -8,7 +8,7 @@ use Exception;
 
 class Pendaftar
 {
-    private $db;
+    private PDO $db;
 
     public function __construct()
     {
@@ -18,24 +18,35 @@ class Pendaftar
     /**
      * Create pendaftar baru (dari landing page)
      */
-    public function create($nama, $nim, $kelas, $prodi, $alasan, $email, $no_hp)
+    public function create(array $data): bool
     {
         try {
-            $query = "INSERT INTO pendaftar (nama, nim, kelas, program_studi, alasan, email, no_hp, status, created_at) 
-                      VALUES (:nama, :nim, :kelas, :prodi, :alasan, :email, :hp, 'Pending', CURRENT_TIMESTAMP)";
-            
-            $stmt = $this->db->prepare($query);
-            return $stmt->execute([
-                ':nama'   => $nama,
-                ':nim'    => $nim,
-                ':kelas'  => $kelas,
-                ':prodi'  => $prodi,
-                ':alasan' => $alasan,
-                ':email'  => $email,
-                ':hp'     => $no_hp
+            $sql = "
+                INSERT INTO pendaftar 
+                    (nama, email, no_hp, nim, angkatan, program_studi, peminatan, keahlian, portofolio_url, alasan, status, created_at, updated_at)
+                VALUES 
+                    (:nama, :email, :no_hp, :nim, :angkatan, :program_studi, :peminatan, :keahlian, :portofolio_url, :alasan, 'Pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ";
+            $stmt = $this->db->prepare($sql);
+            $ok = $stmt->execute([
+                ':nama'           => $data['nama'],
+                ':email'          => $data['email'],
+                ':no_hp'          => $data['no_hp'] ?? null,
+                ':nim'            => $data['nim'],
+                ':angkatan'       => $data['angkatan'],
+                ':program_studi'  => $data['program_studi'],
+                ':peminatan'      => $data['peminatan'],
+                ':keahlian'       => $data['keahlian'],
+                ':portofolio_url' => $data['portofolio_url'] ?? null,
+                ':alasan'         => $data['alasan'],
             ]);
+            if (!$ok) {
+                $err = $stmt->errorInfo(); throw new Exception($err[2] ?? 'DB insert failed');
+            }
+            return true;
         } catch (Exception $e) {
             error_log('Pendaftar create Error: ' . $e->getMessage());
+            $_SESSION['error'] = 'DB Error: ' . $e->getMessage();
             return false;
         }
     }
@@ -72,23 +83,45 @@ class Pendaftar
     /**
      * Update status pendaftar (Admin only)
      */
-    public function updateStatus($id, $status, $catatan = null)
+    public function updateStatus(int $id, string $status, ?string $catatan = null): bool
     {
         try {
-            $query = "UPDATE pendaftar 
-                      SET status = :status, 
-                          catatan = :catatan,
-                          updated_at = CURRENT_TIMESTAMP 
-                      WHERE id = :id";
-                      
-            $stmt = $this->db->prepare($query);
-            return $stmt->execute([
-                ':id'      => $id, 
-                ':status'  => $status,
+            $statusNorm = ucfirst(strtolower($status)); // Pending/Diterima/Ditolak
+
+            // Update status + catatan (catatan boleh kosong)
+            $stmt = $this->db->prepare("
+                UPDATE pendaftar
+                   SET status = :status,
+                       catatan = :catatan,
+                       updated_at = CURRENT_TIMESTAMP
+                 WHERE id = :id
+            ");
+            $ok = $stmt->execute([
+                ':id'      => $id,
+                ':status'  => $statusNorm,
                 ':catatan' => $catatan
             ]);
+            if (!$ok) {
+                $err = $stmt->errorInfo();
+                throw new Exception($err[2] ?? 'Gagal UPDATE pendaftar');
+            }
+
+            // Hanya panggil prosedur saat status baru adalah Diterima
+            if ($statusNorm === 'Diterima') {
+                // Jika PostgreSQL < 11, ubah ke SELECT approve_mahasiswa_fn(:pid)
+                $proc = $this->db->prepare("CALL approve_mahasiswa(:pid)");
+                if (!$proc->execute([':pid' => $id])) {
+                    $err = $proc->errorInfo();
+                    throw new Exception($err[2] ?? 'Gagal CALL approve_mahasiswa');
+                }
+            }
+
+            return true;
         } catch (Exception $e) {
             error_log('Pendaftar updateStatus Error: ' . $e->getMessage());
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                $_SESSION['error'] = 'DB Error: ' . $e->getMessage();
+            }
             return false;
         }
     }
@@ -153,5 +186,40 @@ class Pendaftar
             error_log('Pendaftar search Error: ' . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Find pendaftar by ID
+     */
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, nama, email, no_hp, nim, angkatan, program_studi,
+                   peminatan, keahlian, portofolio_url, alasan, status,
+                   catatan, created_at, updated_at
+            FROM pendaftar
+            WHERE id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    /**
+     * Find pendaftar by Nim
+     */
+    public function findByNim(string $nim): ?array
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, nama, email, no_hp, nim, angkatan, program_studi,
+                   peminatan, keahlian, portofolio_url, alasan, status,
+                   created_at, updated_at
+            FROM pendaftar
+            WHERE nim = :nim
+            LIMIT 1
+        ");
+        $stmt->execute([':nim' => $nim]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
     }
 }

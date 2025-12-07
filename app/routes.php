@@ -2,7 +2,10 @@
 
 use Polinema\WebProfilLabSe\Controllers\HomeController;
 use Polinema\WebProfilLabSe\Controllers\AuthController;
+use Polinema\WebProfilLabSe\Controllers\ArtikelController;
 use Polinema\WebProfilLabSe\Controllers\AdminController;
+use Polinema\WebProfilLabSe\Controllers\PersonilController;
+use Polinema\WebProfilLabSe\Controllers\PendaftaranController;
 use Polinema\WebProfilLabSe\Middlewares\AuthMiddleware;
 
 // admin controllers
@@ -13,6 +16,7 @@ use Polinema\WebProfilLabSe\Controllers\Admin\RoadmapController as AdminRoadmapC
 use Polinema\WebProfilLabSe\Controllers\Admin\ScopeController as AdminScopeController;
 use Polinema\WebProfilLabSe\Controllers\Admin\TentangController as AdminTentangController;
 use Polinema\WebProfilLabSe\Controllers\Admin\VisiMisiController as AdminVisiMisiController;
+use Polinema\WebProfilLabSe\Controllers\Admin\FokusRisetController as AdminFokusRisetController; 
 use Polinema\WebProfilLabSe\Controllers\Admin\DosenController as AdminDosenController;
 use Polinema\WebProfilLabSe\Controllers\Admin\MahasiswaController as AdminMahasiswaController;
 use Polinema\WebProfilLabSe\Controllers\Admin\PublikasiController as AdminPublikasiController;
@@ -29,20 +33,23 @@ $app->get('/tentang/visi-misi', [HomeController::class, 'visi_misi']);
 $app->get('/tentang/fokus-riset',   [HomeController::class, 'fokus_riset']);
 $app->get('/tentang/scope-penelitian',   [HomeController::class, 'scope_penelitian']);
 
-// ANGGOTA
-$app->get('/anggota/dosen',     [HomeController::class, 'dosen']);
-$app->get('/anggota/mahasiswa', [HomeController::class, 'mahasiswa']);
-$app->get('/anggota/alumni',    [HomeController::class, 'alumni']);
+// ANGGOTA (Gunakan PersonilController)
+$app->get('/personil/dosen',     [PersonilController::class, 'dosen']);
+$app->get('/personil/mahasiswa', [PersonilController::class, 'mahasiswa']);
+$app->get('/personil/alumni',    [HomeController::class, 'alumni']);
+
+// DETAIL PERSONIL (Gunakan PersonilController)
+// Menangani klik detail dari halaman dosen/mahasiswa
+$app->get('/personil/detail/{id}', [PersonilController::class, 'detail']);
 
 // ARTIKEL
-$app->get('/artikel',           [HomeController::class, 'artikel']);
+$app->get('/artikel',           [ArtikelController::class, 'index']);
+$app->get('/artikel/detail/{slug}',      [ArtikelController::class, 'detail']);
 
 // PENDAFTARAN
-$app->get('/pendaftaran',       [HomeController::class, 'pendaftaran']);
-
-// PERSONIL 
-$app->get('/personil/mahasiswa',      [HomeController::class, 'mahasiswa']);
-$app->get('/personil/dosen/{id}',    [HomeController::class, 'personilDetail']);
+$app->post('/pendaftaran/store', [PendaftaranController::class, 'store']);
+$app->get('/pendaftaran', [PendaftaranController::class, 'index']);
+$app->get('/pendaftaran/cek-status', [PendaftaranController::class, 'cekStatus']);
 
 // ================== AUTH ==================
 $app->get('/login',             [AuthController::class, 'login']);
@@ -66,68 +73,307 @@ $app->get('/admin', function() {
     $controller = new AdminController();
     $controller->index();
 });
+$app->post('/admin/refresh-stats', [AdminController::class, 'refreshStats']);
 
 // ================== PROFILE (ADMIN) ==================
 // Tentang Lab (pakai tabel profile)
-$app->get('/admin/profile/tentangLab',        [AdminTentangController::class,   'index']);
-$app->get('/admin/profile/tentangLab/edit',   [AdminTentangController::class,   'edit']);
-$app->get('/admin/profile/tentangLab/delete', [AdminTentangController::class,   'delete']);
-$app->post('/admin/profile/tentangLab/update',[AdminTentangController::class,   'update']);
+$app->get('/admin/profile/tentangLab', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminTentangController();
+    $controller->index();
+});
+
+$app->get('/admin/profile/tentangLab/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminTentangController();
+    $controller->edit();
+});
+
+$app->get('/admin/profile/tentangLab/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminTentangController();
+    $controller->delete();
+});
+
+$app->post('/admin/profile/tentangLab/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminTentangController();
+    $controller->update();
+});
 
 // Visi Misi (pakai tabel profile juga)
-$app->get('/admin/profile/visiMisi',          [AdminVisiMisiController::class,  'index']);
-$app->get('/admin/profile/visiMisi/edit',     [AdminVisiMisiController::class,  'edit']);
-$app->get('/admin/profile/visiMisi/delete',   [AdminVisiMisiController::class,  'delete']);
-$app->post('/admin/profile/visiMisi/update',  [AdminVisiMisiController::class,  'update']);
+$app->get('/admin/profile/visiMisi', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminVisiMisiController();
+    $controller->index();
+});
 
-$app->get('/admin/profile/profil',           [AdminRoadmapController::class,   'index']);
-$app->get('/admin/profile/profil/create',    [AdminRoadmapController::class,   'create']);
-$app->get('/admin/profile/profil/edit',      [AdminRoadmapController::class,   'edit']);
-$app->get('/admin/profile/profil/delete',    [AdminRoadmapController::class,   'delete']);
+$app->get('/admin/profile/visiMisi/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminVisiMisiController();
+    $controller->edit();
+});
+
+$app->get('/admin/profile/visiMisi/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminVisiMisiController();
+    $controller->delete();
+});
+
+$app->post('/admin/profile/visiMisi/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminVisiMisiController();
+    $controller->update();
+});
+
+// TAMBAHKAN ROUTE FOKUS RISET DI SINI (DENGAN MIDDLEWARE)
+$app->get('/admin/profile/fokusRiset', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminFokusRisetController();
+    $controller->index();
+});
+
+$app->get('/admin/profile/fokusRiset/create', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminFokusRisetController();
+    $controller->create();
+});
+
+$app->post('/admin/profile/fokusRiset/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminFokusRisetController();
+    $controller->store();
+});
+
+$app->get('/admin/profile/fokusRiset/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminFokusRisetController();
+    $controller->edit();
+});
+
+$app->post('/admin/profile/fokusRiset/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminFokusRisetController();
+    $controller->update();
+});
+
+$app->post('/admin/profile/fokusRiset/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminFokusRisetController();
+    $controller->delete();
+});
+// -------------------------------------------
+
+$app->get('/admin/profile/profil', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRoadmapController();
+    $controller->index();
+});
+
+$app->get('/admin/profile/profil/create', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRoadmapController();
+    $controller->create();
+});
+
+$app->get('/admin/profile/profil/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRoadmapController();
+    $controller->edit();
+});
+
+$app->get('/admin/profile/profil/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRoadmapController();
+    $controller->delete();
+});
 
 // Scope (read only)
-$app->get('/admin/profile/scopePenelitian',   [AdminScopeController::class,     'index']);
+$app->get('/admin/profile/scopePenelitian', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminScopeController();
+    $controller->index();
+});
 
 // Album
-$app->get('/admin/profile/album',             [AdminAlbumController::class,     'index']);
-$app->get('/admin/profile/album/create',      [AdminAlbumController::class,     'create']);
-$app->get('/admin/profile/album/edit',        [AdminAlbumController::class,     'edit']);
-$app->get('/admin/profile/album/delete',      [AdminAlbumController::class,     'delete']);
-$app->post('/admin/profile/album/store',      [AdminAlbumController::class,     'store']);
-$app->post('/admin/profile/album/update',     [AdminAlbumController::class,     'update']);
+$app->get('/admin/profile/album', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminAlbumController();
+    $controller->index();
+});
+
+$app->get('/admin/profile/album/create', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminAlbumController();
+    $controller->create();
+});
+
+$app->get('/admin/profile/album/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminAlbumController();
+    $controller->edit();
+});
+
+$app->get('/admin/profile/album/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminAlbumController();
+    $controller->delete();
+});
+
+$app->post('/admin/profile/album/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminAlbumController();
+    $controller->store();
+});
+
+$app->post('/admin/profile/album/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminAlbumController();
+    $controller->update();
+});
 
 // ================== PERSONIL (ADMIN) ==================
-$app->get('/admin/personil',                  [AdminDosenController::class,     'index']);
+$app->get('/admin/personil', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminDosenController();
+    $controller->index();
+});
 
 // Dosen
-$app->get('/admin/personil/dosen',            [AdminDosenController::class,     'index']);
-$app->get('/admin/personil/createDosen',      [AdminDosenController::class,     'create']);
-$app->get('/admin/personil/dosen/edit',       [AdminDosenController::class,     'edit']);
-$app->get('/admin/personil/dosen/delete',     [AdminDosenController::class,     'delete']);
-$app->post('/admin/personil/dosen/store',     [AdminDosenController::class,     'store']);
-$app->post('/admin/personil/dosen/update',    [AdminDosenController::class,     'update']);
+$app->get('/admin/personil/dosen', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminDosenController();
+    $controller->index();
+});
+
+$app->get('/admin/personil/createDosen', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminDosenController();
+    $controller->create();
+});
+
+$app->get('/admin/personil/dosen/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminDosenController();
+    $controller->edit();
+});
+
+$app->get('/admin/personil/dosen/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminDosenController();
+    $controller->delete();
+});
+
+$app->post('/admin/personil/dosen/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminDosenController();
+    $controller->store();
+});
+
+$app->post('/admin/personil/dosen/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminDosenController();
+    $controller->update();
+});
 
 // Mahasiswa
-$app->get('/admin/personil/mahasiswa',        [AdminMahasiswaController::class, 'index']);
-$app->get('/admin/personil/createMahasiswa',  [AdminMahasiswaController::class, 'create']);
-$app->get('/admin/personil/mahasiswa/edit',   [AdminMahasiswaController::class, 'edit']);
-$app->get('/admin/personil/mahasiswa/delete', [AdminMahasiswaController::class, 'delete']);
-$app->post('/admin/personil/mahasiswa/store', [AdminMahasiswaController::class, 'store']);
-$app->post('/admin/personil/mahasiswa/update',[AdminMahasiswaController::class, 'update']);
+$app->get('/admin/personil/mahasiswa', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminMahasiswaController();
+    $controller->index();
+});
+
+$app->get('/admin/personil/createMahasiswa', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminMahasiswaController();
+    $controller->create();
+});
+
+$app->get('/admin/personil/mahasiswa/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminMahasiswaController();
+    $controller->edit();
+});
+
+$app->get('/admin/personil/mahasiswa/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminMahasiswaController();
+    $controller->delete();
+});
+
+$app->post('/admin/personil/mahasiswa/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminMahasiswaController();
+    $controller->store();
+});
+
+$app->post('/admin/personil/mahasiswa/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminMahasiswaController();
+    $controller->update();
+});
 
 // ================== BLOG (ADMIN) ==================
-$app->get('/admin/blog',              [AdminBlogController::class, 'index']);
-$app->get('/admin/blog/createBlog',   [AdminBlogController::class, 'create']);
-$app->get('/admin/blog/edit',         [AdminBlogController::class, 'edit']);
-$app->get('/admin/blog/delete',       [AdminBlogController::class, 'delete']);
-$app->post('/admin/blog/store',       [AdminBlogController::class, 'store']);
-$app->post('/admin/blog/update',      [AdminBlogController::class, 'update']);
+$app->get('/admin/blog', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminBlogController();
+    $controller->index();
+});
+
+$app->get('/admin/blog/createBlog', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminBlogController();
+    $controller->create();
+});
+
+$app->get('/admin/blog/edit', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminBlogController();
+    $controller->edit();
+});
+
+$app->get('/admin/blog/delete', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminBlogController();
+    $controller->delete();
+});
+
+$app->post('/admin/blog/store', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminBlogController();
+    $controller->store();
+});
+
+$app->post('/admin/blog/update', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminBlogController();
+    $controller->update();
+});
 
 // ================== REKRUTMEN (ADMIN) ==================
-$app->get('/admin/rekrutmen',                 [AdminRekrutmenController::class, 'index']);
-$app->get('/admin/rekrutmen/createRekrutmen', [AdminRekrutmenController::class, 'create']);
-$app->get('/admin/rekrutmen/editRekrutmen',   [AdminRekrutmenController::class, 'edit']);
-$app->get('/admin/rekrutmen/deleteRekrutmen', [AdminRekrutmenController::class, 'delete']);
+$app->get('/admin/rekrutmen', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRekrutmenController();
+    $controller->index();
+});
+
+$app->get('/admin/rekrutmen/createRekrutmen', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRekrutmenController();
+    $controller->create();
+});
+
+$app->get('/admin/rekrutmen/editRekrutmen', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRekrutmenController();
+    $controller->edit();
+});
+
+$app->get('/admin/rekrutmen/deleteRekrutmen', function() {
+    AuthMiddleware::isAdmin();
+    $controller = new AdminRekrutmenController();
+    $controller->delete();
+});
 
 // ================== VISI MISI ==================
 $app->get('/admin/profile/visiMisi', function() {

@@ -29,6 +29,7 @@
             <form method="POST" action="<?= $_ENV['APP_URL'] ?>/admin/scope/update" enctype="multipart/form-data">
 
                 <input type="hidden" name="id" value="<?= $scope['id'] ?>">
+                <input type="hidden" name="existing_icon_url" value="<?= $scope['icon_url'] ?? '' ?>">
 
                 <!-- Kategori -->
                 <div class="mb-4">
@@ -51,8 +52,8 @@
                         required><?= htmlspecialchars($scope['deskripsi']) ?></textarea>
                 </div>
 
-                <!-- Icon/Logo -->
-                <div class="mb-4">
+                <!-- Icon Upload -->
+                <div id="uploadSection" class="mb-4" style="display: <?= !empty($scope['icon_bootstrap']) ? 'none' : 'block' ?>;">
                     <label class="form-label fw-bold">Icon/Logo</label>
 
                     <!-- Preview Icon Lama -->
@@ -71,24 +72,20 @@
                         </div>
                     </div>
                     <?php endif; ?>
+                </div>
 
-                    <!-- Upload Icon Baru -->
-                    <input
-                        type="file"
-                        name="icon"
-                        class="form-control input-bordered"
-                        accept="image/*"
-                        id="inputIcon">
-                    <small class="text-muted">
-                        Format: JPG, PNG, SVG | Maksimal 2MB
-                        <?= !empty($scope['icon_url']) ? ' | Upload icon baru untuk mengganti' : '' ?>
-                    </small>
-
-                    <!-- Preview Upload Baru -->
-                    <div id="previewContainer" class="mt-3" style="display: none;">
-                        <label class="form-label fw-bold">Preview Icon Baru:</label><br>
-                        <img id="previewImage" src="" alt="Preview" class="border-preview" style="max-width: 100px;">
+                <div id="bootstrapSection" class="mb-4">
+                    <label class="form-label fw-bold">Icon Bootstrap (Class Name)</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-code-slash"></i></span>
+                        <input
+                            type="text"
+                            name="icon_bootstrap"
+                            class="form-control input-bordered"
+                            value="<?= htmlspecialchars($scope['icon_bootstrap'] ?? '') ?>" 
+                            placeholder="Contoh: bi-diagram-3-fill">
                     </div>
+                    <small class="text-muted">Cari nama class icon di <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>.</small>
                 </div>
 
                 <!-- Tags -->
@@ -180,6 +177,19 @@
 </style>
 
 <script>
+// Toggle icon type
+document.querySelectorAll('input[name="icon_type"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        if (this.value === 'upload') {
+            document.getElementById('uploadSection').style.display = 'block';
+            document.getElementById('bootstrapSection').style.display = 'none';
+        } else {
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('bootstrapSection').style.display = 'block';
+        }
+    });
+});
+
 // Preview icon baru
 document.getElementById('inputIcon').addEventListener('change', function(e) {
     const file = e.target.files[0];

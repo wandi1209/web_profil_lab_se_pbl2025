@@ -55,6 +55,7 @@ class BlogController extends Controller
         $title = trim($_POST['title'] ?? '');
         $ringkasan = trim($_POST['ringkasan'] ?? '');
         $content = trim($_POST['content'] ?? '');
+        $isFeatured = isset($_POST['featured']);
 
         // Validasi
         if (empty($title) || empty($content)) {
@@ -85,7 +86,9 @@ class BlogController extends Controller
                 'slug'       => $slug,
                 'gambar_url' => $gambarUrl,
                 'ringkasan'  => $ringkasan,
-                'content'    => $content
+                'content'    => $content,
+                'is_featured' => $isFeatured ? 'true' : 'false'
+        
             ];
 
             // Simpan ke database
@@ -149,6 +152,7 @@ class BlogController extends Controller
         $ringkasan = trim($_POST['ringkasan'] ?? '');
         $content = trim($_POST['content'] ?? '');
         $hapusGambar = isset($_POST['hapus_gambar']);
+        $isFeatured = isset($_POST['featured']);
 
         // Validasi
         if (!$id || empty($title) || empty($content)) {
@@ -199,7 +203,8 @@ class BlogController extends Controller
                 'title'     => $title,
                 'slug'      => $slug,
                 'ringkasan' => $ringkasan,
-                'content'   => $content
+                'content'   => $content,
+                'is_featured' => $isFeatured ? 'true' : 'false'
             ];
 
             if ($gambarUrl !== null) {

@@ -55,7 +55,7 @@
                             <td><?= $no++ ?></td>
                             <td>
                                 <?php if (!empty($row['foto_url'])): ?>
-                                    <img src="<?= $_ENV['APP_URL'] . $row['foto_url'] ?>"
+                                    <img src="<?= $_ENV['APP_URL'] . '/public' . $row['foto_url'] ?>"
                                          alt="<?= htmlspecialchars($row['nama']) ?>"
                                          class="rounded"
                                          style="width: 60px; height: 60px; object-fit: cover;">
@@ -69,7 +69,7 @@
                             <td>
                                 <strong><?= htmlspecialchars($row['nama']) ?></strong>
                                 <?php if (!empty($row['nidn'])): ?>
-                                    <br><small class="text-muted">NIDN: <?= htmlspecialchars($row['nidn']) ?></small>
+                                    <br><small class="text-muted">NIP: <?= htmlspecialchars($row['nidn']) ?></small>
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($row['position']) ?></td>

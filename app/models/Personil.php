@@ -18,11 +18,18 @@ class Personil
     /**
      * Get all personil dengan filter kategori
      */
+    /**
+     * Get all personil dengan filter kategori
+     */
     public function getAll($kategori = null)
     {
         try {
             if ($kategori) {
-                $query = "SELECT * FROM personil WHERE kategori = :kategori ORDER BY id DESC";
+                if (strtolower(trim($kategori)) === 'dosen') {
+                    $query = "SELECT * FROM personil WHERE TRIM(kategori) = :kategori ORDER BY urutan ASC, id ASC";
+                } else {
+                    $query = "SELECT * FROM personil WHERE TRIM(kategori) = :kategori ORDER BY id DESC";
+                }
                 $stmt = $this->db->prepare($query);
                 $stmt->execute([':kategori' => $kategori]);
             } else {
@@ -30,9 +37,7 @@ class Personil
                 $stmt = $this->db->prepare($query);
                 $stmt->execute();
             }
-
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Personil getAll Error: ' . $e->getMessage());
             return [];
@@ -56,8 +61,8 @@ class Personil
         }
     }
 
-    /**
-     * Create personil baru
+/**
+     * Create personil baru (UPDATE: Tambah Sinta & Scholar)
      */
     public function create($data)
     {
@@ -65,26 +70,30 @@ class Personil
             $stmt = $this->db->prepare("
                 INSERT INTO personil (
                     nama, kategori, position, email, nidn, keahlian, 
-                    pendidikan, publikasi, linkedin, github, foto_url
+                    pendidikan, linkedin, github, foto_url, urutan,
+                    link_sinta, link_scholar
                 )
                 VALUES (
                     :nama, :kategori, :position, :email, :nidn, :keahlian,
-                    :pendidikan, :publikasi, :linkedin, :github, :foto
+                    :pendidikan, :linkedin, :github, :foto, :urutan,
+                    :link_sinta, :link_scholar
                 )
             ");
 
             return $stmt->execute([
-                ':nama'        => $data['nama'],
-                ':kategori'    => $data['kategori'],
-                ':position'    => $data['position'],
-                ':email'       => $data['email'],
-                ':nidn'        => $data['nidn'] ?? null,
-                ':keahlian'    => $data['keahlian'] ?? null,
-                ':pendidikan'  => $data['pendidikan'] ?? null,
-                ':publikasi'   => $data['publikasi'] ?? null,
-                ':linkedin'    => $data['linkedin'] ?? null,
-                ':github'      => $data['github'] ?? null,
-                ':foto'        => $data['foto_url'] ?? null
+                ':nama'         => $data['nama'],
+                ':kategori'     => $data['kategori'],
+                ':position'     => $data['position'],
+                ':email'        => $data['email'],
+                ':nidn'         => $data['nidn'] ?? null,
+                ':keahlian'     => $data['keahlian'] ?? null,
+                ':pendidikan'   => $data['pendidikan'] ?? null,
+                ':linkedin'     => $data['linkedin'] ?? null,
+                ':github'       => $data['github'] ?? null,
+                ':foto'         => $data['foto_url'] ?? null,
+                ':urutan'       => $data['urutan'] ?? 999,
+                ':link_sinta'   => $data['link_sinta'] ?? null,   // TAMBAHAN
+                ':link_scholar' => $data['link_scholar'] ?? null  // TAMBAHAN
             ]);
 
         } catch (Exception $e) {
@@ -94,7 +103,7 @@ class Personil
     }
 
     /**
-     * Update personil
+     * Update personil (UPDATE: Tambah Sinta & Scholar)
      */
     public function update($id, $data)
     {
@@ -108,28 +117,31 @@ class Personil
                     nidn = :nidn,
                     keahlian = :keahlian,
                     pendidikan = :pendidikan,
-                    publikasi = :publikasi,
                     linkedin = :linkedin,
                     github = :github,
+                    urutan = :urutan,
+                    link_sinta = :link_sinta,       
+                    link_scholar = :link_scholar,   
                     updated_at = CURRENT_TIMESTAMP
             ";
 
             $params = [
-                ':nama'        => $data['nama'],
-                ':kategori'    => $data['kategori'],
-                ':position'    => $data['position'],
-                ':email'       => $data['email'],
-                ':nidn'        => $data['nidn'] ?? null,
-                ':keahlian'    => $data['keahlian'] ?? null,
-                ':pendidikan'  => $data['pendidikan'] ?? null,
-                ':publikasi'   => $data['publikasi'] ?? null,
-                ':linkedin'    => $data['linkedin'] ?? null,
-                ':github'      => $data['github'] ?? null,
-                ':id'          => $id
+                ':nama'         => $data['nama'],
+                ':kategori'     => $data['kategori'],
+                ':position'     => $data['position'],
+                ':email'        => $data['email'],
+                ':nidn'         => $data['nidn'] ?? null,
+                ':keahlian'     => $data['keahlian'] ?? null,
+                ':pendidikan'   => $data['pendidikan'] ?? null,
+                ':linkedin'     => $data['linkedin'] ?? null,
+                ':github'       => $data['github'] ?? null,
+                ':urutan'       => $data['urutan'] ?? 999,
+                ':link_sinta'   => $data['link_sinta'] ?? null,   // TAMBAHAN
+                ':link_scholar' => $data['link_scholar'] ?? null, // TAMBAHAN
+                ':id'           => $id
             ];
 
-            // Jika ada foto baru
-            if (isset($data['foto_url'])) {
+            if (array_key_exists('foto_url', $data)) {
                 $query .= ", foto_url = :foto";
                 $params[':foto'] = $data['foto_url'];
             }
@@ -204,6 +216,19 @@ class Personil
         }
 
         return $decoded;
+    }
+
+    // TAMBAHKAN INI JIKA BELUM ADA
+    public function getDosenList()
+    {
+        try {
+            // FIX: Gunakan IN untuk menangani 'Dosen' (besar) atau 'dosen' (kecil)
+            $query = "SELECT id, nama FROM personil WHERE kategori IN ('Dosen', 'dosen') ORDER BY nama ASC";
+            $stmt = $this->db->query($query);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 }
 ?>
