@@ -62,6 +62,7 @@ $featuredMenu = isset($globalFeaturedArticles) ? $globalFeaturedArticles : [];
     
     <link rel="stylesheet" href="<?= $appUrl ?>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= $appUrl ?>/assets/css/landing_page.css">
+    <link rel="icon" type="image/x-icon" href="<?= $_ENV['APP_URL'] ?>/assets/icons/lab_se.svg">
 </head>
 <body>
     

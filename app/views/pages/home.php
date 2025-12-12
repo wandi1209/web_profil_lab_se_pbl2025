@@ -42,7 +42,7 @@ $pageTitle = "Beranda - Laboratorium SE";
             </div>
 
             <div class="carousel-item hero-slider-item">
-                <img src="<?= $_ENV['APP_URL'] ?>/assets/images/gedung.webp" class="hero-img-zoom" alt="Aktivitas Riset">
+                <img src="<?= $_ENV['APP_URL'] ?>/assets/images/slider-2.jpg" class="hero-img-zoom" alt="Aktivitas Riset">
                 
                 <div class="hero-overlay"></div>
                 <div class="hero-pattern"></div>
@@ -122,7 +122,7 @@ $pageTitle = "Beranda - Laboratorium SE";
                 <h2 class="display-6 fw-bold text-dark mt-2 mb-4"><?= htmlspecialchars($tentang['judul'] ?? 'Pusat Unggulan Rekayasa Perangkat Lunak') ?></h2>
                 
                 <div class="text-secondary lh-lg mb-4">
-                    <?= nl2br(htmlspecialchars($tentang['konten'] ?? 'Deskripsi laboratorium belum tersedia.')) ?>
+                    <?= ($tentang['konten'] ?? 'Deskripsi laboratorium belum tersedia.') ?>
                 </div>
 
                 <div class="row mb-4">
@@ -238,86 +238,6 @@ $pageTitle = "Beranda - Laboratorium SE";
 
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-
-<section id="artikel" class="py-5 bg-white">
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-end mb-5">
-            <div>
-                <span class="text-custom-blue fw-bold text-uppercase small ls-1">Update Terkini</span>
-                <h2 class="display-6 fw-bold text-dark mt-1">Wawasan & Berita</h2>
-            </div>
-            <a href="<?= $_ENV['APP_URL'] ?>/artikel" class="btn btn-outline-primary rounded-pill px-4 fw-medium d-none d-md-inline-block">
-                Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
-            </a>
-        </div>
-
-        <div class="row g-4">
-            <?php if (!empty($articles)): ?>
-                <?php 
-                    $heroArticle = $articles[0];
-                    $sideArticles = array_slice($articles, 1);
-                ?>
-                <div class="col-lg-7">
-                    <a href="<?= $_ENV['APP_URL'] ?>/artikel/detail/<?= $heroArticle['slug'] ?>" class="text-decoration-none">
-                        <div class="blog-hero-card">
-                            <?php 
-                                $heroImg = !empty($heroArticle['gambar_url']) 
-                                    ? $_ENV['APP_URL'] . '/public' . $heroArticle['gambar_url'] 
-                                    : $_ENV['APP_URL'] . '/assets/images/gedung.webp';
-                            ?>
-                            <img src="<?= $heroImg ?>" alt="<?= htmlspecialchars($heroArticle['title']) ?>" class="blog-hero-img">
-                            <div class="blog-hero-overlay"></div>
-                            <div class="blog-hero-content">
-                                <span class="blog-cat-badge cat-hero">
-                                    <i class="bi bi-star-fill me-1"></i> Terbaru
-                                </span>
-                                <h3 class="blog-hero-title text-white">
-                                    <?= htmlspecialchars($heroArticle['title']) ?>
-                                </h3>
-                                <div class="d-flex align-items-center text-white small mt-3 opacity-75">
-                                    <span class="me-3"><i class="bi bi-calendar3 me-2"></i> <?= date('d M Y', strtotime($heroArticle['created_at'])) ?></span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="col-lg-5">
-                    <div class="d-flex flex-column h-100">
-                        <?php foreach($sideArticles as $art) : ?>
-                        <a href="<?= $_ENV['APP_URL'] ?>/artikel/detail/<?= $art['slug'] ?>" class="text-decoration-none">
-                            <div class="blog-list-card">
-                                <div class="blog-list-img-wrapper">
-                                    <?php 
-                                        $sideImg = !empty($art['gambar_url']) 
-                                            ? $_ENV['APP_URL'] . '/public' . $art['gambar_url'] 
-                                            : $_ENV['APP_URL'] . '/assets/images/gedung.webp';
-                                    ?>
-                                    <img src="<?= $sideImg ?>" alt="<?= htmlspecialchars($art['title']) ?>" class="blog-list-img">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="blog-cat-badge cat-news mb-2">Artikel</span>
-                                        <i class="bi bi-arrow-right read-more-arrow"></i>
-                                    </div>
-                                    <h6 class="blog-list-title"><?= htmlspecialchars($art['title']) ?></h6>
-                                    <div class="blog-meta">
-                                        <span><i class="bi bi-calendar-event me-1"></i> <?= date('d M Y', strtotime($art['created_at'])) ?></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php else: ?>
-                <div class="col-12 text-center">
-                    <p class="text-muted">Belum ada artikel terbaru.</p>
-                </div>
-            <?php endif; ?>
         </div>
     </div>
 </section>
@@ -644,6 +564,85 @@ $pageTitle = "Beranda - Laboratorium SE";
     </div>
 </section>
 
+<section id="artikel" class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-end mb-5">
+            <div>
+                <span class="text-custom-blue fw-bold text-uppercase small ls-1">Update Terkini</span>
+                <h2 class="display-6 fw-bold text-dark mt-1">Wawasan & Berita</h2>
+            </div>
+            <a href="<?= $_ENV['APP_URL'] ?>/artikel" class="btn btn-outline-primary rounded-pill px-4 fw-medium d-none d-md-inline-block">
+                Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <?php if (!empty($articles)): ?>
+                <?php 
+                    $heroArticle = $articles[0];
+                    $sideArticles = array_slice($articles, 1);
+                ?>
+                <div class="col-lg-7">
+                    <a href="<?= $_ENV['APP_URL'] ?>/artikel/detail/<?= $heroArticle['slug'] ?>" class="text-decoration-none">
+                        <div class="blog-hero-card">
+                            <?php 
+                                $heroImg = !empty($heroArticle['gambar_url']) 
+                                    ? $_ENV['APP_URL'] . '/public' . $heroArticle['gambar_url'] 
+                                    : $_ENV['APP_URL'] . '/assets/images/gedung.webp';
+                            ?>
+                            <img src="<?= $heroImg ?>" alt="<?= htmlspecialchars($heroArticle['title']) ?>" class="blog-hero-img">
+                            <div class="blog-hero-overlay"></div>
+                            <div class="blog-hero-content">
+                                <span class="blog-cat-badge cat-hero">
+                                    <i class="bi bi-star-fill me-1"></i> Terbaru
+                                </span>
+                                <h3 class="blog-hero-title text-white">
+                                    <?= htmlspecialchars($heroArticle['title']) ?>
+                                </h3>
+                                <div class="d-flex align-items-center text-white small mt-3 opacity-75">
+                                    <span class="me-3"><i class="bi bi-calendar3 me-2"></i> <?= date('d M Y', strtotime($heroArticle['created_at'])) ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="d-flex flex-column h-100">
+                        <?php foreach($sideArticles as $art) : ?>
+                        <a href="<?= $_ENV['APP_URL'] ?>/artikel/detail/<?= $art['slug'] ?>" class="text-decoration-none">
+                            <div class="blog-list-card">
+                                <div class="blog-list-img-wrapper">
+                                    <?php 
+                                        $sideImg = !empty($art['gambar_url']) 
+                                            ? $_ENV['APP_URL'] . '/public' . $art['gambar_url'] 
+                                            : $_ENV['APP_URL'] . '/assets/images/gedung.webp';
+                                    ?>
+                                    <img src="<?= $sideImg ?>" alt="<?= htmlspecialchars($art['title']) ?>" class="blog-list-img">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="blog-cat-badge cat-news mb-2">Artikel</span>
+                                        <i class="bi bi-arrow-right read-more-arrow"></i>
+                                    </div>
+                                    <h6 class="blog-list-title"><?= htmlspecialchars($art['title']) ?></h6>
+                                    <div class="blog-meta">
+                                        <span><i class="bi bi-calendar-event me-1"></i> <?= date('d M Y', strtotime($art['created_at'])) ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="col-12 text-center">
+                    <p class="text-muted">Belum ada artikel terbaru.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const btnAction = document.getElementById('btn-dynamic-action');

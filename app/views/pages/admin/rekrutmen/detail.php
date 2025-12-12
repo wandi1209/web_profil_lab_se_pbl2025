@@ -1,3 +1,9 @@
+<?php
+// AMBIL ROLE USER DARI SESSION
+$userRole = $_SESSION['role_id'] ?? 2; 
+$isSuperAdmin = ($userRole === 1);
+?>
+
 <div class="container-fluid">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -6,6 +12,22 @@
             <i class="bi bi-arrow-left me-2"></i>Kembali
         </a>
     </div>
+    
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= $_SESSION['success'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= $_SESSION['error'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 
     <div class="row">
         <div class="col-md-8">
@@ -90,7 +112,7 @@
                             $iconClass = 'bi-x-circle';
                             break;
                         default:
-                            $badgeClass = 'bg-warning';
+                            $badgeClass = 'bg-warning text-dark';
                             $iconClass = 'bi-clock-history';
                     }
                     ?>
@@ -105,15 +127,26 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/edit?id=<?= $pendaftar['id'] ?>" 
-                           class="btn btn-primary">
-                            <i class="bi bi-pencil-square me-2"></i>Update Status
-                        </a>
+                        <?php if ($pendaftar['status'] !== 'Diterima' || $isSuperAdmin): ?>
+                            <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/edit?id=<?= $pendaftar['id'] ?>" 
+                            class="btn btn-primary">
+                                <i class="bi bi-pencil-square me-2"></i>Update Status
+                            </a>
+                        <?php else: ?>
+                            <div class="alert alert-warning text-center p-2 mb-2 small">
+                                <i class="bi bi-lock-fill"></i> Status DITERIMA terkunci.
+                            </div>
+                            <button class="btn btn-secondary" disabled>
+                                <i class="bi bi-lock-fill me-2"></i>Update Status (Terkunci)
+                            </button>
+                        <?php endif; ?>
 
-                        <button onclick="deletePendaftar(<?= $pendaftar['id'] ?>)" 
-                                class="btn btn-danger">
-                            <i class="bi bi-trash me-2"></i>Hapus Data
-                        </button>
+                        <?php if ($pendaftar['status'] !== 'Diterima' || $isSuperAdmin): ?>
+                            <button onclick="deletePendaftar(<?= $pendaftar['id'] ?>)" 
+                                    class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Hapus Data
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

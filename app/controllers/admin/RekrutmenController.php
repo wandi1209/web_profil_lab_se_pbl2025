@@ -4,6 +4,8 @@ namespace Polinema\WebProfilLabSe\Controllers\Admin;
 
 use Polinema\WebProfilLabSe\Core\Controller;
 use Polinema\WebProfilLabSe\Models\Pendaftar;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use Exception;
 
 class RekrutmenController extends Controller
@@ -52,7 +54,7 @@ class RekrutmenController extends Controller
     }
 
     /**
-     * Halaman edit status pendaftar
+     * Halaman edit status pendaftar (DENGAN PROTEKSI)
      */
     public function edit()
     {
@@ -71,6 +73,18 @@ class RekrutmenController extends Controller
             exit;
         }
 
+        // --- PROTEKSI HALAMAN EDIT ---
+        // Ambil role dari session
+        $userRole = $_SESSION['role_id'] ?? 2; 
+        
+        // Jika status 'Diterima' DAN user BUKAN Super Admin, tendang keluar
+        if ($pendaftar['status'] === 'Diterima' && $userRole !== 1) {
+            $_SESSION['error'] = 'AKSES DITOLAK: Data yang sudah "Diterima" dikunci. Hubungi Super Admin untuk mengedit.';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
+        }
+        // -----------------------------
+
         $data = [
             'title'     => 'Update Status Pendaftar',
             'pendaftar' => $pendaftar
@@ -80,45 +94,130 @@ class RekrutmenController extends Controller
     }
 
     /**
-     * Proses update status
+     * Proses update status (DENGAN PROTEKSI)
      */
     public function updateStatus()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        // Bersihkan pesan lama
         unset($_SESSION['error'], $_SESSION['success']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
             exit;
         }
+
         $id = (int)($_POST['id'] ?? 0);
         $status = trim($_POST['status'] ?? '');
         $catatan = trim($_POST['catatan'] ?? '');
 
         $model = new Pendaftar();
+        
+        // Ambil data LAMA dari database
+        $dataPendaftar = $model->findById($id);
 
-        // Jika status kosong, ambil status saat ini dari DB agar tidak mengosongkan
-        if ($status === '') {
-            $row = $model->findById($id);
-            if (!$row) {
-                $_SESSION['error'] = 'Data pendaftar tidak ditemukan.';
-                header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
-                exit;
-            }
-            $status = $row['status']; // pakai status lama
+        if (!$dataPendaftar) {
+            $_SESSION['error'] = 'Data pendaftar tidak ditemukan.';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
         }
 
+        // --- PROTEKSI PROSES UPDATE ---
+        $userRole = $_SESSION['role_id'] ?? 2;
+        
+        // Cek apakah data LAMA statusnya sudah 'Diterima'
+        // Jika ya, Admin biasa tidak boleh mengubahnya lagi
+        if ($dataPendaftar['status'] === 'Diterima' && $userRole !== 1) {
+            $_SESSION['error'] = 'GAGAL MENYIMPAN: Data status "Diterima" terkunci dan tidak dapat diedit oleh Admin biasa.';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen/detail?id=' . $id);
+            exit;
+        }
+        // ------------------------------
+
+        // Jika status kosong, pakai data lama
+        if ($status === '') {
+            $status = $dataPendaftar['status'];
+        }
+
+        // Lakukan Update ke Database
         $ok = $model->updateStatus($id, $status, $catatan);
 
-        $_SESSION[$ok ? 'success' : 'error'] = $ok ? 'Perubahan disimpan.' : 'Gagal menyimpan status.';
+        if ($ok) {
+            $_SESSION['success'] = 'Perubahan disimpan.';
+
+            // LOGIKA EMAIL (Hanya kirim jika status BERUBAH jadi Diterima)
+            // Kita cek agar tidak kirim email dobel jika statusnya sudah diterima dari awal
+            if (strtolower($status) == 'diterima' && strtolower($dataPendaftar['status']) != 'diterima') {
+                try {
+                    $this->kirimEmailNotifikasi($dataPendaftar['email'], $dataPendaftar['nama'], $catatan);
+                    $_SESSION['success'] .= ' Email notifikasi terkirim.';
+                } catch (Exception $e) {
+                    error_log("Gagal kirim email: " . $e->getMessage());
+                    $_SESSION['error'] = 'Status terupdate, namun gagal mengirim email notifikasi.';
+                }
+            }
+        } else {
+            $_SESSION['error'] = 'Gagal menyimpan status.';
+        }
+
         header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen/detail?id=' . $id);
         exit;
     }
 
     /**
-     * Proses hapus pendaftar
+     * 3. METHOD KIRIM EMAIL (PRIVATE) - Menggunakan ENV
+     */
+    private function kirimEmailNotifikasi($emailPenerima, $namaPenerima, $catatan)
+    {
+        $mail = new PHPMailer(true);
+
+        // Server settings diambil dari $_ENV
+        $mail->isSMTP();
+        $mail->Host       = $_ENV['SMTP_HOST'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $_ENV['SMTP_USERNAME'];
+        $mail->Password   = $_ENV['SMTP_PASSWORD'];
+        $mail->SMTPSecure = $_ENV['SMTP_ENCRYPTION']; // tls atau ssl
+        $mail->Port       = $_ENV['SMTP_PORT'];
+
+        // Recipients
+        $mail->setFrom($_ENV['SMTP_FROM_ADDRESS'], $_ENV['SMTP_FROM_NAME']);
+        $mail->addAddress($emailPenerima, $namaPenerima);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Pengumuman Hasil Rekrutmen Lab SE - DITERIMA';
+        
+        // Template Email Sederhana
+        $bodyContent = "
+            <div style='font-family: Arial, sans-serif; color: #333;'>
+                <h2>Halo, {$namaPenerima}!</h2>
+                <p>Terima kasih telah mengikuti seluruh rangkaian proses rekrutmen Laboratorium Software Engineering (Lab SE).</p>
+                
+                <div style='background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                    <strong>SELAMAT!</strong> Status pendaftaran kamu adalah: <strong>DITERIMA</strong>.
+                </div>
+
+                <p><strong>Catatan Tambahan:</strong><br>
+                " . (!empty($catatan) ? nl2br(htmlspecialchars($catatan)) : 'Tidak ada catatan khusus.') . "</p>
+                
+                <p>Mohon periksa website atau grup informasi secara berkala untuk jadwal kumpul perdana.</p>
+                
+                <br>
+                <p>Salam hangat,<br>
+                <strong>Tim Admin Lab SE Polinema</strong></p>
+            </div>
+        ";
+
+        $mail->Body = $bodyContent;
+        // Plain text version untuk email client jadul/non-html
+        $mail->AltBody = "Selamat {$namaPenerima}, status rekrutmen Anda DITERIMA. Catatan: {$catatan}.";
+
+        $mail->send();
+    }
+
+    /**
+     * Proses hapus pendaftar (DENGAN VALIDASI)
      */
     public function delete()
     {
@@ -130,6 +229,28 @@ class RekrutmenController extends Controller
             exit;
         }
 
+        // 1. Ambil data pendaftar dulu untuk cek status
+        $pendaftar = $this->pendaftarModel->findById($id);
+
+        if (!$pendaftar) {
+            $_SESSION['error'] = 'Data tidak ditemukan.';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
+        }
+
+        // 2. LOGIKA VALIDASI
+        // Cek Role user saat ini (Sesuaikan session ini dengan sistem login kamu)
+        // Contoh: $_SESSION['role_id'] atau $_SESSION['role']
+        $currentUserRole = $_SESSION['role_id'] ?? 2; 
+
+        // Jika status Diterima DAN user BUKAN Super Admin -> Tolak
+        if ($pendaftar['status'] === 'Diterima' && $currentUserRole !== 1) {
+            $_SESSION['error'] = 'AKSES DITOLAK: Hanya Super Admin yang boleh menghapus pendaftar yang sudah Diterima!';
+            header('Location: ' . $_ENV['APP_URL'] . '/admin/rekrutmen');
+            exit;
+        }
+
+        // 3. Proses Hapus (Jika lolos validasi)
         try {
             $result = $this->pendaftarModel->delete($id);
 

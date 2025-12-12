@@ -32,8 +32,10 @@ class PendaftaranController extends Controller
     }
 
     // Simpan pendaftaran (opsional, tanpa required di HTML)
+    // Simpan pendaftaran
     public function store()
     {
+        // 1. Ambil data input
         $data = [
             'nama'           => trim($_POST['nama'] ?? ''),
             'email'          => trim($_POST['email'] ?? ''),
@@ -46,8 +48,38 @@ class PendaftaranController extends Controller
             'portofolio_url' => trim($_POST['portofolio_url'] ?? ''),
             'alasan'         => trim($_POST['alasan'] ?? ''),
         ];
+
+        // 2. VALIDASI DUPLIKASI DATA
+        
+        // Cek NIM
+        if (!empty($data['nim']) && $this->model->findByNim($data['nim'])) {
+            $_SESSION['error'] = "Gagal: NIM {$data['nim']} sudah terdaftar sebelumnya!";
+            $this->view('pages/pendaftaran', ['statusResult' => null], true, 'default');
+            return; // Hentikan proses
+        }
+
+        // Cek Email
+        if (!empty($data['email']) && $this->model->findByEmail($data['email'])) {
+            $_SESSION['error'] = "Gagal: Email {$data['email']} sudah digunakan!";
+            $this->view('pages/pendaftaran', ['statusResult' => null], true, 'default');
+            return; 
+        }
+
+        // Cek No HP
+        if (!empty($data['no_hp']) && $this->model->findByNoHp($data['no_hp'])) {
+            $_SESSION['error'] = "Gagal: Nomor HP {$data['no_hp']} sudah terdaftar!";
+            $this->view('pages/pendaftaran', ['statusResult' => null], true, 'default');
+            return; 
+        }
+
+        // 3. Jika aman, simpan ke database
         $ok = $this->model->create($data);
-        $_SESSION[$ok ? 'success' : 'error'] = $ok ? 'Berhasil dikirim.' : 'Gagal menyimpan.';
-        $this->view('pages/pendaftaran', ['statusResult' => null], true, 'default');
+        
+        $_SESSION[$ok ? 'success' : 'error'] = $ok ? 'Pendaftaran Berhasil dikirim.' : 'Gagal menyimpan data.';
+        
+        // Redirect agar form bersih (PRG Pattern) atau tetap load view
+        // Disarankan redirect agar kalau di-refresh tidak submit ulang
+        header('Location: ' . $_ENV['APP_URL'] . '/pendaftaran');
+        exit;
     }
 }

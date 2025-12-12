@@ -1,3 +1,10 @@
+<?php
+// AMBIL ROLE USER DARI SESSION
+// Sesuaikan key 'user' dan 'role' dengan cara login kamu menyimpan session
+$userRole = $_SESSION['role_id'] ?? 2; 
+$isSuperAdmin = ($userRole === 1);
+?>
+
 <div class="container-fluid">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -121,20 +128,34 @@
                             <td class="text-center">
                                 <div class="btn-group btn-group-sm">
                                     <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/detail?id=<?= $row['id'] ?>" 
-                                       class="btn btn-outline-primary"
-                                       title="Detail">
+                                    class="btn btn-outline-primary"
+                                    title="Detail">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/edit?id=<?= $row['id'] ?>" 
-                                       class="btn btn-outline-warning"
-                                       title="Update Status">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <button onclick="deletePendaftar(<?= $row['id'] ?>)" 
-                                            class="btn btn-outline-danger"
-                                            title="Hapus">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+
+                                    <?php if ($row['status'] !== 'Diterima' || $isSuperAdmin): ?>
+                                        <a href="<?= $_ENV['APP_URL'] ?>/admin/rekrutmen/edit?id=<?= $row['id'] ?>" 
+                                        class="btn btn-outline-warning"
+                                        title="Update Status">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    <?php else: ?>
+                                        <button class="btn btn-outline-secondary" disabled title="Terkunci (Diterima)">
+                                            <i class="bi bi-lock-fill"></i>
+                                        </button>
+                                    <?php endif; ?>
+                                    <?php if ($row['status'] !== 'Diterima' || $isSuperAdmin): ?>
+                                        <button onclick="deletePendaftar(<?= $row['id'] ?>)" 
+                                                class="btn btn-outline-danger"
+                                                title="Hapus">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    <?php else: ?>
+                                        <button class="btn btn-outline-secondary" disabled>
+                                            <i class="bi bi-slash-circle"></i>
+                                        </button>
+                                    <?php endif; ?>
+                                    
                                 </div>
                             </td>
                         </tr>
@@ -164,7 +185,6 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
     const table = document.getElementById('pendaftarTable');
     const rows = table.getElementsByTagName('tr');
 
-    // Mulai dari 1 karena 0 adalah header
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         const text = row.textContent.toLowerCase();

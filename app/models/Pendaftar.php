@@ -212,13 +212,49 @@ class Pendaftar
     {
         $stmt = $this->db->prepare("
             SELECT id, nama, email, no_hp, nim, angkatan, program_studi,
-                   peminatan, keahlian, portofolio_url, alasan, status,
-                   created_at, updated_at
+                peminatan, keahlian, portofolio_url, alasan, status,
+                created_at, updated_at
             FROM pendaftar
             WHERE nim = :nim
             LIMIT 1
         ");
+
         $stmt->execute([':nim' => $nim]);
+        
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function findByEmail($email)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, nama, email, no_hp, nim, angkatan, program_studi,
+                peminatan, keahlian, portofolio_url, alasan, status,
+                created_at, updated_at
+            FROM pendaftar
+            WHERE email = :email
+            LIMIT 1
+        ");
+
+        $stmt->execute([':email' => $email]);
+        
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function findByNoHp($noHp)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, nama, email, no_hp, nim, angkatan, program_studi,
+                peminatan, keahlian, portofolio_url, alasan, status,
+                created_at, updated_at
+            FROM pendaftar
+            WHERE no_hp = :no_hp
+            LIMIT 1
+        ");
+
+        $stmt->execute([':no_hp' => $noHp]);
+        
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }

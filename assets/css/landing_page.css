@@ -242,23 +242,92 @@ a { text-decoration: none; }
     }
 }
 
-/* Mobile: default Bootstrap behavior dengan JavaScript */
+/* --------------------------------------------------------------
+   MOBILE NAVBAR FIX (GARIS HIJAU & POSISI)
+-------------------------------------------------------------- */
 @media (max-width: 991px) {
+    
+    /* 1. Reset posisi dropdown */
     .navbar .nav-item.dropdown .dropdown-menu {
-        display: none !important;
-        position: static;
-        background-color: rgba(11, 78, 130, 0.85);
-        border: none;
-        margin-top: 8px;
-    }
-    
-    .navbar .nav-item.dropdown.show .dropdown-menu {
-        display: block !important;
-    }
-    
-    /* Hide arrow pada mobile */
-    .navbar .nav-item.dropdown > .nav-link-custom::before {
         display: none;
+        position: static !important;
+        float: none;
+        width: 100%;
+        margin-top: 0;
+        background-color: transparent !important;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        transition: none;
+    }
+
+    /* 2. Saat aktif, tampilkan */
+    .navbar .nav-item.dropdown .dropdown-menu.show {
+        display: block !important; 
+    }
+
+    /* 3. Container Menu Mobile */
+    .navbar-collapse {
+        background-color: rgba(11, 78, 130, 0.98);
+        padding: 20px 0;
+        border-radius: 0 0 16px 16px;
+        margin-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+    }
+
+    /* 4. PERBAIKAN UTAMA: Link Menu Utama */
+    .navbar-nav .nav-item {
+        display: flex;             /* Gunakan flexbox */
+        flex-direction: column;    /* Tumpuk vertikal */
+        align-items: center;       /* PAKSA SEMUA ANAK KE TENGAH */
+        width: 100%;
+        margin-bottom: 5px;        /* Beri jarak antar menu */
+    }
+
+    .nav-link-custom {
+        width: fit-content !important; /* KUNCI: Lebar elemen mengikuti panjang teks */
+        display: inline-block;         /* Agar properti width berfungsi */
+        margin: 0 auto;                /* Jaga-jaga agar tetap ditengah */
+    }
+
+    /* 5. Styling item dropdown */
+    .navbar-glass .dropdown-item {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;   /* Teks dropdown rata tengah */
+        align-items: center;
+        text-align: center;
+        width: 100%;               /* Dropdown item boleh full width */
+    }
+
+    /* 6. Efek Hover Mobile */
+    .navbar-glass .dropdown-item:hover,
+    .navbar-glass .dropdown-item:active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+    }
+
+    /* 7. Sembunyikan panah dekorasi desktop */
+    .navbar .nav-item.dropdown > a::after { display: none !important; }
+    .navbar .nav-item.dropdown > .nav-link-custom::before { display: none; }
+
+    /* 8. Tombol Register Mobile */
+    .nav-item.ms-lg-3 {
+        margin-top: 25px !important;
+        width: 100%;
+        display: flex;             /* Tambahan untuk centering */
+        justify-content: center;   /* Tambahan untuk centering */
+    }
+    
+    .btn-register {
+        display: inline-block;     /* Ubah jadi inline-block */
+        width: auto;               /* Lebar otomatis mengikuti teks */
+        padding-left: 40px;        /* Perbesar sedikit padding agar tombol enak ditekan */
+        padding-right: 40px;
     }
 }
 

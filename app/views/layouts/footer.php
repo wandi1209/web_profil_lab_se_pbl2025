@@ -30,7 +30,6 @@
                         <li><a href="<?= $_ENV['APP_URL'] ?>/#people" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Profil Anggota</a></li>
                         <li><a href="<?= $_ENV['APP_URL'] ?>/#publikasi" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Riset & Publikasi</a></li>
                         <li><a href="<?= $_ENV['APP_URL'] ?>/#artikel" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Blog Artikel</a></li>
-                        <li><a href="<?= $_ENV['APP_URL'] ?>/login" class="footer-link"><i class="bi bi-chevron-right me-1" style="font-size: 10px;"></i> Login</a></li>
                     </ul>
                 </div>
 
@@ -59,7 +58,7 @@
 
             <div class="border-top border-secondary border-opacity-25 pt-4 d-flex flex-column flex-md-row justify-content-between align-items-center small">
                 <p class="mb-2 mb-md-0 text-secondary">
-                    &copy; <?= date('Y') ?> Laboratorium Software Engineering. All rights reserved.
+                    &copy; <?= date('Y'); ?> <strong>Lab Software Engineering</strong>. Dibuat oleh Mahasiswa TI-2B Angkatan 2024 JTI Polinema.
                 </p>
                 <div class="d-flex gap-4">
                     <a href="#" class="footer-link" style="font-size: 12px;">Privacy Policy</a>

@@ -63,7 +63,7 @@
                     <label class="form-label fw-bold">Foto Profil</label>
                     <?php if (!empty($dosen['foto_url'])): ?>
                     <div class="mb-3">
-                        <img src="<?= $_ENV['APP_URL'] . htmlspecialchars($dosen['foto_url']) ?>" alt="Foto Dosen" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                        <img src="<?= $_ENV['APP_URL'] . '/public' . htmlspecialchars($dosen['foto_url']) ?>" alt="Foto Dosen" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
                         <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox" name="hapus_foto" id="hapusFoto">
                             <label class="form-check-label text-danger" for="hapusFoto"><i class="bi bi-trash me-1"></i>Hapus foto</label>

@@ -9,7 +9,7 @@
 
     <!-- Footer -->
     <footer class="admin-footer">
-        <p>&copy; <?= date('Y') ?> Web Profil Lab SE</p>
+        <p>&copy; <?= date('Y'); ?> <strong>Lab Software Engineering</strong>. Dibuat oleh Mahasiswa TI-2B Angkatan 2024 JTI Polinema.</p>
     </footer>
 
 </div>

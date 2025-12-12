@@ -17,27 +17,26 @@ $pageTitle = "Form Pendaftaran - Laboratorium SE";
                     <h4 class="fw-semibold mb-3">Form Pendaftaran</h4>
 
                     <form action="<?= $_ENV['APP_URL'] ?>/pendaftaran/store" method="POST">
-                        <!-- Buat field tidak required di HTML. Validasi tetap di server. -->
                         <div class="mb-3">
-                            <label class="form-label">Nama</label>
-                            <input type="text" name="nama" class="form-control rounded-3" placeholder="Masukkan Nama">
+                            <label class="form-label">Nama <span class="text-danger">*</span></label>
+                            <input type="text" name="nama" class="form-control rounded-3" placeholder="Masukkan Nama" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control rounded-3" placeholder="Masukkan Email">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control rounded-3" placeholder="Masukkan Email" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Nomor HP</label>
-                            <input type="text" name="no_hp" class="form-control rounded-3" placeholder="Masukkan Nomor HP">
+                            <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
+                            <input type="text" name="no_hp" class="form-control rounded-3" placeholder="Masukkan Nomor HP" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">NIM</label>
-                            <input type="text" name="nim" class="form-control rounded-3" placeholder="Masukkan NIM">
+                            <label class="form-label">NIM <span class="text-danger">*</span></label>
+                            <input type="text" name="nim" class="form-control rounded-3" placeholder="Masukkan NIM" required>
                         </div>
                         <?php $currentYear = (int)date('Y'); $years = range($currentYear, $currentYear - 4); ?>
                         <div class="mb-3">
-                            <label class="form-label">Angkatan</label>
-                            <select name="angkatan" class="form-select rounded-3">
+                            <label class="form-label">Angkatan <span class="text-danger">*</span></label>
+                            <select name="angkatan" class="form-select rounded-3" required>
                                 <option value="">-- Pilih Angkatan --</option>
                                 <?php foreach ($years as $y): ?>
                                     <option value="<?= $y ?>"><?= $y ?></option>
@@ -45,8 +44,8 @@ $pageTitle = "Form Pendaftaran - Laboratorium SE";
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Prodi</label>
-                            <select name="program_studi" class="form-select rounded-3">
+                            <label class="form-label">Prodi <span class="text-danger">*</span></label>
+                            <select name="program_studi" class="form-select rounded-3" required>
                                 <option value="">-- Pilih Prodi --</option>
                                 <option>D4 Teknik Informatika</option>
                                 <option>D4 Sistem Informasi Bisnis</option>
@@ -54,20 +53,20 @@ $pageTitle = "Form Pendaftaran - Laboratorium SE";
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Peminatan</label>
-                            <input type="text" name="peminatan" class="form-control rounded-3" placeholder="Contoh: Web, AI, Cloud">
+                            <label class="form-label">Peminatan <span class="text-danger">*</span></label>
+                            <input type="text" name="peminatan" class="form-control rounded-3" placeholder="Contoh: Web, AI, Cloud" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Keahlian</label>
-                            <input type="text" name="keahlian" class="form-control rounded-3" placeholder="Contoh: Laravel, React">
+                            <label class="form-label">Keahlian <span class="text-danger">*</span></label>
+                            <input type="text" name="keahlian" class="form-control rounded-3" placeholder="Contoh: Laravel, React" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Link Portofolio</label>
-                            <input type="url" name="portofolio_url" class="form-control rounded-3" placeholder="URL Portofolio">
+                            <label class="form-label">Link Portofolio <span class="text-danger">*</span></label>
+                            <input type="url" name="portofolio_url" class="form-control rounded-3" placeholder="URL Portofolio" required>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Alasan</label>
-                            <textarea name="alasan" class="form-control rounded-3" rows="4" placeholder="Alasan bergabung..."></textarea>
+                            <label class="form-label">Alasan <span class="text-danger">*</span></label>
+                            <textarea name="alasan" class="form-control rounded-3" rows="4" placeholder="Alasan bergabung..." required></textarea>
                         </div>
 
                         <div class="text-end">
@@ -82,7 +81,7 @@ $pageTitle = "Form Pendaftaran - Laboratorium SE";
                     <h4 class="fw-semibold mb-3">Cek Status Pendaftaran</h4>
                     <form action="<?= $_ENV['APP_URL'] ?>/pendaftaran/cek-status" method="GET" class="row g-2">
                         <div class="col-8">
-                            <input type="text" name="nim" class="form-control rounded-3" placeholder="Masukkan NIM">
+                            <input type="text" name="nim" class="form-control rounded-3" placeholder="Masukkan NIM" required>
                         </div>
                         <div class="col-4">
                             <button type="submit" class="btn btn-outline-primary w-100 rounded-pill">Cek</button>

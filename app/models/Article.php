@@ -65,8 +65,8 @@ class Article
     public function create($data)
     {
         try {
-            $query = "INSERT INTO article (title, slug, gambar_url, ringkasan, content, is_featured, created_at) 
-                      VALUES (:title, :slug, :gambar_url, :ringkasan, :content, :is_featured, CURRENT_TIMESTAMP)";
+            $query = "INSERT INTO article (title, slug, gambar_url, ringkasan, content, is_featured, author_id, created_at) 
+                      VALUES (:title, :slug, :gambar_url, :ringkasan, :content, :is_featured, :author_id, CURRENT_TIMESTAMP)";
 
             $stmt = $this->db->prepare($query);
             return $stmt->execute([
@@ -75,13 +75,15 @@ class Article
                 ':gambar_url'  => $data['gambar_url'] ?? null,
                 ':ringkasan'   => $data['ringkasan'] ?? null,
                 ':content'     => $data['content'],
-                ':is_featured' => $data['is_featured'] ?? false // Tambahan
+                ':is_featured' => $data['is_featured'] ?? false,
+                ':author_id'   => $data['author_id'] ?? null // Tambahan Author ID
             ]);
         } catch (Exception $e) {
             error_log('Article create Error: ' . $e->getMessage());
             return false;
         }
     }
+
 
     /**
      * Update article

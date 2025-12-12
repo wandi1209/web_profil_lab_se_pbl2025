@@ -1,7 +1,8 @@
 {
     "name": "polinema/web_profil_lab_se",
     "require": {
-        "vlucas/phpdotenv": "^5.6"
+        "vlucas/phpdotenv": "^5.6",
+        "phpmailer/phpmailer": "^7.0"
     },
     "autoload": {
         "psr-4": {

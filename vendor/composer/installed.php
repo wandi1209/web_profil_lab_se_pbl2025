@@ -3,7 +3,7 @@
         'name' => 'polinema/web_profil_lab_se',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '95236fc09ca57a950a027b167f2fbf4a23f61a92',
+        'reference' => '076b629949bd213f887fb41b129a2ade71d19e95',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -19,6 +19,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v7.0.1',
+            'version' => '7.0.1.0',
+            'reference' => '360ae911ce62e25e11249f6140fa58939f556ebe',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'phpoption/phpoption' => array(
             'pretty_version' => '1.9.4',
             'version' => '1.9.4.0',
@@ -31,7 +40,7 @@
         'polinema/web_profil_lab_se' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '95236fc09ca57a950a027b167f2fbf4a23f61a92',
+            'reference' => '076b629949bd213f887fb41b129a2ade71d19e95',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

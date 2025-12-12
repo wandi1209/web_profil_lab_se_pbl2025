@@ -56,6 +56,7 @@ class BlogController extends Controller
         $ringkasan = trim($_POST['ringkasan'] ?? '');
         $content = trim($_POST['content'] ?? '');
         $isFeatured = isset($_POST['featured']);
+        $authorId = $_SESSION['user']['id'] ?? null;
 
         // Validasi
         if (empty($title) || empty($content)) {
@@ -87,7 +88,8 @@ class BlogController extends Controller
                 'gambar_url' => $gambarUrl,
                 'ringkasan'  => $ringkasan,
                 'content'    => $content,
-                'is_featured' => $isFeatured ? 'true' : 'false'
+                'is_featured' => $isFeatured ? 'true' : 'false',
+                'author_id'   => $authorId
         
             ];
 

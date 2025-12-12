@@ -41,12 +41,13 @@
                         <tr>
                             <th width="5%" class="ps-4">No</th>
                             <th width="15%">Cover</th>
-                            <th width="30%">Info Artikel</th>
-                            <th width="30%">Ringkasan</th>
+                            <th width="25%">Info Artikel</th>
+                            <th width="15%">Penulis</th> <th width="25%">Ringkasan</th>
                             <th width="10%">Tanggal</th>
                             <th width="10%" class="text-center">Aksi</th>
                         </tr>
                     </thead>
+
                     <tbody>
                     <?php if (!empty($dataBlog)): ?>
                         <?php $no = 1; foreach ($dataBlog as $row): ?>
@@ -55,12 +56,12 @@
                             <td>
                                 <?php if (!empty($row['gambar_url'])): ?>
                                     <img src="<?= $_ENV['APP_URL']. '/public' . $row['gambar_url'] ?>"
-                                         alt="<?= htmlspecialchars($row['title']) ?>"
-                                         class="rounded shadow-sm object-fit-cover"
-                                         style="width: 100px; height: 60px;">
+                                        alt="<?= htmlspecialchars($row['title']) ?>"
+                                        class="rounded shadow-sm object-fit-cover"
+                                        style="width: 100px; height: 60px;">
                                 <?php else: ?>
                                     <div class="bg-light rounded border d-flex align-items-center justify-content-center text-muted"
-                                         style="width: 100px; height: 60px;">
+                                        style="width: 100px; height: 60px;">
                                         <i class="bi bi-image"></i>
                                     </div>
                                 <?php endif; ?>
@@ -78,8 +79,18 @@
                                     <i class="bi bi-link-45deg"></i> /<?= htmlspecialchars($row['slug']) ?>
                                 </div>
                             </td>
+                            
                             <td>
-                                <span class="d-inline-block text-secondary small text-truncate" style="max-width: 300px;">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle text-secondary me-2"></i>
+                                    <span class="fw-medium text-dark">
+                                        <?= htmlspecialchars($row['author_name'] ?? 'Admin') ?>
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="d-inline-block text-secondary small text-truncate" style="max-width: 200px;">
                                     <?= htmlspecialchars($row['ringkasan'] ?? '-') ?>
                                 </span>
                             </td>
@@ -90,14 +101,12 @@
                             </td>
                             <td class="text-center">
                                 <a href="<?= $_ENV['APP_URL'] ?>/admin/blog/edit?id=<?= $row['id'] ?>" 
-                                   class="btn btn-warning btn-sm me-1"
-                                   title="Edit">
+                                class="btn btn-warning btn-sm me-1" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
                                 <button onclick="deleteBlog(<?= $row['id'] ?>)" 
-                                        class="btn btn-danger btn-sm"
-                                        title="Hapus">
+                                        class="btn btn-danger btn-sm" title="Hapus">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
