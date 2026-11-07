@@ -6,7 +6,15 @@
     },
     "autoload": {
         "psr-4": {
+            "Polinema\\WebProfilLabSe\\Core\\": "app/core/",
+            "Polinema\\WebProfilLabSe\\Controllers\\Admin\\": "app/controllers/admin/",
+            "Polinema\\WebProfilLabSe\\Controllers\\": "app/controllers/",
+            "Polinema\\WebProfilLabSe\\Models\\": "app/models/",
+            "Polinema\\WebProfilLabSe\\Middlewares\\": "app/middlewares/",
             "Polinema\\WebProfilLabSe\\": "app/"
-        }
+        },
+        "classmap": [
+            "app/"
+        ]
     }
 }

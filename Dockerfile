@@ -13,7 +13,8 @@ RUN composer install \
     --no-interaction \
     --no-progress \
     --prefer-dist \
-    --optimize-autoloader
+    --optimize-autoloader \
+    && composer dump-autoload --optimize --no-dev
 
 # ==========================================
 # Stage 2: Production Runtime (PHP + Apache)
