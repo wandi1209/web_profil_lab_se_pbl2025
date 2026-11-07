@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lab-se-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/var/www/html/.env:ro
+      - ./public:/var/www/html/public
+    networks:
+      - lab-se-net
+      - tunnel-net
+
+networks:
+  lab-se-net:
+    driver: bridge
+  tunnel-net:
+    external: true

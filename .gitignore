@@ -1,2 +1,5 @@
 .env
-public/*
+.env.*
+!.env.example
+.DS_Store
+**/.DS_Store

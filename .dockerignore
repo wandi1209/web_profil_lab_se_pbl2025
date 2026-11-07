@@ -1,0 +1,11 @@
+.git
+.gitignore
+.dockerignore
+.env
+.env.*
+.DS_Store
+**/.DS_Store
+Dokumen PBL
+README.md
+docker-compose.yml
+vendor
